@@ -1,7 +1,7 @@
 [project]
-name = "data-scraper"
+name = "neurodivergent-resource-toolkit"
 version = "0.1.0"
-description = "Add your description here"
+description = "A comprehensive toolkit for enriching, categorizing, and managing neurodivergent support resources using AI-powered data extraction and categorization."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

@@ -203,7 +203,7 @@ def verify(rows: List[Dict[str, str]], name_threshold: float, max_distance_km: f
 
 
 def parse_args() -> argparse.Namespace:
-    default_root = "/Users/venkata/startup/data_scraper"
+    default_root = "/Users/venkata/startup/neurodivergent-resource-toolkit"
     default_input = os.path.join(default_root, "to_be_normalised", "merged_with_google.csv")
     default_report = os.path.join(default_root, "to_be_normalised", "match_report.csv")
     default_report_xlsx = os.path.join(default_root, "to_be_normalised", "match_report.xlsx")

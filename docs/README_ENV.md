@@ -126,7 +126,7 @@ Make sure:
 
 Make sure you're running scripts from the project directory:
 ```bash
-cd /Users/venkata/startup/data_scraper
+cd /Users/venkata/startup/neurodivergent-resource-toolkit
 bash test_pipeline.sh
 ```
 

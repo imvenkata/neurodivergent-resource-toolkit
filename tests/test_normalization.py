@@ -33,7 +33,7 @@ def main() -> None:
     parser.add_argument(
         "--input-file",
         type=Path,
-        default=Path("/Users/venkata/startup/data_scraper/to_be_normalised/test.text"),
+        default=Path("/Users/venkata/startup/neurodivergent-resource-toolkit/to_be_normalised/test.text"),
         help="Path to a text file containing the raw description/content.",
     )
     parser.add_argument(

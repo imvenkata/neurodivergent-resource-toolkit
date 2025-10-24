@@ -591,7 +591,7 @@ def enrich_rows(
 
 
 def parse_args() -> argparse.Namespace:
-    default_root = "/Users/venkata/startup/data_scraper"
+    default_root = "/Users/venkata/startup/neurodivergent-resource-toolkit"
     default_input = os.path.join(default_root, "to_be_normalised", "resources_data.csv")
     default_output = os.path.join(default_root, "to_be_normalised", "resources_data_enriched.csv")
     default_output_xlsx = os.path.join(default_root, "to_be_normalised", "resources_data_enriched.xlsx")

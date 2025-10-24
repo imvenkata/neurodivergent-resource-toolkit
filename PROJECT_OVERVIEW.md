@@ -86,7 +86,7 @@ Automated toolkit for enriching, categorizing, and managing neurodivergent suppo
 ## 📁 Directory Structure
 
 ```
-data_scraper/
+neurodivergent-resource-toolkit/
 ├── src/                    # All source code
 │   ├── *.py               # Main scripts
 │   └── utils/             # Helper utilities

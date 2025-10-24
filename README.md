@@ -22,7 +22,7 @@ python run.py categorize --input data/output/enriched_resources_*.xlsx
 ## 📁 Project Structure
 
 ```
-data_scraper/
+neurodivergent-resource-toolkit/
 ├── src/                          # Source code
 │   ├── batch_enrich_pipeline_parallel.py  # Main enrichment pipeline (FAST)
 │   ├── batch_enrich_pipeline.py           # Sequential pipeline

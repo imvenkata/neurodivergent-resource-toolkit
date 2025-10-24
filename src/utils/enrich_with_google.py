@@ -7,10 +7,10 @@ Usage (dry run):
 Usage (real):
   export GOOGLE_MAPS_API_KEY=...  # or pass --api-key
   python3 enrich_with_google.py \
-    --input /Users/venkata/startup/data_scraper/to_be_normalised/merged_neurodivergent_services.csv \
-    --output /Users/venkata/startup/data_scraper/to_be_normalised/merged_with_google.csv \
-    --output-xlsx /Users/venkata/startup/data_scraper/to_be_normalised/merged_with_google.xlsx \
-    --cache /Users/venkata/startup/data_scraper/to_be_normalised/google_places_cache.json \
+    --input /Users/venkata/startup/neurodivergent-resource-toolkit/to_be_normalised/merged_neurodivergent_services.csv \
+    --output /Users/venkata/startup/neurodivergent-resource-toolkit/to_be_normalised/merged_with_google.csv \
+    --output-xlsx /Users/venkata/startup/neurodivergent-resource-toolkit/to_be_normalised/merged_with_google.xlsx \
+    --cache /Users/venkata/startup/neurodivergent-resource-toolkit/to_be_normalised/google_places_cache.json \
     --region gb --sleep 0.25
 """
 
@@ -381,7 +381,7 @@ def enrich_records(
 
 
 def parse_args() -> argparse.Namespace:
-    default_root = "/Users/venkata/startup/data_scraper"
+    default_root = "/Users/venkata/startup/neurodivergent-resource-toolkit"
     default_input = os.path.join(default_root, "to_be_normalised", "merged_neurodivergent_services.csv")
     default_output = os.path.join(default_root, "to_be_normalised", "merged_with_google.csv")
     default_output_xlsx = os.path.join(default_root, "to_be_normalised", "merged_with_google.xlsx")

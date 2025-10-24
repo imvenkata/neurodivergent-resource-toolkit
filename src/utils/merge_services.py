@@ -563,7 +563,7 @@ def write_excel(path: str, rows: List[Dict[str, str]], columns: List[str] | None
 
 
 def parse_args() -> argparse.Namespace:
-    default_root = "/Users/venkata/startup/data_scraper"
+    default_root = "/Users/venkata/startup/neurodivergent-resource-toolkit"
     default_a = os.path.join(default_root, "to_be_normalised", "autism_services_20251008_185311.csv")
     default_b = os.path.join(default_root, "to_be_normalised", "london_neurodivergent_resources_complete.csv")
     default_out = os.path.join(default_root, "to_be_normalised", "merged_neurodivergent_services.csv")
