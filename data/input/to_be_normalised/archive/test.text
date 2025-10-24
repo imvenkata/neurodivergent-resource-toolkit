@@ -1,0 +1,45 @@
+curl https://ollama.com/api/web_search \
+  --header "Authorization: Bearer b0f753431b434e009b7af8bec17d76a7.-QXJWnJNGg2VGChszIcSHq2U" \
+	-d '{
+	  "query":"You are tasked with extracting and categorizing information about neurodiversity resource centers by visiting below website.
+
+TASK:
+1. Visit the provided website URL
+2. Read and analyze the content
+3. Extract structured information
+4. Categorize the center appropriately
+
+INPUT FORMAT:
+Center Name: Ealing Community Cafe
+Website URL: https://londonautismgroupcharity.org/community-cafes
+
+INSTRUCTIONS:
+- Fetch the website content from the provided URL
+- Look for information in: About pages, Services pages, Contact pages, Home page
+- Extract factual information only (don't infer or assume)
+- If information is not found on the website, mark as "Not specified"
+
+OUTPUT FORMAT (JSON):
+{
+  "center_name": "[name]",
+  "website_url": "[url]",
+  "description_short": "[1-2 concise sentences summarizing main purpose and key services from website]",
+  "category": "[primary category]",
+  "subcategory": "[subcategory or 'General']",
+  "age_range": "[from website or 'Not specified']",
+  "conditions_supported": ["[list from website]"],
+  "specific_services": ["[list from website]"],
+  "organization_type": "[NHS Service, Charity/Non-profit, Local Authority, Private School, Private Provider, Social Enterprise, Unknown]",
+  "contact_info": {
+    "phone": "[if available]",
+    "email": "[if available]",
+    "address": "[if available]"
+  },
+  "additional_notes": "[funding, accessibility, referral process, etc.]",
+  "data_confidence": "[High/Medium/Low - based on clarity of website information]",
+  "reasoning": "[1-2 sentences explaining the categorization]"
+}
+
+CATEGORIES AND SUBCATEGORIES:
+[Same as before - Assessment & Diagnosis, Crisis & Emergency, etc.]"
+}'

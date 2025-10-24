@@ -1,0 +1,1052 @@
+record_index,name,postcode,city,website,phone,email,facebook,source,completeness,key_used,issues
+1,ELFT - City & Hackney ADHD Service,E9 7TS,London,https://elft.nhs.uk/adult-adhd-services,+442085251115,elft.adhdservice@nhs.net,,compiled_resources,1.0,wp,missing_coordinates
+2,ELFT - Newham ADHD Services,E7 8QP,London,https://elft.nhs.uk/adult-adhd-services,+442032885100,elft.newham-pcns-referral-inbox@nhs.net,,compiled_resources,1.0,wp,missing_coordinates
+3,ELFT - Tower Hamlets ADHD Service,E1 4DG,London,https://elft.nhs.uk/adult-adhd-services,+447393243295,elft.thadhdservice@nhs.net,,compiled_resources,1.0,wp,missing_coordinates
+4,ELFT - Adult Autism Diagnostic Services,E1 4DG,London,https://elft.nhs.uk/adult-autism-diagnostic-services,+442076554000,elft.autismservice@nhs.net,,compiled_resources,1.0,wp,missing_coordinates
+5,CNWL - Adult ADHD Service,NW9 9QY,London,https://cnwl.nhs.uk/services/mental-health-services/cnwl-adult-adhd-service,,adhd.cnwl@nhs.net,,compiled_resources,0.875,wp,missing_coordinates
+6,NLFT - Adult ADHD Clinic,EN5 3DJ,London,https://northlondonmentalhealth.nhs.uk/service-details/service/adult-adhd-clinic-148,+442087025544,nlft.referrals.adultadhdservice@nhs.net,,compiled_resources,1.0,wp,missing_coordinates
+7,London Psychiatry Clinic,"60 Harley Street, London, UK",W1G 7HJ,https://londonpsychiatry.clinic/services/attention-deficit-hyperactivity-disorder-adhd-assessment-in-adults,,,,compiled_resources,0.75,wp,postcode_invalid;missing_coordinates
+8,The Autism Service - London,W1U 3PD,London,https://theautismservice.co.uk/clinic/london,+443003030667,,,compiled_resources,0.875,wp,missing_coordinates
+9,Priory Group,Various,London,https://priorygroup.com/mental-health/autism/autism-assessments,+443300566023,,,compiled_resources,0.875,wp,postcode_invalid;missing_coordinates
+10,Psychiatry UK,N/A,Online,https://psychiatry-uk.com/right-to-choose,+443301241980,,,compiled_resources,0.875,wp,postcode_invalid;missing_coordinates
+11,Samaritans,N/A,National,https://samaritans.org,+116123,jo@samaritans.org,,compiled_resources,1.0,wp,phone_suspect;postcode_invalid;missing_coordinates
+12,Shout Crisis Text Line,N/A,National,https://giveusashout.org,,,,compiled_resources,0.75,wp,postcode_invalid;missing_coordinates
+13,CNWL - Mental Health Crisis Line,N/A,London,https://cnwl.nhs.uk/patients-and-carers/help-mental-health-crisis,+448000234650,cnw-tr.spa@nhs.net,,compiled_resources,1.0,wp,postcode_invalid;missing_coordinates
+14,National Autistic Society Helpline,EC1V 1NG,London,https://autism.org.uk/contact-us/urgent-help,+448088004104,,,compiled_resources,0.875,wp,missing_coordinates
+15,NHS 111,N/A,National,https://111.nhs.uk,+111,,,compiled_resources,0.875,wp,phone_suspect;postcode_invalid;missing_coordinates
+16,London Autism Group Charity,Various,London,https://londonautismgroupcharity.org,,,,compiled_resources,0.75,wp,postcode_invalid;missing_coordinates
+17,Centre for ADHD and Autism Support (CAAS),HA4 9XA,London,https://adhdandautism.org,+442045684629,adults@adhdandautism.org,,compiled_resources,1.0,wp,missing_coordinates
+18,London Neurodivergent Friendship Group (LNFG),Various,London,https://lnfg.uk,,,,compiled_resources,0.75,wp,postcode_invalid;missing_coordinates
+19,London Adult ADHD Support Group,W1F 7TH,London,,,,,compiled_resources,0.625,np,no_contact;missing_coordinates
+20,Atypiqueers,Various,London,https://atypiqueers.org,,,,compiled_resources,0.75,wp,postcode_invalid;missing_coordinates
+21,Camden SEN Team,WC1H 9JE,London,https://camden.gov.uk/special-educational-needs,+442079746500,sen.enquiries@camden.gov.uk,,compiled_resources,1.0,wp,missing_coordinates
+22,Tower Hamlets Special Educational Needs Section,E1 1BJ,London,https://towerhamlets.gov.uk/lgnl/education_and_learning/parental_support/special_educational_needs,+442073644880,specialeducational.needs@towerhamlets.gov.uk,,compiled_resources,1.0,wp,missing_coordinates
+23,Hammersmith & Fulham SENCo Advisory Support,Various,London,https://lbhf.gov.uk/family-information-directory/senco-advisory-support,,,,compiled_resources,0.75,wp,postcode_invalid;missing_coordinates
+24,Ealing SEN Assessment Service,Various,London,https://ealing.gov.uk/info/201209/children_with_send_or_a_disability/2110/special_educational_needs_and_disability_send,+442088256910,senas@ealing.gov.uk,,compiled_resources,1.0,wp,postcode_invalid;missing_coordinates
+25,Southwark Special Educational Needs Team,Various,London,https://localoffer.southwark.gov.uk/education/specialist-services-offered-by-the-council/special-educational-needs-team,,,,compiled_resources,0.75,wp,postcode_invalid;missing_coordinates
+26,Sybil Elgar School (National Autistic Society),Various,London,https://autism.org.uk/our-schools/sybil-elgar,,,,compiled_resources,0.75,wp,postcode_invalid;missing_coordinates
+27,Lavender Lodge School,CR4 3HD,London,https://witherslackgroup.co.uk/our-locations/our-schools/lavender-lodge-school,+442086877050,,,compiled_resources,0.875,wp,missing_coordinates
+28,BeyondAutism Tram House School,Various,London,https://beyondautismschools.org.uk/tramhouse,,,,compiled_resources,0.75,wp,postcode_invalid;missing_coordinates
+29,Centre Academy London,Various,London,https://centreacademy.net,,,,compiled_resources,0.75,wp,postcode_invalid;missing_coordinates
+30,Exceptional Individuals,Various,London,https://exceptionalindividuals.com/candidates,+442081336046,,,compiled_resources,0.875,wp,postcode_invalid;missing_coordinates
+31,Access to Work Scheme,N/A,National,https://gov.uk/access-to-work,+448001217479,,,compiled_resources,0.875,wp,postcode_invalid;missing_coordinates
+32,National Autistic Society Residential Services,Various,National,https://autism.org.uk/what-we-do/adult-residential-services,,,,compiled_resources,0.75,wp,postcode_invalid;missing_coordinates
+33,Personal Independence Payment (PIP),N/A,National,https://gov.uk/pip,+448009172222,,,compiled_resources,0.875,wp,postcode_invalid;missing_coordinates
+34,Universal Credit,N/A,National,https://gov.uk/universal-credit,+448003285644,,,compiled_resources,0.875,wp,postcode_invalid;missing_coordinates
+35,Citizens Advice,Various,London,https://citizensadvice.org.uk,,,,compiled_resources,0.75,wp,postcode_invalid;missing_coordinates
+36,Transport for London (TfL) Accessibility,Various,London,https://tfl.gov.uk/transport-accessibility,,,,compiled_resources,0.75,wp,postcode_invalid;missing_coordinates
+37,Ealing Community Cafe,W5 2RS,Mount Park Road,https://londonautismgroupcharity.org/community-cafes,,,,lag_map,0.625,wp,
+38,Grays Community Cafe,RM17 6DR,This community cafe will be taking place on the 1st Sunday of every month at 2pm-4pm at,https://londonautismgroupcharity.org/community-cafes,,,,lag_map,0.625,wp,
+39,Old Street Community Cafe,EC1V 9NH,London,https://londonautismgroupcharity.org/community-cafes,,,,lag_map,0.625,wp,
+40,Southgate Community Cafe,N14 5PP,It is held at the fantastic St Andrew's Church Hall in Southgate,https://londonautismgroupcharity.org/community-cafes,,,,lag_map,0.625,wp,
+41,South Woodford Community Cafe,E18 2PA,St Mary's Parish Church Woodford,https://londonautismgroupcharity.org/community-cafes,,,,lag_map,0.625,wp,
+42,NAS Bexley Branch,,email: bexley@nas.org.uk,,,,,lag_map,0.375,nc,no_contact
+43,NAS Croydon Branch,,email: croydonbranch@nas.org.uk,https://autism.org.uk/directory/resources/12588.aspx,,,,lag_map,0.5,wc,
+44,NAS Enfield Branch,,email: enfield@nas.org.uk,https://enfieldnas.org.uk,,,,lag_map,0.5,wc,
+45,NAS Greenwich Branch,,Branch Officer,https://facebook.com/nasgreenwich,,,https://facebook.com/nasgreenwich,lag_map,0.5,wc,
+46,Ladbroke Grove Autism Centre,W10 6EJ,London,https://autism.org.uk/services/england/london/daytime-hubs/ladbroke-grove.aspx,,,,lag_map,0.625,wp,
+47,NAS Lambeth Branch,,email: lambeth@nas.org.uk,https://nasbranch.org.uk/lambeth,,,,lag_map,0.5,wc,
+48,NAS Lewisham Autism Support,SE23 2LB,Website: http://www.autism.org.uk/directory/resources/5039.aspx,https://autism.org.uk/directory/resources/5039.aspx,,,,lag_map,0.625,wp,
+49,NAS Merton Branch,,email: Merton.Group@nas.org.uk,https://nasbranch.org.uk/merton,,,,lag_map,0.5,wc,
+50,NAS Newham Branch,E13 8AL,email: newham@nas.org.ukwww.nasbranch.org.uk/newham,https://nasnewhambranch.webeden.co.uk,,,,lag_map,0.625,wp,
+51,NAS Richmond Branch,,information and awareness.,https://richmondnas.org/index.html,,,,lag_map,0.5,wc,
+52,NAS Southwark Branch,,email: southwark@nas.org.uk,,,,,lag_map,0.375,nc,no_contact
+53,NAS Surrey Autism Resource Centre,,Epsom Ash Guildford and Newbury,https://nassurreybranch.org,,,,lag_map,0.5,wc,
+54,NAS Sutton Branch,,email: sutton@nas.org.uk,https://sutton.webeden.co.uk,,,,lag_map,0.5,wc,
+55,NAS Thurrock Branch,,http://nasthurrock.btck.co.uk/,https://nasthurrock.btck.co.uk,,,,lag_map,0.5,wc,
+56,NAS - Tower Hamlets,E2 0SN,London,,,,,lag_map,0.5,np,no_contact
+57,NAS West London Branch,,London,,,,,lag_map,0.375,nc,no_contact
+58,AS Mentoring,,Specialist Coaching and Mentoring for adults with Autism Spectrum Conditions and other neurodiverse conditions.,https://asmentoring.co.uk,,,,lag_map,0.5,wc,
+59,Autism Employment Alliance,,Autism Employment Alliance of 17 different national charities the UK.,https://autism-alliance.org.uk/about-us/our-members,,,,lag_map,0.5,wc,
+60,Care Trade,,London,https://care-trade.org,,,,lag_map,0.5,wc,
+61,Dimensions- Supported employment,,where they can fulfill their employment aspirations and achieve social and economic inclusion.,https://dimensions-uk.org/what-we-do/supported-employment,,,,lag_map,0.5,wc,
+62,Disability Rights UK,N1 6AH,a network of disabled people in senior jobs.,https://disabilityrightsuk.org/how-we-can-help/leadership/radiate-network,,,,lag_map,0.625,wp,
+63,Employability,,https://www.employ-ability.org.uk/,https://employ-ability.org.uk,,,,lag_map,0.5,wc,
+64,Expect the Best,N3 1RT,which aims to improve the quality of services delivered to people who receive support.,https://expectthebest.org.uk,,,,lag_map,0.625,wp,
+65,NAS Employment Advice Service,,http://www.autism.org.uk/about/adult-life/work.aspx,https://autism.org.uk/about/adult-life/work.aspx,,,,lag_map,0.5,wc,
+66,"Scope- 
+Future Ambitions Employment service",,providing each customer with one to one support from a specialist Employment Advisor to understand their career goals and aspirations and how to achieve them.,https://scope.org.uk/futureambitions,,,,lag_map,0.5,wc,
+67,Uptimize Online Employability Training,,to make that vision a reality.,https://uptimize.com,,,,lag_map,0.5,wc,
+68,Ardeley- Work Experience and Family Visits at Church Farm,,http://www.churchfarmardeley.co.uk/plan-a-visit,https://churchfarmardeley.co.uk/plan-a-visit,,,,lag_map,0.5,wc,
+69,Barnet- Kisharon Adult employment programme,NW4 2BP,Email: albc@kisharon.org.uk,https://kisharon.org.uk/our-services/opportunity/employment/supported-employ-ment-at-kisharon,,,,lag_map,0.625,wp,
+70,"Barnet- Mencap
+Bright Futures Service",N3 1RT,advice and support for people with learning disabilities and people with autism.,https://barnetmencap.org.uk/BFPressRelease.htm,,,,lag_map,0.625,wp,
+71,Barnet- Norwood Catering Scheme,NW4 4HJ,with the aim of going on to obtain paid work within the catering industry.,https://norwood.org.uk/Page/Workskills-and-Employment,,,,lag_map,0.625,wp,
+72,Barnet Work Choice,,Specialist support for people with disabilities to find and stay in work.,,,,,lag_map,0.375,nc,no_contact
+73,"Basildon, 
+Essex.
+Papworth Trust Centre",,The Papworth Trust Centre in Basildon offers a choice of activities for disabled people to have fun and learn new skills and get some work experience.,https://papworthtrust.org.uk/leisure-sports-and-social/basildon-timetable,,,,lag_map,0.5,wc,
+74,"Berkhamsted-
+ Sunnyside Rural Trust
+Work Experience",HP4 3HD,Sunnyside Rural Trust works in Hertfordshire with adults with learning disabilities through horticultural and practical activities.,https://sunnysideruraltrust.org.uk,,,,lag_map,0.625,wp,
+75,"Bexley-
+Re-Instate Employment Service",DA17 6AA,Address: Mitchell Close,https://re-instate.co.uk/the-employment-service,,,,lag_map,0.625,wp,
+76,Brixton - Work Programme & Volunteers,SW9 8HY,Specialist support for people with disabilities to find and stay in work. Day one support for Young People Trailbrazer. Volunteers.,,,,,lag_map,0.5,np,no_contact
+77,Bromley- Mencap Jobmatch Employment Service,BR2 9JG,Bromley,https://bromleymencap.org.uk/finding-a-job/jobmatch-projects,,,,lag_map,0.625,wp,
+78,Camden- Alexandra College,NW8 0SR,off Boundary Road,,,,,lag_map,0.5,np,no_contact
+79,Camden- Employment and Learning Service,NW5 3AQ,We offer specialist employment support built around you to make sure you reach your full potential.,https://thecamdensociety.co.uk/ourservices/employment,,,,lag_map,0.625,wp,
+80,Camden- Elfrida Rathbone,NW5 2BP,7 Dowdney Close,https://www2.elfridacamden.org.uk,,,,lag_map,0.625,wp,
+81,"Camden- 
+Horticultural volunteering and training 
+The Calthorpe Project",WC1X 8LH,E-mail: info@calthorpeproject.org.uk,https://calthorpeproject.org.uk,,,,lag_map,0.625,wp,
+82,"City of London- Auticon Ltd
+ Autistic IT Employer",EC2A 2EX,Auticon is an award-winning IT and compliance consulting business. All Auticon consultants are on the autism spectrum.,https://auticon.co.uk/about,,,,lag_map,0.625,wp,
+83,Crawley- A Potential Diamond,,find out about their strengths and aspirations and build an understanding of what type of work and what sort of work environment will suit them best.,,,,,lag_map,0.375,nc,no_contact
+84,Croydon- Status Employment,CR0 8RA,6 West Way Gardens,https://statusemployment.org.uk,,,,lag_map,0.625,wp,
+85,"Croydon- Work Choice & Programme, Volunteers",CR0 1QQ,Shaw Trust Employment support.,,,,,lag_map,0.5,np,no_contact
+86,"Elstree- Rural Care
+Work experience 
+ Aldenham Country Park",,Rural Care provides training and work experience for people with learning disabilities and/or mental health issues in a supportive and caring environment on a fully working farm. We also work in partnership with North Hertfordshire College to provide accredited training for their students with learning disabilities on the farm. Volunteers are welcome and can help out with Rural Care or can work on their own so they can enjoy the tranquillity of the farm.,https://ruralcare.wordpress.com,,,,lag_map,0.5,wc,
+87,"Greenwich- 
+Mencap Employment Service",,This service is co-ordinated by The Camden Society and Advocacy in Greenwich.,https://greenwichmencap.org.uk,,,,lag_map,0.5,wc,
+88,"Guildford-
+Surrey choices employability",GU1 1RR,Surrey Choices provide support services for people with additional needs across Surrey and surrounding areas. These include:,https://surreychoices.com/employability,,,,lag_map,0.625,wp,
+89,Hackney- Access for Autism,EC2A 4NE,London,https://accessforautism.co.uk,,,,lag_map,0.625,wp,
+90,Hackney Community Hub,E8 2NA,Specialist support for people with disabilities to find and stay in work.,,,,,lag_map,0.5,np,no_contact
+91,"Hammersmith and Fulham-
+Adult Learning and Skills Service",,supported employment and/or to have an active life in the community.,https://hfals.co.uk/learning-other-disabilities,,,,lag_map,0.5,wc,
+92,Haringey- Hail to Work,N15 4RY,London,https://hailltd.org,,,,lag_map,0.625,wp,
+93,Harlow- Elbow Grease Volunteering,CM20 2BJ,Sara O’Neill: Service Coordinator,https://elbow-grease.co.uk,,,,lag_map,0.625,wp,
+94,Harrow Association of Disabled People,HA3 7AE,Harrow,,,,,lag_map,0.5,np,no_contact
+95,"Harrow- Norwood
+Work Skills and Employment Service",HA7 4HB,People who live in Norwood’s accommodation services are supported to undertake training and seek work or volunteering opportunities according to their wishes.,https://norwood.org.uk/Page/Workskills-and-Employment,,,,lag_map,0.625,wp,
+96,Heathrow -Green Corridor,TW19 6BS,Main Rd Nurseries,https://greencorridor.org.uk,,,,lag_map,0.625,wp,
+97,Hillingdon- Mencap Employment Service,,but also welcomes clients from neighbouring boroughs.,https://directory.hillingdon.gov.uk/kb5/hillingdon/fsd/service.page,,,,lag_map,0.5,wc,
+98,"High Wycombe- 
+Supported Employment
+Buckinghamshire Care",HP11 1NH,Easton Street,https://base-uk.org/about/members/buckinghamshire-care,,,,lag_map,0.625,wp,
+99,Hillingdon- Rural Activities Garden Centre (RAGC) and the Rural Tea Rooms.,UB8 3JZ,https://www.hillingdon.gov.uk/article/23061/Rural-Activities-Garden-Centre-RAGC,https://hillingdon.gov.uk/article/23061/Rural-Activities-Garden-Centre-RAGC,,,,lag_map,0.625,wp,
+100,"Islington- Adjust 
+Understanding for Employers",N1 7GU,dyspraxia and ADHD. Employers may often miss out on the unique strengths and skills brought to the workplace by these individuals.,https://adjustservices.co.uk,,,,lag_map,0.625,wp,
+101,Ladbroke Grove Autism Centre,,http://www.autism.org.uk/.../daytime.../ladbroke-grove.aspx,https://autism.org.uk/.../daytime.../ladbroke-grove.aspx,,,,lag_map,0.5,wc,
+102,"Lambeth - Inclusion London
+Training and Support",SW9 7AA,London,https://inclusionlondon.org.uk/training-and-support,,,,lag_map,0.625,wp,
+103,Lewisham- Community Hub,SE13 6EE,Specialist support for people with disabilities to find and stay in work. Support for young people.,,,,,lag_map,0.5,np,no_contact
+104,"Lewisham-
+PLUS Services",SE13 5BD,London,https://plus-services.org,,,,lag_map,0.625,wp,
+105,"Maidstone-
+Burgess Autistic Trust",ME16 9NT,Hermitage Lane,,,,,lag_map,0.5,np,no_contact
+106,"Merton- United Response Support
+(Employment/Education)",SW19 1NE,We support many people who are on the autistic spectrum – some are able to live independent lives with a small amount of support while others require specialist full-time support.,https://unitedresponse.org.uk,,,,lag_map,0.625,wp,
+107,"Newham-
+Ellingham Employment Services",E15 2AU,5-11 Ellingham Road,https://ellingham.org.uk,,,,lag_map,0.625,wp,
+108,Reading- AutAngel Gardening group,,email: caroline@autangel.org.uk,,,,,lag_map,0.375,nc,no_contact
+109,Richmond- Choice Support,,London,https://choicesupport.org.uk/find-support/find-support-near-you/richmond-wandsworth,,,,lag_map,0.5,wc,
+110,Romford Autism Hub Sycamore Trust,RM1 3RT,support netowrks and coping strategies.,https://sycamoretrust.org.uk/our-services/adult-services,,,,lag_map,0.625,wp,
+111,Sidcup- Social Enterprise Employment Company (SEEC),DA15 7EJ,3rd Floor,,,,,lag_map,0.5,np,no_contact
+112,Sidcup- Avenues Trust Group,DA14 5TA,The Avenues Trust Group.,https://avenuesgroup.org.uk,,,,lag_map,0.625,wp,
+113,"Sidcup- Choice Support
+Carlton Centre",,we may be able to help you.,https://choicesupport.org.uk/find-support/find-support-near-you/carlton,,,,lag_map,0.5,wc,
+114,Stoke Newington- Shaw Trust,N16 0PH,Specialist support for people with disabilities to find and stay in work.,,,,,lag_map,0.5,np,no_contact
+115,Sutton Choice Support Employment,SM4 6BL,Bishopsford Road,https://choicesupport.org.uk/find-support/find-support-near-you/sutton-supported-employment,,,,lag_map,0.625,wp,
+116,Tower Hamlets- Tower Project,E3 4RL,London,https://towerproject.org.uk/services/job-enterprise-and-training,,,,lag_map,0.625,wp,
+117,Wandsworth- BeyondAutism,SW18 2SL,what they do and with whom.,https://beyondautism.org.uk/our-services,,,,lag_map,0.625,wp,
+118,"Wandsworth- Share Community
+Individual placement and support",SW11 1JL,Do you have a long-term mental health concern?,https://sharecommunity.org.uk/employment-support/individual-placement-and-support-helping-you-find-right-job,,,,lag_map,0.625,wp,
+119,"Wandsworth- 
+Work Choice/Work Programme",SW18 4LS,Wandsworth High Street,,,,,lag_map,0.5,np,no_contact
+120,"Wandsworth-
+Disabled Living Foundation",SW18 4LS,We are the UK's leading source of impartial information and expert advice on independent living,,,,,lag_map,0.5,np,no_contact
+121,"Westminster- 
+Kennet West Skills Centre",W9 3LG,The new Kennet West Skills Centre in Westminster is an exciting new vocational skills centre in a new development for students with learning difficulties and disabilities. This new dedicated Skills Centre is opening at the Queen Elizabeth II School in conjunction with Westminster City Council. This centre will deliver vocational courses and work related opportunities for 16-25 year old students with Learning Difficulties and Disabilities in:,,,,,lag_map,0.5,np,no_contact
+122,"Woking- Optalis 
+Supported Employment",RG41 2PY,substance misuse issues and carers. Most are covered by the Equality Act 2010 and mean you’re entitled to extra support.,https://optalis.org/employment-learning-leisure/help-to-find-and-keep-a-job,,,,lag_map,0.625,wp,
+123,Asperger London Area Group -ALAG,N1 0NP,London,,,,,lag_map,0.5,np,no_contact
+124,"Autistic Inclusive Meets(AIM)
+Autistic Community Group 
+for Adults, children and carers",SE18 6UZ,Autistic Inclusive Meets,,,,,lag_map,0.5,np,no_contact
+125,Informal Meetups for Autistic Adults,,London,https://imaa.org.uk,,,,lag_map,0.5,wc,
+126,London Adults with mild Autism Spectrum Disorder Meetup Group,,to help each other to get a better understanding of the current world and last but not least to feel comfortable in this meeting with like-minded people. I'm open for any advice critics or ideas about this meetup.,https://meetup.com/London-Adults-with-mild-Autism-Spectrum-Disorder,,,,lag_map,0.5,wc,
+127,London Adult ADHD Support Group,,and no issues are too delicate.,,,,,lag_map,0.375,nc,no_contact
+128,Neurodivergent Professional Group,,membership will be open to other conditions that can be considered Neurodivergent. The aim of this group twofold: (ii) to create greater connections within our community and (ii) to consider how we can address some of the challenges we face. Events to connect and network will be the main focus (details will be made available to members).,https://acas.org.uk/index.aspx,,,,lag_map,0.5,wc,
+129,SEE Autistic Women: London & South East England Support and Social Group,,This group facilitates meet ups all across the South East for and by women.,https://facebook.com/groups/990431507754294,,,https://facebook.com/groups/990431507754294,lag_map,0.5,wc,
+130,Certitude Support,SW17 7BQ,London,https://certitude.london,,,,lag_map,0.625,wp,
+131,Barking and Dagenham Information Advice and Support Service,RM10 8NJ,close relative or friend we are here to provide help when you need it.,https://carerscentre.org.uk,,,,lag_map,0.625,wp,
+132,Barking/Dagenham -Ab Phab Youth Club,RM8 2UT,To provide a youth club that offers social/physical/educational opportunities that meets the needs of Disabled young people aged 11-25 living in barking and Dagenham,,,,,lag_map,0.5,np,no_contact
+133,Barking and Dagenham- Kids Patch Club,RM10 7YP,Pembroke Gardens,https://dabd.org.uk/help-and-advice/personal-help/kids-patch-club,,,,lag_map,0.625,wp,
+134,Basildon- SHARE Safe Haven and Respite Environment,SS14 3PE,As a registered charity we have been supporting families since 1982. We offer a wide range of opportunities for young people with disabilities . We do this through our holiday and out of school clubs with a range of fun activities within a happy safe and relaxed environment.,,,,,lag_map,0.5,np,no_contact
+135,"Barnet -Aspergers Social Group
+Mencap",N3 1RT,www.barnetmencap.org.uk,,,,,lag_map,0.5,np,no_contact
+136,Barnet Early Years Alliance (BEYA),EN4 9NT,BEYA parents of children with SEN coffee mornings. 2017 meetings will take place on the last Friday of the month in term -time.,,,,,lag_map,0.5,np,no_contact
+137,Barnet Early Autism Model (BEAM) Specialist Team,,Barnet Early Autism Model (BEAM) is a specialist Autism home-based service for families of pre - school children under five with a confirmed diagnosis of Autism by a Paediatrician. BEAM staff work in partnership with parents in their homes to maximise learning opportunities and support their transition into educational settings.,https://barnet.gov.uk/citizen-home/directories/Directories,,,,lag_map,0.5,wc,
+138,Barnet Carers Centre,N12 8NP,Global House,https://barnetcarers.org,,,,lag_map,0.625,wp,
+139,"Barnet Finchley Rd
+Resources for Autism",NW11 6AB,Saturday Club Respite 1400-1600,https://resourcesforautism.org.uk/wp/wp-content/uploads/2015/04/Resources-for-Autism-Wednesday-858-Club.pdf,,,,lag_map,0.625,wp,
+140,"Barnet -St Joseph's Pastoral Centre
+Family Support and Social Group.",NW4 4TY,St Joseph's Grove,https://stjoseph.org.uk,,,,lag_map,0.625,wp,
+141,Barnet -Jewish Autism Trust,NW4 1AD,The Jewish Autism Trust is a charity that supports families of children with autism or Asperger syndrome. We are unaffiliated and welcome families across the Jewish community. The Jewish Autism Trust gives members the opportunity to exchange ideas and experiences and to give each other mutual support. We also organise speakers on a regular basis.,,,,,lag_map,0.5,np,no_contact
+142,Barnet- Fairplay,NW4 4TY,St Joseph’s Pastoral Centre,,,,,lag_map,0.5,np,no_contact
+143,Barnet- Kids In Sync Therapy Centre,EN5 4PH,Herts,https://kidsinsync.com,,,,lag_map,0.625,wp,
+144,Barnet -Teatime Support Group For Special Needs Children and Families,EN5 4JP,Usually on the last Saturday of the month,,,,,lag_map,0.5,np,no_contact
+145,"Barnet -Finchley Road 
+Resources for Autism",NW11 6AB,we are running an autism specific play club for young people with a diagnosis of Autism.,,,,,lag_map,0.5,np,no_contact
+146,"Barnet- Norwood 
+Support and Respite Services",HA7 4HB,http://www.norwood.org.uk/,https://norwood.org.uk,,,,lag_map,0.625,wp,
+147,Barnet Parent Carer Forum,N3 1RT,35 Hendon Lane,,,,,lag_map,0.5,np,no_contact
+148,Beckenham- Choice Support Hub,BR3 4RP,We run a lively social club for adults with learning disabilities and autism in Beckenham.,https://choicesupport.org.uk/find-support/find-support-near-you/autism-social-club,,,,lag_map,0.625,wp,
+149,Autism Berkshire,RG1 8EQ,http://www.autismberkshire.org.uk/events/,https://autismberkshire.org.uk/events,,,,lag_map,0.625,wp,
+150,Berkshire Youth Phab Club,RG1 2TD,Berkshire Youth Phab Club,https://phab.org.uk,,,,lag_map,0.625,wp,
+151,Bexley -Bridging the Gap South East,DA18 4DR,Autistic Spectrum Disorder Social Club (adults),https://btgse.co.uk,,,,lag_map,0.625,wp,
+152,"Bexley- Choice Support Advice and 
+Adult Autistic Social Club",BR3 4RP,243-247 Beckenham Road,https://choicesupport.org.uk/find-support/find-support-near-you/support-thats-right-for-you,,,,lag_map,0.625,wp,
+153,Bexley Voice Parent Carer Forum,DA7 6QP,http://www.bexleyvoice.org.uk,https://bexleyvoice.org.uk,,,,lag_map,0.625,wp,
+154,"Billericay
+Essex,
+Brighter Opportunities through Supported Play",CM12 9AH,weekends and school holidays. Provides fun and exciting activities with social opportunities for children and young people with disabilities.,https://bosp.co.uk,,,,lag_map,0.625,wp,
+155,Brent- Asian People's Disability Alliance (APDA),NW10 8RA,Alric Avenue,,,,,lag_map,0.5,np,no_contact
+156,Autism Parents Brent - NW10,,We run the second Wednesday of the month. We suggest you follow us on facebook 'Autism Parents Brent' or on twitter @autismbrent or email us for updates around holiday times.,,,,,lag_map,0.375,nc,no_contact
+157,Brent Carers Centre,NW10 2PT,friendly and supportive environment. Meets the last Friday of each month. 1 pm - 3 pm.,,,,,lag_map,0.5,np,no_contact
+158,"Brent Resources for Autism
+Saturday Club",NW2 1TR,we are running an autism specific youth club for young people aged 12-15 with a diagnosis of Autism at:,,,,,lag_map,0.5,np,no_contact
+159,Brent Outreach Autism Team (BOAT),,or up to 19 years if the CYP attends a mainstream provision for 6th Form.,https://brent.gov.uk/services-for-residents/education-and-schools/special-educational-needs/brent-outreach-autism-team,,,,lag_map,0.5,wc,
+160,Brent Parent Carer Forum,HA9 0BP,First Floor,,,,,lag_map,0.5,np,no_contact
+161,Brent- SEND Parent Support Group,NA9 7NW,Meetings on the last Wednesday of each month,,,,,lag_map,0.5,np,no_contact
+162,Brentwood- SNAP Essex,,sibling support and family counselling.,https://snapcharity.org,,,,lag_map,0.5,wc,
+163,Bromley- Advocacy for all,BR8 7BU,An Advocate helps someone to talk about their needs and wishes. Advocates listen to people and help them to have their voices heard. Advocates represent people who need support to make sure that decisions are made in their best interests.,,,,,lag_map,0.5,np,no_contact
+164,"Bromley- CASPA
+Bromley and Downham Youth Club",BR1 4RD,increase their communication skills and enable them to relax and have fun.,https://caspabromley.org.uk,,,,lag_map,0.625,wp,
+165,"Bromley- CASPA
+Duke Youth Centre",BR5 4AS,increase their communication skills and enable them to relax and have fun.,https://caspabromley.org.uk,,,,lag_map,0.625,wp,
+166,"Bromley -CASPA
+ Orpington",BR5 2QL,increase their communication skills and enable them to relax and have fun.,https://caspabromley.org.uk,,,,lag_map,0.625,wp,
+167,"Bromley- CASPA
+The Hawes Down Centre",BR4 9AE,increase their communication skills and enable them to relax and have fun.,https://caspabromley.org.uk,,,,lag_map,0.625,wp,
+168,"Bromley- CASPA 
+The Hub Beckenham",BR3 4RP,increase their communication skills and enable them to relax and have fun.,https://caspabromley.org.uk,,,,lag_map,0.625,wp,
+169,Bromley Carers,BR5 4AD,targeting our services to provide the best quality support where it is most needed.,https://carersbromley.org.uk,,,,lag_map,0.625,wp,
+170,"Bromley
+Beckenham & Penge Gateway Club",SE20 7QR,meals out and trips to the theatre are also arranged.,https://thegatewayclub.co.uk,,,,lag_map,0.625,wp,
+171,Bromley Lunch Club,,Bromley Lunch Club,https://burgessautistictrust.org.uk/useful-information/how-to-access-social-clubs,,,,lag_map,0.5,wc,
+172,Bromley Parent Voice,BR4 9AE,London,,,,,lag_map,0.5,np,no_contact
+173,"Bromley
+Burgess Autistic Trust
+Parent Support Groups",,Enquiries and applications for membership must be made through the following Bromley Outreach Practitioner:,,,,,lag_map,0.375,nc,no_contact
+174,Bromley -Playgroup for Children With Special Needs (Pre-school),BR5 1LH,Postcode	,,,,,lag_map,0.5,np,no_contact
+175,Bromley & Downham Buzz Phab Club,BR1 4RD,aged between 8 years and 25 years old.,,,,,lag_map,0.5,np,no_contact
+176,The Lorna Wing Centre for Autism,,We also provide advanced training to fellow practitioners on specialist diagnosis and assessment using the DISCO framework.,https://autism.org.uk/services/diagnosis.aspx,,,,lag_map,0.5,wc,
+177,Parents Consortium -Bromley/Dartford,,E-mail:admin@parentsconsortium.co.uk,,,,,lag_map,0.375,nc,no_contact
+178,Bromley Mencap,BR2 9JG,44 Masons Hill,https://bromleymencap.org.uk/social-leisure,,,,lag_map,0.625,wp,
+179,Bushey -SEN Support Group,WD23 3AX,Bushey,,,,,lag_map,0.5,np,no_contact
+180,Camden Wac Arts Advocacy Service,NW3 4QP,Wac Arts offers fully inclusive performing arts,https://wacarts.co.uk/what-we-do/inclusive,,,,lag_map,0.625,wp,
+181,Camden Carers' Service,NW5 2TJ,London,,,,,lag_map,0.5,np,no_contact
+182,Camden MOSAIC,NW5 2AJ,Website:http://www.cnwl.nhs.uk/service/camden-mosaic/,https://cnwl.nhs.uk/service/camden-mosaic,,,,lag_map,0.625,wp,
+183,Camden  Parent / Carer Support Group,N19 5DQ,who are concerned about their child’s development/progress.,,,,,lag_map,0.5,np,no_contact
+184,Camden special parents forum,,http://www.kids.org.uk/camden-special-parents-forum1,https://kids.org.uk/camden-special-parents-forum1,,,https://facebook.com/CamdenSpecialParentsForum,lag_map,0.5,wc,
+185,"Camden -Coffee Mornings
+ Positive Autism Support and Training",NW1 6NJ,advice on behaviour or input into your child's condition - we offer friendly and personalised support.,https://positiveautismsupportandtraining.co.uk,,,,lag_map,0.625,wp,
+186,The Camden Society,NW5 3AQ,London,https://thecamdensociety.co.uk,,,,lag_map,0.625,wp,
+187,Chalfont St Peter Youth Centre,SL9 9TR,louder environments.,,,,,lag_map,0.5,np,no_contact
+188,Chelmsford ADHD/AS Support group,CM1 4BW,however we have provided details for situations where people are unable to contact us via email.,https://adhd-support.org.uk,,,,lag_map,0.625,wp,
+189,"Chelmsford, Essex. 
+Apex Parent Support Group",CM2 8RW,Slades Lane,https://apexparentsupportgroup.co.uk/index.php/meeting-dates,,,,lag_map,0.625,wp,
+190,"Chelmsford,
+Essex- Families InFocus",,A specialist one-stop information and advice service and helpline.,https://familiesinfocusessex.org.uk,,,,lag_map,0.5,wc,
+191,"Chelmsford,
+Essex.
+InterAct",CM2 7PX,Chelmsford,https://interact.org.uk,,,,lag_map,0.625,wp,
+192,"Chelmsford,
+ Essex.
+Mencap",CM2 0DZ,City of Chelmsford Mencap,https://mencap.org.uk/group/488,,,,lag_map,0.625,wp,
+193,Chertsey -Little Stars Playgroup,KT16 0AE,Just £5 per session,,,,,lag_map,0.5,np,no_contact
+194,Chesham SPACE Support,,Website: http://www.spacepage.co.uk,https://spacepage.co.uk,,,,lag_map,0.5,wc,
+195,Chesham- Chiltern Music Therapy,HP5 1DE,Stones Courtyard,https://chilternmusictherapy.co.uk,,,,lag_map,0.625,wp,
+196,City of London- Barbican Squish Space sensory play,,creative activities for you to enjoy at home.,https://facebook.com/groups/2920435984899618,,,https://facebook.com/groups/2920435984899618,lag_map,0.5,wc,
+197,City of London Parent Carer Forum,,London,https://cityparentcarers.org,,,https://facebook.com/groups/1238004562951520/about,lag_map,0.5,wc,
+198,"City of London- Coffee mornings
+City of London Parent Carer Forum",EC3A 5DE,Coffee mornings on the 1st Thursday of every month.,https://fyi.cityoflondon.gov.uk/kb5/cityoflondon/fyi/site.page,,,,lag_map,0.625,wp,
+199,Crawley Autism Support,,E-mail: admin@autismsupportcrawley.co.uk,,,,,lag_map,0.375,nc,no_contact
+200,Cricklewood -Carers Advice Clinic,NW2 6TU,10 am - 1 pm.,,,,,lag_map,0.5,np,no_contact
+201,Croydon Carers Support Centre,CR0 1PB,24 George Street,https://carersinfo.org.uk/about-us/carers-support-centre,,,,lag_map,0.625,wp,
+202,Croydon- Jubilee Chill’n’Chat Group,CR2 8HD,child does not need to have a formal diagnosis for you to attend these sessions.,,,,,lag_map,0.5,np,no_contact
+203,Croydon- Knots Arts Youth Club,SE25 6XX,Knots Arts Friday night Youth Club in Croydon takes place at the Samuel Coleridge Taylor Centre near Norwood Junction station and is for young people aged 13 – 25 years old with a social communication difficulty.,https://knotsarts.com/youth-groups/youth-club-croydon,,,,lag_map,0.625,wp,
+204,Croydon- Mencap,CR7 7HU,London,https://croydonmencap.org.uk/services,,,,lag_map,0.625,wp,
+205,Disability Croydon,,http://disabilitycroydon.org.uk/?page_id=16,https://disabilitycroydon.org.uk,,,,lag_map,0.5,wc,
+206,Inaspectrum meetings and coffee morning -Croydon,CR0 1JE,(opp croydon Police station),https://inaspectrum.com/meetings-in-croydon,,,,lag_map,0.625,wp,
+207,Croydon- Nordoff Robbins Music Therapy,CR0 2HN,Andrew Lloyd Webber Foundation Nordoff Robbins Unit.,https://nordoff-robbins.org.uk,,,,lag_map,0.625,wp,
+208,Croydon- Parents in Partnership,CR0 1PB,the local authority and other service providers.,https://pipcroydon.com,,,,lag_map,0.625,wp,
+209,"South Croydon/Elmbridge
+Special Help 4 Special Needs",CR3 0BL,ADHD/ADD and Developmental Delay.,https://shsn.co.uk,,,,lag_map,0.625,wp,
+210,"Crowthorne Phab Club
+Wellington College",RG45 7PU,Wellington College Phab Club,https://phab.org.uk,,,,lag_map,0.625,wp,
+211,Sycamore Trust (was PACT) -Dagenham,,Sycamore Trust (was PACT),,,,,lag_map,0.375,nc,no_contact
+212,Dartford -Carers First,DA1 5ND,Swanley,https://carersfirst.org.uk,,,,lag_map,0.625,wp,
+213,Dartford Fathers' Club,,Provides support and guidance for fathers of children who have autism. There are two support groups: Dartford North West Kent Area - Tel: 01322 668 501 - meets monthly (except August) and Maidstone Mid Kent Area,,,,,lag_map,0.375,nc,no_contact
+214,Deptford- Alma autism,,London,,,,,lag_map,0.375,nc,no_contact
+215,Contact a Family -Ealing and Southall,,http://www.cafamily.org.uk/advice-and-support/in-your-area/offices/ealing-and-southall/,https://cafamily.org.uk/advice-and-support/in-your-area/offices/ealing-and-southall,,,,lag_map,0.5,wc,
+216,Ealing Carers’ Centre,W3 8PH,1 Edgecote Close,https://ecil.org/index.asp,,,,lag_map,0.625,wp,
+217,Ealing Mencap Lido Centre,W13 9LA,London,https://ealingmencap.org.uk,,,,lag_map,0.625,wp,
+218,"Ealing- Parents ADHD Support Group
+Grange Children's Centre",,We have drop in surgery/ coffee morning twice a month at the Grange Children's Centre in Ealing.,,,,,lag_map,0.375,nc,no_contact
+219,Ealing Parent Carer Forum,,The Ealing Parent Carer Forum (EPCF) is much more than just a place to talk and share views.,https://epcf.org.uk,,,,lag_map,0.5,wc,
+220,Ealing Specialist Advice Service (ESAS),,confidential advice to carers or adults with additional needs in Ealing.,https://ealingsas.org.uk,,,,lag_map,0.5,wc,
+221,"Ealing- Connect Women’s Group
+ASSIST London",W5 2NH,Connect is a social group for all those who identify as women on the autism spectrum. It is a relaxing space for people to meet and socialise with one another and plan and participate in running a variety of activities.,,,,,lag_map,0.5,np,no_contact
+222,Ealing- Ealing Music Therapy,W13 0DB,Ealing Music Therapy offers music therapy sessions to children and young people in various schools in the Borough of Ealing who have special needs or any kind of difficulty.,https://ealingmusictherapy.org,,,,lag_map,0.625,wp,
+223,The Larches Trust -Edgware,HA8 7LF,UK,,,,,lag_map,0.5,np,no_contact
+224,"Edgware- ADDISS, The National Attention Deficit Disorder Information and Support Service.",HA8 9HL,sufferers and professionals in the fields of ADHD and related learning and behavioural difficulties. All our activity is supported by our Professional Board of expert advisers.,https://addiss.co.uk,,,,lag_map,0.625,wp,
+225,Enfield Advisory Service for Autism,EN3 5PA,Bell Lane,https://enfieldasa.org.uk,,,,lag_map,0.625,wp,
+226,Enfield Carers Centre,EN1 3JL,Enfield,,,,,lag_map,0.5,np,no_contact
+227,Enfield NAS Adult Social Group,N13 4PP,London,https://enfieldnas.org.uk/adult-social-group.html,,,,lag_map,0.625,wp,
+228,Enfield Disability Action,N9 0PZ,311 Fore Street,https://e-d-a.org.uk,,,,lag_map,0.625,wp,
+229,Enfield Mencap,N9 8LW,1 Foxglove Close,https://enfieldmencap.org.uk,,,,lag_map,0.625,wp,
+230,Enfield- Playtedz Holiday Respite Club,EN3 5BY,,https://durants.enfield.sch.uk/page,,,,lag_map,0.5,wp,
+231,Enfield-Our Voice,,https://www.ourvoiceenfield.org.uk,https://ourvoiceenfield.org.uk,,,,lag_map,0.5,wc,
+232,Enfield -Unity 70 Phab Club,EN1 1DS,Unity 70 Phab Club,https://phab.org.uk,,,,lag_map,0.625,wp,
+233,Enfield -Zebras Childrens Club,EN1 4HW,Zebras Childrens Club,https://zebrasclub.org,,,,lag_map,0.625,wp,
+234,In-Clued -East Sussex,,E-mail:Inclued.community@gmail.com,,,,,lag_map,0.375,nc,no_contact
+235,Carer Support Elmbridge,KT12 2TZ,E-mail: info@carersupportelmbridge.org.uk,,,,,lag_map,0.5,np,no_contact
+236,Epsom and Ewell Phab youth club,KT17 3DS,dance and music on Friday club evening.,https://phab.org,,,,lag_map,0.625,wp,
+237,Epping Forest Phab Club,IG8 0RF,Epping Forest Phab Club,https://eppingforest.phab.org.uk,,,,lag_map,0.625,wp,
+238,Essex carers’ Support,CO15 1NZ,Enable carers to have choice and control.,https://essexcarerssupport.org.uk,,,,lag_map,0.625,wp,
+239,Essex Family Forum,,our Local Authority and health commissioners aiming for quality outcomes that meet the needs of all our families. We will also be part of the Eastern region and national network of forums.,https://essexfamilyforum.org,,,,lag_map,0.5,wc,
+240,Essex- Loughton Weekly Group to play learn and chat.,IG10 2JD,chat and learn from others. Or just take time to relax and socialise.,,,,,lag_map,0.5,np,no_contact
+241,"Essex 
+SAFE (Supporting Asperger Families in Essex)",CM2 9QY,including the unitaries of Southend and Thurrock.,https://aspergers.org.uk,,,,lag_map,0.625,wp,
+242,Supporting Aspergers Families in Essex (SAFE),SS6 9AU,including the unitaries of Southend and Thurrock.,,,,,lag_map,0.5,np,no_contact
+243,"Essex 
+Phab You & Us Club
+Nazeing",EN9 2SF,Nazeing Phab You & Us Club,https://phab.org.uk,,,,lag_map,0.625,wp,
+244,Essex- Uniting Friends,IG4 5EG,Uniting Friends is a social inclusion project for adults with a learning disability.,https://unitingfriends.org.uk,,,,lag_map,0.625,wp,
+245,"Farnborough -Reach up Reach out 
+Support Group for families of children with additional needs.",GU14 8HW,Moor Road,,,,,lag_map,0.5,np,no_contact
+246,Gillingham- Autism Womens Group (Kent Autistic Trust),ME7 5AE,therefore we would be unable to offer this group to people who have support through the Learning Disability team in Social Services.,,,,,lag_map,0.5,np,no_contact
+247,Gravesham & Dartford Phab Club,DA12 2TL,Gravesham & Dartford Phab Club is a social club for disabled and non-disabled people to meet and do various activities as equals.,https://facebook.com/GandDPhabClub,,,https://facebook.com/GandDPhabClub,lag_map,0.625,wp,
+248,Greenwich Carers Centre,SE7 7BD,in order to further awareness of Carers issues.,,,,,lag_map,0.5,np,no_contact
+249,Greenwich -Families Living with Autism in Greenwich (FLAG),SE9 5AB,come and have a tea or coffee and a biscuit and meet other parents. Lesley will be available if there are issues on which you would like information or advice.,,,,,lag_map,0.5,np,no_contact
+250,Greenwich -Ethnic Minorities Support Group for families on the autistic spectrum,SE7 8HX,Charlton,,,,,lag_map,0.5,np,no_contact
+251,Greenwich Mencap -Activities for Learning Disabilities and ADHD support group   ‘Greenlights’,,cards and ten-pin bowling.,https://greenwichmencap.org.uk,,,,lag_map,0.5,wc,
+252,Greenwich Parent Voice,SE10 1DH,London,https://greenwichparentvoice.com,,,,lag_map,0.625,wp,
+253,Greenwich- Social Arts For Education (SAFE),SE9 1TY,fear of social situations and extreme shyness. It is also a registered charity (No. 1150485).,https://safeschoolbexley.co.uk,,,,lag_map,0.625,wp,
+254,Greenwich Toy & Leisure Library,SE2 9EU,Each year 250 families access the services that include:,https://gtlla.org.uk/index.htm,,,,lag_map,0.625,wp,
+255,Greenwich -We Listen Group for Families from Ethnic Minorities,SE28 8EZ,London,,,,,lag_map,0.5,np,no_contact
+256,Challengers -Guildford Playscheme,,300 disabled children. These services were delivered at Challengers Guildford and Farnham Centres as well as schemes based at schools and community youth centres all through the year.,,,,,lag_map,0.375,nc,no_contact
+257,"Hackney Ark  (CAMHS)
+Events, meetings, parenting groups and parent coffee mornings.",,This is a specialist tier 3 NHS Child and Adolescent Mental Health service (CAMHS) for children with disabilities and emotional/behavioural and mental health concerns. Our work is with children and young people with moderate to profound learning disabilities.,https://cityandhackneycamhs.org.uk/events,,,,lag_map,0.5,wc,
+258,"Hackney CAMHS
+Support group for parents of young people with Autism.",E9 6ED,London,,,,,lag_map,0.5,np,no_contact
+259,"Hackney Independent Forum for 
+Parents/Carers of Children with Disabilities",,get our voices heard and have real influence over the services our children use including:,https://hiphackney.org.uk,,,,lag_map,0.5,wc,
+260,"Hackney- KEEN 
+One-to-one support,
+Sports and activity sessions",N16 8JN,London,https://keenlondon.org,,,,lag_map,0.625,wp,
+261,Hackney- The Huddleston Centre,E5 8DJ,http://huddlestoncentre.org.uk/programs/,https://huddlestoncentre.org.uk/programs,,,,lag_map,0.625,wp,
+262,Hammersmith -Action on Disability,SW6 7SR,Email: info@actionondisability.org.uk,,,,,lag_map,0.5,np,no_contact
+263,Hammersmith and Fulham Mencap,,between 10 a.m. to 2 p.m. all year. We run the Saturday club at the White City Adventure Playground. The Holiday Playschemes are run at Cambridge School.,https://hfmencap.org,,,,lag_map,0.5,wc,
+264,"Hammersmith and Fulham 
+Parents Active Carer Forum",W6 8LH,Parentsactive and its membership have grown over the years and we have conducted numerous events and workshops relevant to disabled children and their families.,https://parentsactive.org.uk,,,,lag_map,0.625,wp,
+265,Haringey- Brightstars community club,N8 8NT,particularly those with autism.,https://facebook.com/Brightstarsspecialclub,,,https://facebook.com/Brightstarsspecialclub,lag_map,0.625,wp,
+266,Haringey CARIS,N15 4HJ,St Philip's Church,,,,,lag_map,0.5,np,no_contact
+267,Haringey- CPotential Music and Movement Therapy,N10 1JP,143 Coppetts Road,https://cpotential.org.uk/movement-disabilities,,,,lag_map,0.625,wp,
+268,"Haringey Involve
+Parent Carer Forum",N15 4RB,as any other child.,https://haringeyinvolve.com,,,,lag_map,0.625,wp,
+269,Haringey- Kith & Kids,N17 8DX,Kith & Kids offers: social development project; weekend clubs; friendship schemes; summer camp; and an advocacy project. Their activities currently have a long waiting list.,,,,,lag_map,0.5,np,no_contact
+270,Haringey Mencap,N17 0AE,London,,,,,lag_map,0.5,np,no_contact
+271,Haringey -Markfield Project and Parent Partnership Scheme,N15 4RB,https://markfield.org.uk,https://markfield.org.uk,,,,lag_map,0.625,wp,
+272,Harrow Mencap,HA3 6ND,Email:julie.browne@harrowmencap.org.uk,https://harrowmencap.org.uk,,,,lag_map,0.625,wp,
+273,"Harrow Parents 4 Disabled Children
+Parent Carer Forum",HA3 6QH,London,https://harrowparents4disabledchildren.org,,,,lag_map,0.625,wp,
+274,"Hart and Rushmoor Surrey
+Mustard Seed Autism Trust",GU16 6NU,that offers an holistic approach in dealing with the complex needs of families living with autism.,https://mustardseedautism.co.uk,,,,lag_map,0.625,wp,
+275,Hatfield- ADD-vance,AL10 0RN,Attention Deficit Hyperactivity Disorder (ADHD) and related conditions in Hertfordshire.,,,,,lag_map,0.5,np,no_contact
+276,Havering- Add & Up,,E-mail: addup@addup.co.uk,https://addup.co.uk,,,,lag_map,0.5,wc,
+277,"Havering- Positive Parents 
+Parent Carer Forum",RM12 5PP,Positive Parents is the strategic consultative body within Havering representing families of children with special educational needs and disabilities.,https://positiveparentshavering.org.uk,,,,lag_map,0.625,wp,
+278,Havering Junior Phab Club,RM13 7LP,Havering Junior Phab Club,https://phab.org.uk,,,,lag_map,0.625,wp,
+279,HACS (Hillingdon Autistic Care & Support),,E-mail: enquiries@hacs.org.uk,https://hacs.org.uk,,,,lag_map,0.5,wc,
+280,Accuro (Care Services) Harlow West Essex,,E-mail: enquiries@accuro.org.uk,https://accuro.org.uk/index.php,,,,lag_map,0.5,wc,
+281,Heathrow Special Needs Centre,UB7 0EF,and gardening.,https://heathrowspecialneedscentre.org,,,,lag_map,0.625,wp,
+282,Hemel Hempstead –Families in Focus Parent Network support & information group,HP1 1JF,,https://familiesinfocus.co.uk,,,,lag_map,0.5,wp,
+283,Hemel Hempstead- The Snow Centre,HP3 9NH,dyspraxia and deafness.,https://thesnowcentre.com/snowbility,,,,lag_map,0.625,wp,
+284,Herts Parent Carer Forum,AL7 9LD,HPCI is the parent carer forum for Hertfordshire and part of a national network of parent carer forums. We are an independent parent carer led organisation with a network of parent carers from all over Hertfordshire. We aim to improve services for our families by working alongside those providing services for children and young people with SEND (Special educational needs and disabilities),https://hertsparentcarers.org.uk,,,,lag_map,0.625,wp,
+285,Highgate- Nordoff Robbins Music Therapy Centre,NW5 1PQ,Every music therapy session at Nordoff Robbins is different because every person is different.,https://nordoff-robbins.org.uk,,,,lag_map,0.625,wp,
+286,"High Wycombe 
+The Spectrum Club
+East Side Youth Centre,
+The Highcrest Academy",,Social Club for young people with Aspergers and High functioning autism.,,,,,lag_map,0.375,nc,no_contact
+287,Hillingdon- Centre for ADHD & Autism Support,HA4 9XA,269 Field End Road,,,,,lag_map,0.5,np,no_contact
+288,Hillingdon Dads Drop In Centre,UB8 3HD,A Charity of DADS caring for children with disabilities and or SEN giving support to other families caring for children with disabilities and or SEN in the UK,https://twitter.com/hillingdondads,,,,lag_map,0.625,wp,
+289,"Hillingdon 
+Harefield Children's Centre
+Stay & Play",UB9 6BT,Harefield,https://harefieldchildrenscentre.co.uk,,,,lag_map,0.625,wp,
+290,Hillingdon North Mencap,HA4 0LR,London,https://mencap.org.uk/group/110,,,,lag_map,0.625,wp,
+291,Hillingdon Parent Carer Forum,,London,https://hillingdonpcf.com,,,,lag_map,0.5,wc,
+292,Hounslow ASD Support Group,TW3 3EL,Middlesex,,,,,lag_map,0.5,np,no_contact
+293,Hounslow Lampton Phab Club,TW3 4EP,Bridging The Gap Lampton Phab Club,https://phab.org.uk,,,,lag_map,0.625,wp,
+294,Hounslow Parent Carers Forum,TW3 1ES,education and employment. Professionals are there to share their current plans and to hear what parents have to say. It is also a place to share information parent to parent and to ask questions.,https://hounslowpcf.co.uk,,,,lag_map,0.625,wp,
+295,"Hounslow Phab club 
+Hounslow Youth Centre",TW3 1NX,Kingsley Road,,,,,lag_map,0.5,np,no_contact
+296,Islington -The Zone Youth Project,N7 0EQ,games and games consoles and a kitchen.,https://directory.islington.gov.uk/kb5/islington/directory/service.page,,,,lag_map,0.625,wp,
+297,Islington- Centre 404,N7 0SJ,and access to social groups and other local networks.,https://centre404.org.uk,,,,lag_map,0.625,wp,
+298,Isleworth Phab Club,TW7 6DL,Isleworth Tuesday Phab Club,https://phab.org.uk,,,,lag_map,0.625,wp,
+299,"Islington- MindBuilders
+Early Intervention/Parent Coaching",N5 2BL,44 C Aberdeen Park,https://mindbuilders-consulting.org,,,,lag_map,0.625,wp,
+300,Islington- Palace For All,N19 4EL,play and learn in an inclusive environment.,https://palaceforall.org.uk,,,,lag_map,0.625,wp,
+301,The Kent Autistic Trust,,We have been providing support for individuals on the autism spectrum for over 20 years.,,,,,lag_map,0.375,nc,no_contact
+302,Kensinton and Chelsea- Full of Life,,housing..etc.||For more information please contact Full of Life directly.,,,,,lag_map,0.375,nc,no_contact
+303,Kensington and Chelsea- Outsiders,W14 0SH,relationships and other things.,,,,,lag_map,0.5,np,no_contact
+304,Kensington- Nordoff Robbins music Therapy,SW7 2AP,London,,,,,lag_map,0.5,np,no_contact
+305,Kilburn -Carers Advice Clinic,NW6 6BX,10 am - 12.30 pm.,,,,,lag_map,0.5,np,no_contact
+306,"Kingsbury -Saturday Playgroup
+D.A.R.E.
+The Village School",NW9 0JY,London,,,,,lag_map,0.5,np,no_contact
+307,Kingston Carers' Network,KT3 4BD,London,,,,,lag_map,0.5,np,no_contact
+308,"Kingston and Richmond Family Voices 
+Parent Carer Forum",,plus leads from disability specific support groups and specialist schools; we all offer our time on a voluntary basis and take responsibility for representing the views of a wider group of parents.,https://sendfamilyvoices.org,,,,lag_map,0.5,wc,
+309,"Kingston- Parents and Carers of Children and Young People with Additional Needs
+Support Group",KT6 7SA,Surbiton,,,,,lag_map,0.5,np,no_contact
+310,Kingston Carers’ Support Group,KT9 2GY,Third Wednesday of every month,,,,,lag_map,0.5,np,no_contact
+311,Kingston- Express CIC,KT6 7EL,group networking and events which bring the community together.,,,,,lag_map,0.5,np,no_contact
+312,Kingston -FAST MINDS Adult ADHD support Group,KT1 2PT,FAST MINDS is an acronym for common symptoms that are often seen in Attention Deficit Hyperactivity Disorder (ADHD).,https://adhdkingston.org.uk,,,,lag_map,0.625,wp,
+313,Kingston Advocacy Group,KT2 6LX,KAG provides advocacy for vulnerable people especially those with a learning disability or mental health problem.,https://kagadvocacy.org.uk/home-1/advocacy,,,,lag_map,0.625,wp,
+314,Lambeth -Disability Advice Service,SW9 7AA,London,,,,,lag_map,0.5,np,no_contact
+315,Lambeth- Information Advice and Support Service,SW9 7QE,exclusions (where SEN is involved),https://younglambeth.org/lambethinformationadviceandsupport-service.html,,,,lag_map,0.625,wp,
+316,"Lambeth Mencap
+Healthy living and wellbeing group",SE16 4JE,London,,,,,lag_map,0.5,np,no_contact
+317,Lambeth Parent Forum,SW9 7AA,336 Brixton Road,https://lambethparentforum.com,,,,lag_map,0.625,wp,
+318,Lewisham Autism Support,SE23 2LB,High-functioning autism; Autism spectrum; and Autism.,,,,,lag_map,0.5,np,no_contact
+319,"Lewisham- Drumbeat Outreach /
+ Early Bird Courses",SE4 2PR,Revelon Rd,,,,,lag_map,0.5,np,no_contact
+320,Lewisham Mencap,SE6 2NZ,The services we offer include:,,,,,lag_map,0.5,np,no_contact
+321,Lewisham Parent and Carer Forum,SE13 5EU,London,https://lewishamparentcarer.org.uk,,,,lag_map,0.625,wp,
+322,"Lewisham- SIGNAL 
+(Support, Information, Guidance & News for Autism in Lewisham)",SE4 2NX,Wallbutton Road,https://signalfamilysupport.org,,,,lag_map,0.625,wp,
+323,Luton- Families in Luton Autism Group (FLAG),,have access to a sympathetic listening ear and user friendly information about the autism spectrum.,https://directory.luton.gov.uk/kb5/luton/directory/service.page,,,,lag_map,0.5,wc,
+324,Luton- Dads Autism Discuss Support (DADS),LU2 0QN,The Special Educational Needs Service in Luton are developing a group to support fathers/male carers of children with Autistic Spectrum Disorders/Asperger's syndrome.,,,,,lag_map,0.5,np,no_contact
+325,Maidenhead- Autistic Adult Social Group,SL6 1QJ,meeting at The Bear pub in Maidenhead town centre.,https://autismberkshire.org.uk/otherevents/bear-with-me-adult-social-group-maidenhead-4-2019-07-10,,,,lag_map,0.625,wp,
+326,Medway Autism Group and Information Centre (MAGIC),,a youth club and a holiday home for respite breaks.,https://medway-magic.org,,,,lag_map,0.5,wc,
+327,Medway Parents and Carers Forum,ME7 4BY,funding was made available to help support parents and carers to have a voice in shaping locally delivered services for disabled children and young people. As a result of this the Medway Parents and Carers Forum was set up.,https://medwaypcf.org.uk,,,,lag_map,0.625,wp,
+328,Merton -Carers Support Merton,CR4 3UD,London,https://csmerton.org/index.htm,,,,lag_map,0.625,wp,
+329,Merton Parents Carer Forums,CR4 4TP,Adults First & Talk Autism,https://mertonmencap.org.uk/parentscarers.htm,,,,lag_map,0.625,wp,
+330,Merton Autism Outreach Service (MAOS),CR4 3AF,Merton Autism Outreach Service (MAOS) supports the inclusion of pupils with Autism Spectrum Disorder (ASD) and Social Communication Difficulties in mainstream settings. MAOS works in an advisory role with schools supporting staff in developing their understanding of ASD and sharing tools and strategies to enable pupils to access learning and social opportunities. Advice relating to the needs of specific pupils and staff training is also provided. For more information please visit www.cricketgreen.merton.sch.uk/maos,,,,,lag_map,0.5,np,no_contact
+331,"Merton Mencap 
+Talk Autism",CR4 4TP,courtesy of funding received by Merton Mencap. It is being administrated by Kids First.,https://mertonmencap.org.uk/index.htm,,,,lag_map,0.625,wp,
+332,Merton Centre for Independent Living,CR4 3BE,advice and advocacy support to Disabled People on a wide range of issues. These issues must relate to:,https://mertoncil.org.uk/services/information-and-advice-service,,,,lag_map,0.625,wp,
+333,"Muswell Hill Youth Project 
+social club",,Muswell Hillbillies - social club for Haringey mainstream secondary school attending children with autism/aspergers. Wednesdays termtime after school. Muswell Hill Youth Centre (behind M and S car park).,,,,,lag_map,0.375,nc,no_contact
+334,Muswell Hill -Challenge Playgroup,,Muswell Hill. The happy noises of children playing are like those of hundreds of playgroups around the country. But this playgroup is special.,,,,,lag_map,0.375,nc,no_contact
+335,Newham -NAS Carers Support Group,E13 8AL,411 Barking Rd,,,,,lag_map,0.5,np,no_contact
+336,"Newham -Autism Awareness and Support Group /
+Forum for Health & Wellbeing",,the co-production Forum and other co-production networks in Newham.,,,,,lag_map,0.375,nc,no_contact
+337,Newham Parent Carer Forum,E6 5YA,We are an independent group of parents in Newham who all have children with a disability or special educational needs. We recognise that children’s needs and circumstances can be very different. We are committed to giving a voice to all carers and families in government. Newham Parent Forum is managed on an entirely voluntary basis by Parents.,https://newhamparentforum.co.uk,,,,lag_map,0.625,wp,
+338,Newham Parent Partnership Service,E15 4BQ,49-51 Broadway,,,,,lag_map,0.5,np,no_contact
+339,"Newham Resources for Autism
+John F. Kennedy School
+Saturday Club",E16 3LQ,we are running an autism specific play club for young people aged 8-13 with a diagnosis of Autism at:,,,,,lag_map,0.5,np,no_contact
+340,"Newham 
+Resources for Autism
+Shipman Youth Centre
+Saturday Club",E16 3JH,Prince Regent Lane,,,,,lag_map,0.5,np,no_contact
+341,Newham Carers Network,E12 6PG,London,https://newhamcarers.org.uk/carers-support-groups-in-newham.html,,,,lag_map,0.625,wp,
+342,"Rayleigh -Supporting Carers and Families Together, (SCAFT)",SS6 7BU,First Floor Offices,https://scaft.org/home,,,,lag_map,0.625,wp,
+343,"Reading-
+Aut-Haslemere Support Group",RG1 3QF,and share tips and strategies for living the best autistic lives possible. You do not need a formal diagnosis to attend,https://facebook.com/authaslemere,,,https://facebook.com/authaslemere,lag_map,0.625,wp,
+344,Redbridge Carers Support Service (RCSS),,E-mail:office@rcss.org.uk,https://rcss.org.uk,,,,lag_map,0.5,wc,
+345,Redbridge Mencap,IG5 0SJ,confidence and self awareness through the groups it organises. We encourage community participation and welcome inclusion.,https://facebook.com/redbridge.mencap,,,https://facebook.com/redbridge.mencap,lag_map,0.625,wp,
+346,Redhill -Autism All-Stars,,but all ages are very welcome. We have a thriving facebook and twitter community where we offer support and inspiration to those who are struggling.,https://autism-all-stars.org,,,,lag_map,0.5,wc,
+347,Richmond Care and Support,TW1 2PD,Guest speakers,https://richmondchs.org,,,,lag_map,0.625,wp,
+348,Richmond- Knots Arts Youth Club,SW14 8SN,meet new people and above all have fun.,https://knotsarts.com/youth-groups/mortlake-youth-club,,,,lag_map,0.625,wp,
+349,Richmond- Me too & Co,TW1 2PD,as well as off site hydrotherapy at a specialist pool in Teddington.,,,,,lag_map,0.5,np,no_contact
+350,Richmond- Music Therapy,TW2 5LL,behavioural or emotional difficulties.,https://okmtrust.co.uk,,,,lag_map,0.625,wp,
+351,Richmond Music Trust,TW2 6RB,7 Briar Road,https://richmondmusictrust.org.uk,,,,lag_map,0.625,wp,
+352,"Richmond- Ruils
+Disability Action & Advice Centre",TW11 8HT,befriending and activities to our clients and their families.,,,,,lag_map,0.5,np,no_contact
+353,"Richmond- SENDIASS 
+(Special Educational Needs and Disabilities Information Advice and Support Service)",TW9 2HP,20 Windham Road,https://kids.org.uk/richmond-and-kingston-sendiass,,,,lag_map,0.625,wp,
+354,Romford Autistic Group Support,RM3 7SU,RAGS offers a support network for families who have a member with a diagnosis of an autism spectrum condition or who are seeking a diagnosis.,https://rags-havering.co.uk,,,,lag_map,0.625,wp,
+355,Sevenoaks Mencap,TN13 3AY,71 Hinching Lane,https://facebook.com/Sevenoaks-Mencap-317642541585383,,,https://facebook.com/Sevenoaks-Mencap-317642541585383,lag_map,0.625,wp,
+356,"Sidcup- Ken Boyce Centre
+Choice Support",DA14 5BT,We support adults aged 18 and over who have autism or learning disabilities.,https://choicesupport.org.uk/find-support/find-support-near-you/ken-boyce-centre,,,,lag_map,0.625,wp,
+357,"Slough- Autistic adults social group
+Hidden Pearls",SL1 2XN,is now up and running in Slough.,https://autismberkshire.org.uk/2019/06/18/hidden-pearls-group-slough,,,,lag_map,0.625,wp,
+358,Slough -Maidenhead Autism Support Group,,Maidenhead,,,,,lag_map,0.375,nc,no_contact
+359,Slough- Mencap,SL3 8JU,off Common Road,,,,,lag_map,0.5,np,no_contact
+360,"Slough Parent Carer Forum
+Special Voices",SL1 5QS,Special Voices is a group of parents/carers of children and young people with special/additional needs. We are all volunteers working in partnership with voluntary and statutory organisations. The main aim of Special Voices is to raise awareness about the rights and needs of children/young people with special needs and to ensure that they and their families are consulted and involved in any decisions made during planning or developing services for them. Special Voices has a main steering group of voluntary parents/carers who have taken on the role of gathering your collective views and presenting them to service planners and decision makers in order to ensure that services are needs-led.,https://specialvoices.co.uk,,,,lag_map,0.625,wp,
+361,"South Bucks
+ Rainbow Social Club
+Bourne End
+Westfield School",SL8 5BE,NAS South Bucks Rainbow Club.,,,,,lag_map,0.5,np,no_contact
+362,Southend Mencap,SS1 1PG,London,https://southendmencap.org.uk,,,,lag_map,0.625,wp,
+363,"Family Voice Southend 
+Parent Carer Forum",SS2 6XT,and we are here to help.,https://family-voice-southend.co.uk,,,,lag_map,0.625,wp,
+364,Southwark ADHD,SE21 8QS,Run by Parents,,,,,lag_map,0.5,np,no_contact
+365,Southwark Carers,SE5 0EN,Walworth Methodist Church,https://southwarkcarers.org.uk,,,,lag_map,0.625,wp,
+366,Southwark Parent Carer Council (PCC),SE17 1RL,We are the parent carer forum for Southwark - and we want to achieve the best local services for children and young people aged 0-25 with disabilities/additional needs and their families.,,,,,lag_map,0.5,np,no_contact
+367,"Southwark Resources For Autism
+Sunday play club",SE1 2AN,we are running an autism specific play club for young people aged 8-13 with a diagnosis of Autism at:,,,,,lag_map,0.5,np,no_contact
+368,Southwark -Salmon Youth Centre,SE16 4TE,Youth Work Manager (Clubs Development).,,,,,lag_map,0.5,np,no_contact
+369,Voices For Autism - Southwark,,London,https://voicesforautism.co.uk,,,https://facebook.com/voicesforautism.co.uk,lag_map,0.5,wc,
+370,Carers Support Spelthorne (CSS),TW18 1XA,Middlesex,https://carerssupportspelthorne.co.uk,,,,lag_map,0.625,wp,
+371,Stevenage- TRACKS autism,SG1 4QX,Boulton Road,https://tracks-autism.org.uk,,,,lag_map,0.625,wp,
+372,Stevenage- Space Group,,with Attention Deficit Hyperactivity Disorder (ADHD) or a related condition.,https://spaceherts.org.uk/stevenage.htm,,,,lag_map,0.5,wc,
+373,Surrey- interAKtive,SM7 1WW,an ASD specialist play-scheme in the Easter and summer holidays and member coffee mornings.,https://interaktive.org.uk,,,,lag_map,0.625,wp,
+374,"Family Voice Surrey
+Parent Carer Forum",KT22 7LT,Kingston Road,https://familyvoicesurrey.org,,,,lag_map,0.625,wp,
+375,Surrey- Music Therapy,KT19 8PB,Surrey and Borders Partnership NHS Foundation Trust,,,,,lag_map,0.5,np,no_contact
+376,"Surrey- 
+Portesbery School 
+Drop in sessions with support of parents and staff.",GU16 6TA,Newfoundland Road,,,,,lag_map,0.5,np,no_contact
+377,Sutton- Knots Arts Girls Group,SM3 9PX,likes and suggestions.,https://knotsarts.com/youth-groups/girls-group-sutton,,,,lag_map,0.625,wp,
+378,Sutton Inclusion Centre,SM1 2BF,Sutton Inclusion Centre,https://sutton.gov.uk/info/200333/adult_social_care/1226/sutton_inclusion_centre,,,,lag_map,0.625,wp,
+379,Sutton Mencap,SM6 0EU,London,https://suttonmencap.org.uk,,,,lag_map,0.625,wp,
+380,Sutton Parents Forum,SM6 0EU,London,https://suttonparentsforum.org.uk,,,,lag_map,0.625,wp,
+381,Sunshine Centre Thurrock,,E-mail: sunshinecentre@thurrock.gov.uk,https://sunshinecentre.org.uk,,,,lag_map,0.5,wc,
+382,A2ndVoice - Tooting,,Awards,https://a2ndvoice.com/events,,,,lag_map,0.5,wc,
+383,Tower Hamlets- Autism Parents Support Group,E3 2AD,Email p.chanda@phoenix.towerhamlets.sch.uk,,,,,lag_map,0.5,np,no_contact
+384,Tower Hamlets- Carers Centre,E1 0SG,21 Brayford Square,https://carerscentretowerhamlets.org.uk/services,,,,lag_map,0.625,wp,
+385,Tower Hamlets- Mencap,,Bow,https://facebook.com/Tower-Hamlets-Mencap-341214186045426,,,https://facebook.com/Tower-Hamlets-Mencap-341214186045426,lag_map,0.5,wc,
+386,Tower Hamlets -NAS Inclusion Service,E1 5HZ,The National Autistic Society have two Inclusion Officers who support children and young,,,,,lag_map,0.5,np,no_contact
+387,Tower Hamlets- Tower Project,E14 9WA,this is the Tower Project First Start Day Opportunities Service (Autism).,,,,,lag_map,0.5,np,no_contact
+388,Tower Hamlets SEND Parents Forum,E1 5NP,East End Parent Carers Together – the Tower Hamlets SEND Parents Forum,https://eastendpctogether.wordpress.com,,,,lag_map,0.625,wp,
+389,Waltham Forest Parent Forum,E10 6DA,London,https://walthamforestparentforum.com,,,,lag_map,0.625,wp,
+390,Waltham Forest Parent Parent Forum Support Groups,,E-mail:walthamforestparentforum@live.co.uk,,,,,lag_map,0.375,nc,no_contact
+391,Waltham Forest/Walthamstow -CAPS Children with Asperger's Parent Support,E17 6RX,London,https://thelimes.org.uk,,,,lag_map,0.625,wp,
+392,Wandsworth- Autism Voice,SW4 6DZ,Autism Voice is a UK based organization that works with people (children and adults) with Autism Spectrum Disorder (ASD) and their families in communities in the UK.,https://autismvoice.org.uk,,,,lag_map,0.625,wp,
+393,"Wandsworth Carers’ Centre, 
+Asperger's Carers Support Group",SW18 4JE,Wandsworth Office.,https://carerswandsworth.org.uk,,,,lag_map,0.625,wp,
+394,"Wandsworth -Sen Talk
+ Coffee Mornings",,SEN parent/carer coffee mornings on every third Tuesday of each month. Coffee Mornings are from 10am-12pm and there are activities for younger siblings too,https://sentalk.org,,,,lag_map,0.5,wc,
+395,"Wandsworth
+Positive Parent Action
+Parent Carer Forum",SW17 0LA,we work closely with Wandsworth Council to improve provision for all families in the borough with additional needs.,https://positiveparentaction.org.uk,,,,lag_map,0.625,wp,
+396,"Watford -Gambado
+SEN Indoor soft play, adventure & sensory",WD25 7JZ,and focus on families with specific needs every month. Our indoor soft play & party venue has been superbly designed to cater for children ages 0-12. Our venues are packed full of variety and innovation to ensure no two trips are the same. Our play areas for toddlers and pre-school are designed to be stimulating and to inspire young minds. We have sensory zones and play equipment that create a calming and relaxing multi sensory environment.,https://gambado.com/newsletter/activities-for-children-with-autism-and-sen,,,,lag_map,0.625,wp,
+397,Watford -Playskill,,training events and outings. Contact Andrea Clarke for more details.,https://playskill.org,,,,lag_map,0.5,wc,
+398,"Watford -Holland Support Group
+ The Red House, 
+Croxley Green, 
+WD3 3DX",WD3 3DX,Croxley Green,https://facebook.com/Holland-Group-Page-1412805879038670,,,https://facebook.com/Holland-Group-Page-1412805879038670,lag_map,0.625,wp,
+399,Watford -The Wheelchair Dance Sport Association,WD24 7RX,for those who would otherwise be excluded from dancing.,https://wdsauk.co.uk,,,,lag_map,0.625,wp,
+400,Bushey & Watford Phab Club,WD24 4GY,Bushey & Watford Phab Club,https://phab.org.uk,,,,lag_map,0.625,wp,
+401,Watford & District Mencap Society,WD3 1AN,enabling them to lead the life they want for themselves.,https://watfordmencap.org.uk,,,,lag_map,0.625,wp,
+402,Watford- Families in Focus Parent Network support & information group,WD25 9JL,609 St Albans Road,https://familiesinfocus.co.uk,,,,lag_map,0.625,wp,
+403,"Welwyn- 
+Special Needs Information and Parenting Support(SNIPS)",,E-mail:jnkn@tiscali.co.uk,,,,,lag_map,0.375,nc,no_contact
+404,Welwyn- Spectrum Girls,AL8 7SG,London,,,,,lag_map,0.5,np,no_contact
+405,Wembley -Carers Advice Clinic,HA0 4UZ,116 Chaplin Road,,,,,lag_map,0.5,np,no_contact
+406,"Westminster- 
+Autism Carers Support Group 
+(Carers Network)",W11 2RW,Are you caring for a family member or close friend with an autism spectrum disorder?,,,,,lag_map,0.5,np,no_contact
+407,"Westminster- 
+Asperger's Syndrome Foundation Saturday Social Club",W1K 2PA,The social club will meet once a month on Saturday. Lunch is not provided (bring your own).,,,,,lag_map,0.5,np,no_contact
+408,Westminster - Building Blocks Therapy and Activity Centre,NW8 6PL,which is an extra-curricular dance activity for children with SEN.,https://buildingblockstherapycentre.co.uk,,,,lag_map,0.625,wp,
+409,Westminster- Carers Network coffee morning,W10 4JL,Last Tuesday of the month every two months,https://carers-network.org.uk/westminster-peer-support-groups-and-drop-ins,,,,lag_map,0.625,wp,
+410,Westminster -Caxton Youth Organisation,,where they can come to make and meet their friends. We prioritise the inclusion of young people with physical and/ or learning disabilities who live in Westminster.,,,,,lag_map,0.375,nc,no_contact
+411,"Westminster- 
+In-Deep Children’s Music Therapy",,In-Deep offers group music therapy for children aged between 5-13 with special needs and disabilities. These music therapy sessions will take place on every 2nd Saturday morning of the month at In-Deep’s Grosvenor Hall Vincent Street venue in Victoria between 11am-12.30pm.,https://in-deep.org.uk/activitie/childrens-music-therapy,,,,lag_map,0.5,wc,
+412,Westminster Parent Partnership Service,NW8 8LF,1st Floor,,,,,lag_map,0.5,np,no_contact
+413,Westminster Parents Participation Group,W9 3NA,social care and education. We have parent representatives who help to represent the views of parent carers to service providers.,https://wppg.org.uk,,,,lag_map,0.625,wp,
+414,Westminster Phab Club,,London,https://phab.org.uk,,,,lag_map,0.5,wc,
+415,Westminster School Phab club,SW1P 3PF,days out and group holidays and usually meets once a week.,https://phab.org.uk,,,,lag_map,0.625,wp,
+416,Westminster Society For People With Learning Disabilities,W9 3HL,London,,,,,lag_map,0.5,np,no_contact
+417,Westminster Tresham Play Service - After School/Youth Club,NW8 8TW,have fun and gain new experiences and skills according to their EHC plan.,https://fisd.westminster.gov.uk/kb5/westminster/fis/service.page,,,,lag_map,0.625,wp,
+418,"Weybridge childrens centre - 
+sensory and tactile play
+Rainbow Group",KT13 8DB,Churchfield Road,,,,,lag_map,0.5,np,no_contact
+419,"Woolwich -Autistic Inclusive Meets
+(AIM) Autistic Community Group 
+for Adults, children and carers",SE18 6UZ,Autistic Inclusive Meets,,,,,lag_map,0.5,np,no_contact
+420,Windsor Mencap,SL4 3RU,committed to promoting equality for people with special needs whilst helping our members make the most out of life.,https://windsormencap.org,,,,lag_map,0.625,wp,
+421,Woking Phab Club,GU22 9LY,Woking Phab Club,https://phab.org.uk,,,,lag_map,0.625,wp,
+422,accomplish,,our priority has been the fulfilment of the lives of everyone we support across England and Wales.,https://accomplish-group.co.uk/supported-living-london,,,,lag_map,0.5,wc,
+423,Certitude,SW17 7BQ,London,https://certitude.london/what-we-do/supported-living,,,,lag_map,0.625,wp,
+424,Choice Care Group,RG12 9DY,with a particular specialism in working with individuals who have highly complex needs or have a history of being a risk to themselves or others. A high proportion of the people we support are also on the autism spectrum.,https://choicecaregroup.com,,,,lag_map,0.625,wp,
+425,Clearwater Care,CM16 6LP,London,https://clearwatercare.co.uk/london-supported-living-services,,,,lag_map,0.625,wp,
+426,Consensus Support,CO4 9YQ,London,https://consensussupport.com/county/london,,,,lag_map,0.625,wp,
+427,Hoffmann Foundation,HA7 3QD,We support our service users to develop new skills and further broaden their existing skills with the aim of preparing them to move into independent living in the future.,https://hoffmannfoundation.org.uk/supported-living,,,,lag_map,0.625,wp,
+428,Kent Autistic Trust - Living Services,,within small homes for up to six people.,https://kentautistic.com/what-we-do/living-services,,,,lag_map,0.5,wc,
+429,Kisharon,,admin – and are always armed with a smile and love nothing more than chatting and having fun with those they support. As well as assistance with daily tasks we offer life skills training including money handling and travel training.,https://kisharon.org.uk/our-services/support/adult-supported-living,,,,lag_map,0.5,wc,
+430,Look Ahead,SW1P 3HQ,We deliver services to some of the most disadvantaged and marginalised people in our communities. Many have multiple and complex needs.,https://lookahead.org.uk/our-services/services-we-provide,,,,lag_map,0.625,wp,
+431,mcch,ME16 9NT,London,https://mcch.org.uk/autism/index.aspx,,,,lag_map,0.625,wp,
+432,Norwood,HA7 4HB,Norwood’s Supported Living service provides support for people with learning disabilities to live in their own homes. The support can be for just a few hours each week or 24 hours a day.,https://norwood.org.uk/Page/Supported-Living,,,,lag_map,0.625,wp,
+433,Outward,E3 5BW,Services we offer include:,https://outward.org.uk/support.php,,,,lag_map,0.625,wp,
+434,Priory Adult Care,UB8 2YF,London,https://prioryadultcare.co.uk/find-a-location/supporting-you-in-london-and-thames-valley,,,,lag_map,0.625,wp,
+435,Sahara Care,IG11 8TA,London,https://saharacare.com/our-services,,,,lag_map,0.625,wp,
+436,Salisbury Support 4 Autism,UB7 8ES,outreach and respite. A new Day Service is now open in West Drayton.,https://ss4autism.com,,,,lag_map,0.625,wp,
+437,St Edwards Close NAS Residential Service,,to become more confident and independent and to live full lives in the community.,https://autism.org.uk/services/england/london/residential.aspx,,,,lag_map,0.5,wc,
+438,Artsdepot Finchley,N12 0GA,5 Nether Street,https://artsdepot.co.uk/whats-on,,,,lag_map,0.625,wp,
+439,Camden- Jewish Museum London,,London,https://jewishmuseum.org.uk/curious-explorers,,,,lag_map,0.5,wc,
+440,Chelmsford Museum,,Chelmsford Museum have added a number of autism resources to their website including FAQs and a visual guide. https://www.chelmsford.gov.uk/leisure-theatres-and-museums/museums/chelmsford-museum/your-visit-to-chelmsford-museum/accessibility-at-chelmsford-museum/resources-for-visitors-with-learning-disabilities-or-an-autistic-spectrum-condition/,https://chelmsford.gov.uk/leisure-theatres-and-museums/museums/chelmsford-museum/your-visit-to-chelmsford-museum/accessibility-at-chelmsford-museum/resources-for-visitors-with-learning-disabilities-or-an-autistic-spectrum-condition,,,,lag_map,0.5,wc,
+441,"Haringey
+Jacksons Lane
+Contemporary theatre and circus",N6 5AA,and a large-scale outreach programme for hard-to-reach communities.,https://jacksonslane.org.uk,,,,lag_map,0.625,wp,
+442,"Haringey Shed
+Inclusive theatre",N17 8DX,nurseries and community centres.,https://haringeyshed.org,,,,lag_map,0.625,wp,
+443,Lewisham- Horniman Museum and Gardens,SE23 3PQ,Horniman Museum and Gardens,https://horniman.ac.uk/visit/disability-and-access,,,,lag_map,0.625,wp,
+444,"Little Angel Theatre 
+Islington",N1 2DN,sensory or communication needs or a learning disability.,https://littleangeltheatre.com/finding-us/access-needs,,,,lag_map,0.625,wp,
+445,The Lion King Musical,,http://www.thelionking.co.uk/autismfriendly/,https://thelionking.co.uk/autismfriendly,,,,lag_map,0.5,wc,
+446,London Transport Museum,,Date: Saturday 29 October 2016 and Saturday 8 April 2017,https://ltmuseum.co.uk/whats-on/events-calendar/family-activities,,,,lag_map,0.5,wc,
+447,Lyttelton Theatre/ The National Theatre,SE1 9PX,London,https://nationaltheatre.org.uk/your-visit/access/relaxed-performances,,,,lag_map,0.625,wp,
+448,Museum of London,EC2Y 5HN,arts and crafts and a sensory space. Explore our galleries exclusively from 08.30am (normal opening hours are 10am-6pm). Full programme information will be emailed to ticket holders in the week before the event.,https://museumoflondon.org.uk/museum-london/event-detail,,,,lag_map,0.625,wp,
+449,Mousetrap Theatre Projects,,http://www.mousetrap.org.uk/index.php/special-educational-needs/relaxed-performances/current-relaxed-performance,https://mousetrap.org.uk/index.php/special-educational-needs/relaxed-performances/current-relaxed-performance,,,,lag_map,0.5,wc,
+450,National Maritime Museum,,role-play and all of our senses to discover new objects from unknown lands and bring them back from our travels to create a museum display.,https://rmg.co.uk/plan-your-visit/schools/sessions/sensory-seas-send,,,,lag_map,0.5,wc,
+451,Royal Academy of Arts,,https://www.royalacademy.org.uk/events/tag/sen,https://royalacademy.org.uk/events/tag/sen,,,,lag_map,0.5,wc,
+452,The Royal National Theatre,,London,https://nationaltheatre.org.uk/your-visit/access/relaxed-performances,,,,lag_map,0.5,wc,
+453,Sea Life London Aquarium,SE1 7PB,London,https://london-support.visitsealife.com/hc/en-us/categories/201540705-Disabled-Information,,,,lag_map,0.625,wp,
+454,Southgate -Chicken Shed Theatre,N14 4PE,Southgate,https://chickenshed.org.uk,,,,lag_map,0.625,wp,
+455,Science Museum,,http://www.sciencemuseum.org.uk/visitmuseum/plan_your_visit/events/other/early_birds_event,https://sciencemuseum.org.uk/visitmuseum/plan_your_visit/events/other/early_birds_event,,,,lag_map,0.5,wc,
+456,St. Paul's Cathedral,,For Disabled Access Day Saturday 11th March 2017 St. Paul’s Cathedral had a whole day of events including for the first time an early relaxed opening for families with #autism from 8.30am for more details please see the website https://www.stpauls.co.uk/visits/visits/disabled-access-day-2019,https://stpauls.co.uk/visits/visits/disabled-access-day-2019,,,,lag_map,0.5,wc,
+457,Theatre Royal Stratford East,E15 1BN,London,https://stratfordeast.com/whats-on/all-shows,,,,lag_map,0.625,wp,
+458,Tower Bridge,,Autism friendly early opening. http://www.towerbridge.org.uk/news/2016/09/01/autism-friendly-early-opening/,https://towerbridge.org.uk/news/2016/09/01/autism-friendly-early-opening,,,,lag_map,0.5,wc,
+459,Tower Hamlets- Ragged School Museum,E3 4RR,46-50 Copperfield Road,https://raggedschoolmuseum.org.uk,,,,lag_map,0.625,wp,
+460,‎Tower Hamlets -V&A Museum of Childhood,E2 9PA,Cambridge Heath Road,https://vam.ac.uk/moc,,,,lag_map,0.625,wp,
+461,Unicorn Theatre,SE1 2HZ,London,https://unicorntheatre.com/access-at-the-unicorn,,,,lag_map,0.625,wp,
+462,Lambeth- The Old Vic Theatre,SE1 8NB,London,https://oldvictheatre.com/your-visit/access/open-performances,,,,lag_map,0.625,wp,
+463,Sport -Archway Leisure Centre Swimming,N19 5DD,MacDonald Road,,,,,lag_map,0.5,np,no_contact
+464,"Sport -Barking Beavers Swimming
+Abbey Sports Centre,",IG11 7LX,Barking Beavers,,,,,lag_map,0.5,np,no_contact
+465,"Sport -Barnet 
+Swimming 
+Copthall Leisure Centre",NW4 1PX,London,https://better.org.uk/leisure-centre/london/barnet/barnet-copthall-leisure-centre/timetable,,,,lag_map,0.625,wp,
+466,"Sport-Swimming
+Barnet, Potters Bar.
+Furzefield Leisure Centre",EN6 3BW,multiple sclerosis and muscular dystophy.,https://barracudasc.co.uk,,,,lag_map,0.625,wp,
+467,"Unitas, Barnet Youth Zone",HA8 0DT,76 Montrose Ave,,,,,lag_map,0.5,np,no_contact
+468,"Barnet- Trampolining for All 
+Queen Elizabeth's Girls' School",EN5 5RR,Tel: 020 8343 9776 or 07701 014175.,,,,,lag_map,0.5,np,no_contact
+469,Cycling -Battersea Park (London Recumbents),,kids and grannies. Inclusion guaranteed!,https://cyclingforall.org/cycling-sessions/view/london-recumbents-battersea-park,,,,lag_map,0.5,wc,
+470,Sport -The Spa at Beckenham,BR3 4PF,Beckenham Leisure Centre24 Beckenham Road,,,,,lag_map,0.5,np,no_contact
+471,Sport -Becontree Heath Leisure Centre,RM10 7AY,carers or siblings are welcome to join in the session if there is room in the pool. There is full disabled access at the venue.,,,,,lag_map,0.5,np,no_contact
+472,Sport- Swimming Bexley Beavers,DA7 4HH,Bexleyheath between 6:00 PM and 7:30PM.,https://bexleybeavers.org.uk,,,,lag_map,0.625,wp,
+473,Sport -Borehamwood Otters Swimming Club,WD6 1JY,disabled changing and toilet facilities and good site access.,,,,,lag_map,0.5,np,no_contact
+474,"Sport -Borehamwood Trampolining
+MegaJump",WD6 1QQ,,https://megajump.co.uk,,,,lag_map,0.5,wp,
+475,"Sport -Brent Cross
+Flip Out SEN Trampolining",NW2 6LW,socks are included.,https://rollerdigital.com/flipoutbrentcross/sessions/sen-sessions,,,,lag_map,0.625,wp,
+476,"Sport - Brent Swimming 
+Willesden Sportability Club",NW10 3QX,physical and visual disabilities.,,,,,lag_map,0.5,np,no_contact
+477,"Sport - Brent 
+Willesden Sports Centre",NW2 3NF,Club Brent,https://disabilitysportscoach.co.uk/community-clubs/club-brent,,,,lag_map,0.625,wp,
+478,"Sport -Camberwell
+Trampolining.
+ Cambridge House School .",SE5 0HF,1 Addington Square,,,,,lag_map,0.5,np,no_contact
+479,"Sport -Camberwell
+ Swimming.
+Cambridge House School.",SE5 0HF,1 Addington Square,,,,,lag_map,0.5,np,no_contact
+480,"Sport- Camden 
+Coram's Fields Football Pitch",WC1N 1DN,Free inclusive football session which is being run by Arsenal Football club and Coram’s Field.,,,,,lag_map,0.5,np,no_contact
+481,"Sport -Camden
+ Trampolining and Multi Sports
+Talacre Community Sports Centre",,Monday Night Club,,,,,lag_map,0.375,nc,no_contact
+482,"Sport -Camden 
+YMCA Hub Club",WC1B 3NQ,YMCA Hub Club,,,,,lag_map,0.5,np,no_contact
+483,"Sport -Camden
+Kentish Town Sport centre. 
+Fleetwell Disabled Swimming Club.",NW5 3DU,Voluntary family Club that aims to cater for all disabilites and ages and was started in 1982. Uses the halliwick method to promote water confidence,,,,,lag_map,0.5,np,no_contact
+484,Sport -Chafford Sports Complex Swimming,RM13 9XB,Chafford Sports Complex,,,,,lag_map,0.5,np,no_contact
+485,"Sport- Chelmsford 
+Riverside Ice & Leisure Centre Disabled Swimming Club",,Disabled Swimming Club,https://chelmsford.gov.uk/disability-clubs-riverside-ice-and-leisure-centre,,,,lag_map,0.5,wc,
+486,"Sport- 
+Chelmsford,
+Essex, 
+Springfield Gymnastics Club",CM1 7HR,Offers gymnastic sessions for children with special needs. Meets during the school holidays (closed from December 20th - January 10th),,,,,lag_map,0.5,np,no_contact
+487,"Sport -Cheshunt
+The Laura Trott(Grundy Park) Leisure Centre",EN8 9AJ,Multi sport sessions are run on Saturdays between 11.30am - 12.30pm.,,,,,lag_map,0.5,np,no_contact
+488,Sport -Chiswick Trampolining,W4 3UN,Sessions are run at Chiswick Sports Hall Wednesdays between 4 - 6.15pm and cost £5.50.,https://parasport.org.uk/find-a-club/detail/ace-of-clubs-trampolining,,,,lag_map,0.625,wp,
+489,"Sport -City/ Barbican 
+Golden Lane Sport & Fitness",EC1Y 0SH,London,https://weswim.club/barbican,,,,lag_map,0.625,wp,
+490,"Sport -Clerkenwell
+Swimming and Fitness 
+Golden Lane Sports",EC1Y 0SH,disabled changing rooms and toilets.,https://search3.openobjects.com/kb5/cityoflondon/fyi/service.page,,,,lag_map,0.625,wp,
+491,Sport -Clissold Leisure Centre,N16 9EX,Centre runs a number of disabled specific sessions including wheelchair basketball on Mondays 16.00-18.00pm and disability swimming sessions on Tuesday 17.00-19.00pm for juniors (under 16s) and over 16s 18:00 -19:00pm,,,,,lag_map,0.5,np,no_contact
+492,Sport- Crouch End WeSwim,N8 8JN,London,https://weswim.club/weswim-crouch-end,,,,lag_map,0.625,wp,
+493,"Croydon University Hospital,
+Hydrotherapy Pool
+Swimming Lessons.",CR7 7HF,We are excited to welcome swimmers with a disability and special educational needs to Great Waves Swimming Academy.,https://greatwaves.co.uk/disability-swimming,,,,lag_map,0.625,wp,
+494,"Sport -Croydon 
+Swimming.
+Purley Enterprise Swimming Club",CR8 2AA,or their age” A secondary object is “To enhance the above by the provision of appropriate social activities.”,https://enterprise-club.org.uk/index.html,,,,lag_map,0.625,wp,
+495,"Sport -South Croydon
+St Giles School
+Swimming Lessons",CR2 6DF,We are excited to welcome swimmers with a disability and special educational needs to Great Waves Swimming Academy.,https://greatwaves.co.uk/disability-swimming,,,,lag_map,0.625,wp,
+496,"Sport - South Croydon 
+Keston Primary School
+Coulsdon
+Swimming Lessons",CR5 1HP,Great Waves Swimming Academy.,https://greatwaves.co.uk/disability-swimming,,,,lag_map,0.625,wp,
+497,Cycling -Croydon Sports Arena,SE25 4QL,London,https://wheelsforwellbeing.org.uk,,,,lag_map,0.625,wp,
+498,Cycling -Dagenham,RM8 2JR,London,https://cyclingforall.org,,,,lag_map,0.625,wp,
+499,Sport -Dormers Wells Leisure Centre,UB1 3HX,Dormers Well Lane,,,,,lag_map,0.5,np,no_contact
+500,Cycling -Dulwich Herne Hill,SE24 9HE,Herne Hill Velodrome 104 Burbage Road,https://wheelsforwellbeing.org.uk/inclusive-cycling,,,,lag_map,0.625,wp,
+501,Sport -Dulwich Leisure Centre,,not on winning and so it doesn’t matter what standard you are currently at with your swimming.,,,,,lag_map,0.375,nc,no_contact
+502,Cycling -Dulwich Park,,either a bank card or driving license is fine.,https://cyclingforall.org/cycling-sessions,,,,lag_map,0.5,wc,
+503,"Sport - West Dulwich
+Aspire Well Being Centre Gym",SE21 8EH,Are you looking for a gym for adults with sensory and physical impairments– or long term health conditions? The Aspire Wellbeing Health Gym might be just what you are looking for.,https://aspirewellbeing.org/our-facilities/health-gym,,,,lag_map,0.625,wp,
+504,Sport -Eltham Stingrays Swimming Club,SE28 8RE,Eltham Stingrays Swimming Club,,,,,lag_map,0.5,np,no_contact
+505,"Sport -Eltham
+Lion Swimming Club",SE9 1HA,London,,,,,lag_map,0.5,np,no_contact
+506,Sport -Eltham Leisure Centre,SE9 1HA,2 Archery Road,,,,,lag_map,0.5,np,no_contact
+507,Cycling -Emirates Stadium,,Pedal power is the cycling club for anyone who doesn’t have access to cycling. We meet rain or shine so please check the weather before coming to make sure you are dressed properly to enjoy yourself to the fullest.Please wear suitable footwear. Helmets are necessary and provided for those who don’t have their own. Carers and support workers are encouraged to join in. Our trainers are qualified National Standards cycle trainers.,https://pedalpowercc.org,,,,lag_map,0.5,wc,
+508,"Sport -Enfield/Southgate Swimming
+Halliwick Penguins club",,friendly environment for swimmers with disabilities to learn and practice swimming,,,,,lag_map,0.375,nc,no_contact
+509,Cycling -Enfield Bush Hill Park,EN1 3XQ,Enfield,https://cyclingforall.org/cycling-sessions,,,,lag_map,0.625,wp,
+510,Sport -Enfield NAS Youth Club,N14 6BS,http://www.enfieldnas.org.uk/,https://enfieldnas.org.uk,,,,lag_map,0.625,wp,
+511,"Sport -Enfield Albany Leisure Centre
+Gateway seekers swimming club",EN3 5XH,Gateway seekers swimming club,,,,,lag_map,0.5,np,no_contact
+512,"Sport -Epping 
+Swimming
+All Ability Sports",,E-mail: helen@allabilitysportsandleisure.co.uk,https://allabilitysportsandleisure.co.uk,,,,lag_map,0.5,wc,
+513,"Sport- Epping 
+Disability Inclusion Project",CM16 4LU,Forest Fun days and Multi Sports Camps.,https://eppingforestdc.gov.uk/out-and-about/our-activities/community-health-and-wellbeing/inclusion-project,,,,lag_map,0.625,wp,
+514,"Sport -Epping
+All Ability Sports",,E-mail: helen@allabilitysportsandleisure.co.uk,https://allabilitysportsandleisure.co.uk,,,,lag_map,0.5,wc,
+515,Cycling - Epsom,,at Epsom and Woking. The welcome both children and adults with a range of disabilities and difficulties and offer a wide selection of adapted bikes to choose from.,https://cyclinguk.org/cycle-centre/surrey-wheels,,,,lag_map,0.5,wc,
+516,"Sport -Epsom
+ Swimming
+Rainbow Leisure Centre",KT17 1BN,Epsom and Ewell Puffins Sports Club for Disabled,https://dotcomunity.org.uk/show_listing.php,,,,lag_map,0.625,wp,
+517,"Sport -Epsom
+Swimming Lessons
+Warren Mead Junior School",SM7 1EJ,We are excited to welcome swimmers with a disability and special educational needs to Great Waves Swimming Academy.,https://greatwaves.co.uk/disability-swimming,,,,lag_map,0.625,wp,
+518,"Sports - Essex 
+Swimming
+Impulse Leisure",RM16 2JU,Blackshots Lane,,,,,lag_map,0.5,np,no_contact
+519,"Sport -Swimming.
+Essex,
+Leigh on Sea",,Swimming club for children and adults with disabilities and their families.,https://sealsswimclub.co.uk/sealsswimclub/Home.html,,,,lag_map,0.5,wc,
+520,Cycling -Finsbury Park,,12 – 4pm (alternate Saturdays),https://pedalpowercc.org,,,,lag_map,0.5,wc,
+521,"Sport -Fulham FC Active for Autism.
+Saint Joseph's Catholic Nursery School",,St Joseph’s School,https://wandsworth.childrensservicedirectory.org.uk/kb5/wandsworth/fsd/service.page,,,,lag_map,0.5,wc,
+522,Sport -Goresbrook Leisure Centre,RM9 6XW,Ripple Road,,,,,lag_map,0.5,np,no_contact
+523,Sport -Gravesham Disability Sportslink,DA12 4LG,Gravesham Borough Council and GCL with the following aspirations:,https://gcll.co.uk/disability-sportslink,,,,lag_map,0.625,wp,
+524,"Sport -Greenford
+Swimming
+Gurnell Leisure Centre",W13 0AL,Ruislip Road East,,,,,lag_map,0.5,np,no_contact
+525,Cycling -Greenwich,SE9 2PT,Saturday 1:30-2:30pm,,,,,lag_map,0.5,np,no_contact
+526,"Sport -Grove Park
+Swimming
+Eric Liddell Sports Centre",SE9 4QF,Sharks Swimming Club of Mottingham,,,,,lag_map,0.5,np,no_contact
+527,"Sport- Hackney
+Disability Sports Coach Club",E8 3XW,One of our busiest clubs which is full of laughter. Due to the fast growing numbers at this session we this year have expanded to having 4 badminton courts to enable further session growth.,,,,,lag_map,0.5,np,no_contact
+528,"Sport -Hammersmith
+Swim Club. 
+St Paul's Girl's School.",W6 7BS,Greenhouse Inclusive Swim Club,,,,,lag_map,0.5,np,no_contact
+529,"Sport -Haringey
+Swimming
+Park Road Pools & Fitness
+Crouch End",N8 8JN,PARK ROAD POOLS & FITNESS,https://parkroadpoolsandfitness.com,,,,lag_map,0.625,wp,
+530,Cycling -Bushy Park Hampton Crt,TW12 2EJ,Companion cycling – Bushy Park,https://bikeworks.org.uk,,,,lag_map,0.625,wp,
+531,"Sport -Harringay Swimming lessons
+Campsbourne School
+ N8 7AF",N8 7AF,London,https://justswim.org.uk/special-needs,,,,lag_map,0.625,wp,
+532,"Sport -Harringay Swimming lessons
+South Harringay Junior School",N4 1BD,Harringay,https://justswim.org.uk/special-needs,,,,lag_map,0.625,wp,
+533,Sport -Harrow Leisure Centre Swimming,HA3 5BD,Harrow Kingfisher Swimming Club for People with Disabilities,,,,,lag_map,0.5,np,no_contact
+534,Sport- Harrow Trampoline Club,HA3 5BD,Harrow Trampoline Club Special Needs sessions.,https://harrowtrampolineclub.co.uk,,,,lag_map,0.625,wp,
+535,"Sport- Hatch End
+ Aquarius Swimming Club",,Aquarius Swimming Club,,,,,lag_map,0.375,nc,no_contact
+536,"Sports -Hayes 
+Botwell Green Sports and Leisure Centre",UB3 2HW,Saturdays 11am-1pm (during term time),https://better.org.uk/leisure-centre/london/hillingdon/botwell-green/newsitems/join-your-new-weekly-multi-sports-disability-session-in-hayes,,,,lag_map,0.625,wp,
+537,"Sport- Allianz Park 
+Hendon
+Sarrie's Skills Club
+Saracens Rugby Club",,which takes place every Monday evening between 4:30 – 6:30.,https://saracens.com/foundation/inclusion/sarries-skill-club,,,,lag_map,0.5,wc,
+538,"Sport- Hemel  Swimming 
+Funkey Fitness",HP2 7HL,St Agnells Lane,https://facebook.com/FunkeyFitness,,,https://facebook.com/FunkeyFitness,lag_map,0.625,wp,
+539,"Sports- High Wycomb 
+Horizon Sports Club",HP11 1TJ,Horizon Sports Club,https://horizonsportsclub.org.uk,,,,lag_map,0.625,wp,
+540,"Sport- Hillingdon
+Fenix Gymnastics",UB8 3QU,Fenix Gymnastics Club in Hillingdon,https://fenixgymnastics.com,,,,lag_map,0.625,wp,
+541,Sport- Hillingdon Leisure Complex. Ruislip Turtles Swimming Club.,UB8 1ES,metal health or learning disability and their family.,,,,,lag_map,0.5,np,no_contact
+542,Sport- Hillingdon Turtles Swimming Club,HA4 8DZ,Turtles Swimming Club,,,,,lag_map,0.5,np,no_contact
+543,Sport -Hitchin Swimming,SG5 1HA,North Herts Disability Swim Squad,,,,,lag_map,0.5,np,no_contact
+544,"Sport- Swimming Hoddesdon 
+The John Warner Sports Centre",,The Borough of Broxbourne and Hoddesdon Swimming Club are working in partnership to provide a session for people with a disability; physical or learning.,https://facebook.com/groups/1490846281137864,,,https://facebook.com/groups/1490846281137864,lag_map,0.5,wc,
+545,Sport -Hornchurch Sports Centre Swimming Pool,RM11 1JU,Hornchurch Road,,,,,lag_map,0.5,np,no_contact
+546,"Sport- Holloway
+Trampolining and Ice Rink
+Sobell Leisure Centre",,https://hoop.co.uk/i/qaZmlN/,https://hoop.co.uk/i/qaZmlN,,,,lag_map,0.5,wc,
+547,"Sport- Hounslow
+No Barriers Badminton Club (NBBC)",UB2 5TZ,Badminton is all about enjoying your game. Therefore whether you are learning disabilities or physical disabilities you can be assured that you will be welcomed and fit in amongst all the different characters and cultures here at the Dome (NBBC).,,,,,lag_map,0.5,np,no_contact
+548,"Sport - Hounslow 
+Swimming lessons
+New Chiswick Pool",W4 2RG,Chiswick,https://justswim.org.uk/special-needs,,,,lag_map,0.625,wp,
+549,"Sport- Hounslow
+ Swimming lessons
+Isleworth Leisure Centre",TW7 7EU,Twickenham Road,https://fusion-lifestyle.com/centres/isleworth-leisure-centre-library/activities/pool-and-swimming-lessons/all,,,,lag_map,0.625,wp,
+550,"Sport- Islington
+Disability Sports Coach Club",N7 7NY,Club Islington takes place on a Saturday morning. The friendly and fun environment means all participants love playing sport.,https://disabilitysportscoach.co.uk/community-clubs,,,,lag_map,0.625,wp,
+551,Sport -Larkfield Leisure Centre Kent,ME20 6RH,New Hythe Lane,,,,,lag_map,0.5,np,no_contact
+552,"Sport- Kensington & Chelsea
+Disability Sports Coach Club",W10 6EX,London,https://disabilitysportscoach.co.uk/community-clubs,,,,lag_map,0.625,wp,
+553,"Sport-Kensington 
+ Trampolining 
+Oxygen Freejumping",W3 0AF,London,,,,,lag_map,0.5,np,no_contact
+554,"Sport - Kent
+Cascades Leisure Centre",DA12 4LG,Thong Lane,,,,,lag_map,0.5,np,no_contact
+555,"Sport - Kingston 
+YMCA Hawker 
+Inclusive Fitness Initiative",KT2 5BH,including those in wheelchairs and with limited mobility.,,,,,lag_map,0.5,np,no_contact
+556,Sport -Laburnum Boat Club/ Swimming,E2 8BA,this session costs £2. There are also sessions run for adults with mental health issues on Wednesdays 19.30-21.30pm. Activities undertaken include kayaking and narrowboating. These sessions cost £3. All the sessions are run by qualified coaches who are experienced in working with disabilities. The venue also has full disabled access.,,,,,lag_map,0.5,np,no_contact
+557,"Sport- Lambeth 
+Disability Sports Coach Club",SW9 8QQ,Club Lambeth takes place at the heart of disability sport in Lambeth. The session is an ideal time for young people to come to after school and also is open to all.,https://disabilitysportscoach.co.uk/community-clubs,,,,lag_map,0.625,wp,
+558,Cycling -Lewisham,SE4 1JF,148 Dressington Avenue,https://wheelsforwellbeing.org.uk,,,,lag_map,0.625,wp,
+559,"Sport- Mitcham
+Swimming(Mind sessions by referral only)
+Canons Leisure Centre",CR4 4HD,Madeira Road,,,,,lag_map,0.5,np,no_contact
+560,"Gymnastics and Dance
+The Muswell Hill Centre
+London Academy",N10 3QJ,London,https://lagad.co.uk,,,,lag_map,0.625,wp,
+561,Sport -Newham Leisure Centre,E13 8SD,281 Prince Regent Lane,,,,,lag_map,0.5,np,no_contact
+562,Sport- Northolt Leisure Centre Swimming,UB5 4AB,Eastcote Lane North,,,,,lag_map,0.5,np,no_contact
+563,"Sport- Northwood
+Aquarius Swimming Club
+Merchant Taylors' School",,Aquarius Swimming Club,,,,,lag_map,0.375,nc,no_contact
+564,Sport -Old Street Swimming Pool,EC1V 3AA,WeSwim Old Street,https://weswim.club/old-street,,,,lag_map,0.625,wp,
+565,Cycling -Victoria Park,,ALL ABILITY CYCLING CLUBS,https://bikeworks.org.uk/all-ability,,,,lag_map,0.5,wc,
+566,Sport -Peckham Pulse Healthy Living Centre,SE15 5QN,10 Melon Road,,,,,lag_map,0.5,np,no_contact
+567,Sport -Potters Bar Tennis,EN6 1QL,Hertfordshire.,https://pottersbartennis.net,,,,lag_map,0.625,wp,
+568,Sport -Putney Leisure Centre,SW15 1BL,Dryburgh Road,,,,,lag_map,0.5,np,no_contact
+569,"Sport -Redbridge
+Cathall Leisure Centre
+Dolphin Swimming Club",E11 4LA,Dolphin Swimming Club,,,,,lag_map,0.5,np,no_contact
+570,Cycling -Regent’s Park,NW1 4NR,West Euston Ability Bikes,https://westeustonpartnership.co.uk,,,,lag_map,0.625,wp,
+571,"Sport -Richmond
+Special Olympics",TW1 4SX,St Marys University CollegeWaldegrave Road,,,,,lag_map,0.5,np,no_contact
+572,"Sport -Romford
+Trampoline Park
+Jump Evolution",RM3 8SB,UK,,,,,lag_map,0.5,np,no_contact
+573,Sport- Ruslip Disability multi sport club,HA4 0JE,Disability multi sport club,https://hillingdon.gov.uk/article/31489/Disability-multi-sport-club,,,,lag_map,0.625,wp,
+574,"Sport -Sidcup 
+Gymnastics Club
+ Hurstmere School",DA15 9AW,Falcon Spartak Gymnastics Club,,,,,lag_map,0.5,np,no_contact
+575,Sport -Shene Fitness Centre Richmond,SW14 8RG,including those in wheelchairs and with limited mobility.,,,,,lag_map,0.5,np,no_contact
+576,Sport -Seven Islands Leisure Centre,SE16 2TU,Lower Road,,,,,lag_map,0.5,np,no_contact
+577,"Sports - Slough 
+Multi Sports Disability Club 
+Burnham",SL1 7LY,including wheelchair users.,https://burnhamsportsandactivities.org.uk/business-directory/1570/burnham-multi-sports-disability-club-2,,,,lag_map,0.625,wp,
+578,"Sport -Slough Starfish Swimming Club
+Magnet Leisure Centre 
+Maidenhead",,self-esteem and sportmanship in a safe and caring environment.,https://starfish-swimming.org.uk,,,,lag_map,0.5,wc,
+579,Sport -Southwark Disability Football,SE1 6ER,St Georges Road,,,,,lag_map,0.5,np,no_contact
+580,"Sport- Southwark 
+Disability Sports Coach Club",SE1 6SQ,From this term the club is taking place at the new and highly accessible Castle Leisure Centre. We are very lucky to be based at this venue which also boasts an impressive swimming pool and gym which all can use at the weekend’s as part of Southwark’s free gym and swim offer.,https://disabilitysportscoach.co.uk/community-clubs,,,,lag_map,0.625,wp,
+581,Sport -Spelthorne Leisure Centre - Swimming and Disability Sports Club,TW18 1AJ,,https://spelthorne.gov.uk/disabilitysportsclub,,,,lag_map,0.5,wp,
+582,"Sport -Stanmore
+Aspire Leisure Centre",HA7 4AP,Wood Lane,https://aspireleisurecentre.org.uk,,,,lag_map,0.625,wp,
+583,Sport -Stoke Park Trust For The Disabled,,We are a sports club providing sports facilities and opportunities for all disabled people.,,,,,lag_map,0.375,nc,no_contact
+584,"Sport -Swimming Lessons
+Surrey
+Limpsfield Grange School
+Oxted",RH8 0RZ,Great Waves Swimming Academy.,https://greatwaves.co.uk/disability-swimming,,,,lag_map,0.625,wp,
+585,"Sport - Surrey
+Swimming Lessons
+Thomas More Catholic School
+ Purley",CR8 2XP,We are excited to welcome swimmers with a disability and special educational needs to Great Waves Swimming Academy.,https://greatwaves.co.uk/disability-swimming,,,,lag_map,0.625,wp,
+586,"Sport- Surrey Trampolining and Rebound Therapy 
+at the Saturn V Rebound Hall Caterham, Surrey",,We aim to be fully inclusive by catering for and encouraging members at all levels of ability from complex needs to very able.,,,,,lag_map,0.375,nc,no_contact
+587,Cycling -Sutton,SM5 1SL,Middleton Road,https://cyclingforall.org/cycling-sessions,,,,lag_map,0.625,wp,
+588,"Sport- Sutton
+Disability Sports Coach Club",SM5 1SL,attending the Club is an ideal setting to get into sport.,https://disabilitysportscoach.co.uk/community-clubs,,,,lag_map,0.625,wp,
+589,"Sport -Surrey 
+Swimming Lessons
+Dorking",RH4 2LR,We are excited to welcome swimmers with a disability and special educational needs to Great Waves Swimming Academy.,https://greatwaves.co.uk/disability-swimming,,,,lag_map,0.625,wp,
+590,"Sport -Swiss Cottage Leisure Centre
+Starfish Social & Swimming Club",NW3 3NF,Club runs disabled specific session on Tuesdays 19.00-20.00pm. They have a pool side chair and bed hoist and the pool is heated.,,,,,lag_map,0.5,np,no_contact
+591,Sport -Teddington Pools & Fitness Centre,TW11 8EZ,Vicarage Road,,,,,lag_map,0.5,np,no_contact
+592,"Sport- Tower Hamlets
+Disability Sports Coach Club",E3 4HL,the sporting hub of Tower Hamlets this strucured and fun club delivers sport suitable for everyone.,https://disabilitysportscoach.co.uk/community-clubs,,,,lag_map,0.625,wp,
+593,"Sport- We Swim. 
+Vauxhall Leisure Centre",,build confidence and become more active.,https://weswim.club,,,,lag_map,0.5,wc,
+594,"Sport -Waltham Forest Pool & Track
+PWD Swimming Group",E17 5AA,Waltham Forest Pool & Track,,,,,lag_map,0.5,np,no_contact
+595,"Sport -Wandsworth
+George Shearing Centre",SW11 2TF,Sessions cost £1; parents and carers are welcome to come along.,,,,,lag_map,0.5,np,no_contact
+596,"Sport - Wandsworth
+Youth Centre. 
+Community Club.",SW11 3RL,,https://disabilitysportscoach.co.uk/community-clubs/club-wandsworth,,,,lag_map,0.5,wp,
+597,"Sport- Westminster
+Disability Sports Coach Club",W2 1ND,Club Westminster was the 2015 winner of The Active Westminster Inclusive & Active award!,https://disabilitysportscoach.co.uk/community-clubs,,,,lag_map,0.625,wp,
+598,"Sport -Welwyn Gosling Park
+Herts Disability Sports Hub",,deliver participation opportunities for people with disabilities.,https://facebook.com/HertsDisabilitySportsHub,,,https://facebook.com/HertsDisabilitySportsHub,lag_map,0.5,wc,
+599,"Cycling -White City,
+Little Wormwood Scrubs",,meet new people and are very much a relaxed environment designed to be accessible to all. The sessions are not coached or intensive sessions simply a place to try out a different type of cycling.,https://bikeworks.org.uk/all-ability,,,,lag_map,0.5,wc,
+600,Sport -Woodfield School Cricket Club,NW9 7LY,Disability specific Cricket Club held at Woodfield School for children with moderate learning disabilities.,,,,,lag_map,0.5,np,no_contact
+601,Cycling -Woking,,the activities are both physically and mentally stimulating and above all fun for everyone involved.,https://matthewwing.wix.com/surrey-wheels-for-al,,,,lag_map,0.5,wc,
+602,"Sport -Woolwich 
+ABC Swim School",SE18 4LD,Club currently has children with physical and learning disabilities.,,,,,lag_map,0.5,np,no_contact
+603,"Sport- Woolwich
+ Trampolining
+Greenwich Bouncers Trampoline academy",,including those with special needs and/or disabilities.,,,,,lag_map,0.375,nc,no_contact
+604,"Art- Action Space
+ North, South and East London Studios",WC1N 2NP,London,https://actionspace.org,,,,lag_map,0.625,wp,
+605,Dinosaur Safari Golf -Arkley,EN5 3HW,For those with a special interest in dinosaurs.,https://dinosaursafari.co.uk,,,,lag_map,0.625,wp,
+606,Horse Riding -Barnet Elstree Penniwells RDA Group,WD6 3RG,Penniwells RDA Group,https://penniwellsrda.com,,,,lag_map,0.625,wp,
+607,"Barnet- Footprints Life Camp 
+Easter and Summer Holiday activities",N19 3HS,https://www.footprintslifecamp.co.uk,https://footprintslifecamp.co.uk,,,,lag_map,0.625,wp,
+608,Bekonscot Model Village & Railway,HP9 2PL,For those with a special interest in models and trains.,https://bekonscot.co.uk,,,,lag_map,0.625,wp,
+609,"Horse Riding -Berkshire 
+South Bucks RDA Group",SL2 4QR,by providing people with the opportunity to ride to benefit their health and well-being in the south Buckinghamshire area.,https://southbucksrda.org,,,,lag_map,0.625,wp,
+610,"Horse Riding -Bexley
+ Arrow Riding Centre",DA2 6LZ,and have tailor-made programmes progresssing up to National and Paralympic standards.,,,,,lag_map,0.5,np,no_contact
+611,"Horse Riding -Brentwood
+ Upminster RDA Group",CM14 5QH,RDA Upminster Group,https://ridinglessonsessex.co.uk,,,,lag_map,0.625,wp,
+612,"Horse Riding -Brixton 
+Ebony Horse Club",SW9 7JD,we will recommend another centre with suitable expertise and facilities. The vast majority of those with special needs or disabilities are fully integrated within our regular classes and we currently have many riders on the autistic spectrum registered with us.,https://ebonyhorseclub.org.uk/riding_ebony_horse_club,,,,lag_map,0.625,wp,
+613,"Dance- Basildon,
+Essex. 
+La Danse Fantastique",SS16 5AP,Essex,https://ladansefantastique.uk.com,,,,lag_map,0.625,wp,
+614,"Dance -Bromley 
+Magpie Dance",BR1 1HA,Magpie unlocks individual potential and ability by giving participants space to make their own choices and take ownership of what they achieve.,https://magpiedance.org.uk,,,,lag_map,0.625,wp,
+615,Paradise Wildlife Park -Broxbourne,EN10 7QA,White Stubbs Lane,https://pwpark.com,,,,lag_map,0.625,wp,
+616,"Dance -Camden 
+icandance
+Fitzjohn's Primary School",,including wheelchair users,https://icandance.org.uk,,,,lag_map,0.5,wc,
+617,"Dance -Camden
+Greenwood Dance Group
+Kentish Town Community Centre",,Free- Please call to register an interest in,,,,,lag_map,0.375,nc,no_contact
+618,"Horse Riding -Chelmsford, Essex,
+Barrow Farm",CM1 3QR,Barrow Farm RDA,https://barrowfarmrda.org.uk,,,,lag_map,0.625,wp,
+619,"Chingford
+Model Train Club",E4 7RS,London,https://theengineshed.org.uk,,,,lag_map,0.625,wp,
+620,"Drama Therapy- Croydon
+Roundabout",CR0 2XX,London,https://roundaboutdramatherapy.org.uk,,,,lag_map,0.625,wp,
+621,"Table Tennis -Croydon 
+Phab youth club
+Eldon",CR0 1DT,Croydon Phab Youth Club is an inclusive youth club for disabled and non-disabled young people.,https://croydonyouth.phab.org.uk,,,,lag_map,0.625,wp,
+622,"Music,Drama, Radio,Film at Club Soda -Croydon",CR9 1ET,Club Soda,https://clubsoda.org.uk,,,,lag_map,0.625,wp,
+623,Nightlife East London Bubble Club -Access to Nightlife for everyone,E2 0EL,London,https://bubbleclub.org/future-clubs,,,,lag_map,0.625,wp,
+624,Creative Workshop East London,E1 1DN,learn skills and collaborate with industry professionals on live productions.,https://bubbleclub.org/bub-hub-workshops,,,,lag_map,0.625,wp,
+625,"Climbing -Enfield 
+Trent Park Go Ape Adventure Activity",EN4 0DZ,Adventure-activity chain venue where groups explore the forest canopy via a treetop rope course.,https://goape.co.uk/accessibility,,,,lag_map,0.625,wp,
+626,Horse riding -Enfield,EN2 9JL,At Gillian's we have a selection of horses that are suitable for riders with mild and severe learning and physical disabilities. During the week we have regular disability classes or mini rides along our track over looking Whitewebbs valley.,https://gilliansridingschool.co.uk/disability-riding,,,,lag_map,0.625,wp,
+627,"Horse Riding -Epsom 
+Riding for the Disabled",KT19 8QW,and support and encourage our riders.,https://epsomrda.btck.co.uk,,,,lag_map,0.625,wp,
+628,Miniature Railway -Essex,CM13 3LX,Barnards Miniature Railway,https://barnardsminiaturerailway.eu/index.php,,,,lag_map,0.625,wp,
+629,Dance/Musical Theatre -Essex,SS6 7XJ,singing and musical theatre; as well as holiday workshops.,https://mushroomtheatre.co.uk,,,,lag_map,0.625,wp,
+630,"Dance- Finchley 
+RAD Ballet",N3 1NX,Inclusive Ballet School in Finchley,https://en-gb.facebook.com/westleydance,,,,lag_map,0.625,wp,
+631,"Horse Riding -Greenwich
+New Lodge Riding Centre",SE9 4RW,and learning difficulties. We try to cater for all impairments and needs.,https://newlodgerda.org.uk,,,,lag_map,0.625,wp,
+632,"Creative Arts- Greenwich
+Heart n Soul Company and Charity.",SE8 4AG,develop and share this power and talent as widely as possible.,https://heartnsoul.co.uk,,,,lag_map,0.625,wp,
+633,"Sailing -Greenwich
+The AHOY Centre",SE8 3JY,Borthwick Street,,,,,lag_map,0.5,np,no_contact
+634,"Animal Assisted Therapy & Learning    
+-Guildford Westland Farm",GU5 0TL,self-awareness and development.,https://elysianatwestland.org,,,,lag_map,0.625,wp,
+635,"Climbing -Hackney 
+The Castle Climbing Centre",N4 2HA,The Castle is run by climbers for climbers and as the premier indoor climbing centre in South East England.,https://castle-climbing.co.uk/accessibility,,,,lag_map,0.625,wp,
+636,"Therapeutic choir- Hackney 
+ Inclusive Notes",N1 5NU,A specialist choir in Hackney for children aged 6-11 with additional needs.,https://inclusivenotes.com,,,,lag_map,0.625,wp,
+637,"Martial Arts -Haringey
+Bruce Grove Youth Centre",N17 6RA,Free Martial Arts classes for disabled young people of 13 to 24 years,https://sanjuromartialarts.com/inclusion-classes,,,,lag_map,0.625,wp,
+638,Art- Haringey Hoffman Foundation Art Centre,N22 7EX,which will assist them in living a life that is more meaningful to them.,https://hoffmannfoundation.org.uk/art-centre,,,,lag_map,0.625,wp,
+639,Horse Riding -Heathrow Special Needs Centre,UB7 0EF,Middlesex,https://heathrowspecialneedscentre.org/RDAhorse,,,,lag_map,0.625,wp,
+640,Royal Air Force Museum -Hendon,NW9 5LL,London,https://rafmuseum.org.uk/london/plan-your-day/accessibility.aspx,,,,lag_map,0.625,wp,
+641,"Lyric Hammersmith- Key club 
+Creative Arts and Social club",W6 0QL,London,https://lyric.co.uk/classes/key-club,,,,lag_map,0.625,wp,
+642,"Drama Therapy- Islington
+Roundabout",N7 6LA,London,https://roundaboutdramatherapy.org.uk,,,,lag_map,0.625,wp,
+643,MahaDevi Yoga -Islington,N7 8EQ,London,https://mahadevicentre.com/special-needs,,,,lag_map,0.625,wp,
+644,Model Railway Club -Islington,N1 9DA,The Model Railway Club,https://themodelrailwayclub.org,,,,lag_map,0.625,wp,
+645,Horse Riding -Kentish Town City Farm,NW5 4BN,friendly and approved by both the British Horse Society and the Riding for the Disabled Association. We have three horses and make full use of our floodlit outdoor arena.,https://ktcityfarm.org.ukdescription:,,,,lag_map,0.625,wp,
+646,"Horse Riding -Kensington and Chelsea
+Wormwood Scrubs Pony Centre",,London,https://wormwoodscrubsponycentre.org/RIDING-FOR-THE-DISABLED.html,,,,lag_map,0.5,wc,
+647,Horse Riding -Kingston RDA Group,KT2 7RG,Kingston RDA Group,https://kingstonridingcentre.com,,,,lag_map,0.625,wp,
+648,"Horse Riding -Kingston
+Barnfield Riding for the Disabled",KT2 5LL,use the horses and facilities provided by Barnfield.,,,,,lag_map,0.5,np,no_contact
+649,"Horse Riding -Lee Valley Riding Centre
+RDA Group",E10 7QL,71 Lea Bridge Road,https://visitleevalley.org.uk/go/horseriding,,,,lag_map,0.625,wp,
+650,Special Interest Clubs- Maidenhead The Autism Group,SL6 1DX,Braywick Road,https://theautismgroup.org.uk/clubs,,,,lag_map,0.625,wp,
+651,Special Interest Clubs- Maidenhead The Autism Group,SL6 6QR,,https://theautismgroup.org.uk/clubs,,,,lag_map,0.5,wp,
+652,Special Interest Clubs- Maidenhead The Autism Group,SL6 7BE,4 Cordwallis Street,https://theautismgroup.org.uk/clubs,,,,lag_map,0.625,wp,
+653,"Horse Riding -Merton
+Deen City Farm",SW19 2RR,and offer RDA lessons.,https://deencityfarm.co.uk/portfolio/riding-school,,,,lag_map,0.625,wp,
+654,"Karate therapy -Merton
+by OT Play",SW20 8BA,karate for sensory processing difficulties are karate to improve coordination skills.,https://otplay.co.uk,,,,lag_map,0.625,wp,
+655,"Equine Therapy- Morden
+Time to shine Kids",SM4 4NL,London,https://timetoshinekids.org,,,,lag_map,0.625,wp,
+656,"Horse Riding -Newham
+Docklands Equestrian Centre",E6 6JF,Docklands Equestrian Centre is a member group of the Riding for the Disabled Association (RDA) and we have RDA qualified staff.,,,,,lag_map,0.5,np,no_contact
+657,Dinosaur Escape Northolt,UB5 6QZ,For those with a special interest in dinosaurs.,https://dinosaurescape.co.uk,,,,lag_map,0.625,wp,
+658,Shintaido Class - Reading,,Autism-friendly Shintaido class in Reading.,,,,,lag_map,0.375,nc,no_contact
+659,Miniature Railway -Reading,RG30 3UE,Amners Farm Road,,,,,lag_map,0.5,np,no_contact
+660,"Horse Riding -Redbridge 
+Aldersbrook & Wanstead Group (Rda)",E12 5HW,Aldersbrook & Wanstead Group (Rda),,,,,lag_map,0.5,np,no_contact
+661,"Horse Riding -Redbridge
+Chigwell Riding Trust For Special Needs",IG7 6DP,Chigwell Riding Trust was the first riding centre for people with special needs in the world and has been established in Chigwell for over fifty years. Riding instruction is given to people of all ages and abilities. The riding centre has approximately 160 riders each week.,https://chigride.org.uk/index.html,,,,lag_map,0.625,wp,
+662,"Horse Riding -Richmond upon Thames
+Hampton Court Road",KT8 9BW,Hampton Court Road,,,,,lag_map,0.5,np,no_contact
+663,Knots Arts drama -Richmond,SW14 8AT,Knots Arts drama sessions run in East Sheen and are an exciting place for children aged 4 – 16 years old with social communication difficulties to come and make new friends whilst having fun.,https://knotsarts.com/drama-sessions,,,,lag_map,0.625,wp,
+664,"Horse Riding -Richmond
+Park Lane Stables",TW12 3QD,Park Lane Stables,https://parklanestables.co.uk/riding-for-the-disabed,,,,lag_map,0.625,wp,
+665,Horse Riding -Ruislip Park Stables,HA5 2ND,Pinner,,,,,lag_map,0.5,np,no_contact
+666,"Sailing -Shepperton -
+Phab Sailing Club",TW17 0NF,Littleton Lane,https://phab.org.uk,,,,lag_map,0.625,wp,
+667,"Drama Classes- Slough
+Friendly Bombs Theatre Company
+Burnham",SL1 7HX,The aim of Friendly Bombs is to provide local learning disabled adults with a true sense of drama and theatre. Phone first for details.,,,,,lag_map,0.5,np,no_contact
+668,"Dance/Arts- Southwark
+Brockwell Lido Whippersnappers",SE24 0PA,Whippersnappers: inclusive fun,,,,,lag_map,0.5,np,no_contact
+669,"Dance/Drama -Southwark 
+Dulwich Whippersnappers",SE21 7BQ,London,,,,,lag_map,0.5,np,no_contact
+670,"Drama Classes- Sutton 
+Orange Frog Theatre Company",SM5 2JF,both of whom have a passion for the performing arts and making it accessible to all..,https://orangefrogtheatrecompany.co.uk,,,,lag_map,0.625,wp,
+671,"Horse Riding -Sutton 
+The Diamond Centre For Disabled Riders",SM5 4DT,carriage drive or vault at the level of their ability to benefit their health and well being.,,,,,lag_map,0.5,np,no_contact
+672,Sutton- Saraswati Yoga Studio,SM1 2SE,122 Robin Hood Lane,https://theyogastudio.org.uk/Childrens%20Classes.html,,,,lag_map,0.625,wp,
+673,"Horse Riding -Surrey
+Horsley and Bookham RDA Group",KT23 3PS,You can email our group secretary Gemma at horsleyandbookhamrda@hotmail.co.uk or call 01372 458949 after 6pm please.,https://horsleyandbookhamrda.co.uk,,,,lag_map,0.625,wp,
+674,"Equine Therapy- Surrey
+ Time to shine Kids",KT24 6EA,London,https://timetoshinekids.org,,,,lag_map,0.625,wp,
+675,"Horse Riding-Surrey
+Leatherhead",KT21 1PP,leatherheadrda1@hotmail.com,https://leatherheadrda.co.uk,,,,lag_map,0.625,wp,
+676,Surrey Outdoor Learning & Development,RH5 6DQ,Headley Lane,https://surreyoutdoorlearning.uk,,,,lag_map,0.625,wp,
+677,Miniature Railway -Surrey,,Malden and District Society of Model Engineers Ltd. is located in Thames Ditton Surrey. Our miniature railway is known as the Thames Ditton Miniature Railway. The ground level railway is for the large scale trains. The elevated railway is for the smaller scale trains. We hope you will be able to visit us during the year and enjoy the atmosphere of the railway. We have been running passenger trains on the miniature railway for for over 66 years.,https://malden-dsme.co.uk/public/index.asp,,,,lag_map,0.5,wc,
+678,Woodlarks Camp Site- Surrey,GU10 3RN,and leave often having exceeded their own expectations.,https://woodlarks.org.uk/what-we-do,,,,lag_map,0.625,wp,
+679,Assistive music technology -Tower Hamlets,E2 7HP,We have been pioneering the use of assistive music technology for over 20 years. This enables more people to make music.,https://drakemusic.org,,,,lag_map,0.625,wp,
+680,"Horse Riding -Tandridge Oxted
+Godstone Group RDA",RH8 9NE,Barrow Green Road,,,,,lag_map,0.5,np,no_contact
+681,"Horse Riding -Thurrock
+ Sugarloaf RDA",RM15 6RT,and physical health.,,,,,lag_map,0.5,np,no_contact
+682,"The Adult Autistic Choir-
+Tower Hamlets",,Choirmaster CEO,https://theautisticadultchoir.com,,,,lag_map,0.5,wc,
+683,"Horse Riding -Vauxhall 
+City Farm Group",SE11 5HS,Postcode:,https://vauxhallcityfarm.org/riding,,,,lag_map,0.625,wp,
+684,Dance/Drama-  Wandsworth,SW11 3HP,we're with you all the way.,https://bakedbeancompany.com,,,,lag_map,0.625,wp,
+685,Miniature Railway -Ware,SG12 9RP,we are open to the public every weekend for complete family enjoyment.,,,,,lag_map,0.5,np,no_contact
+686,"Watford- Herts Inclusive Theatre
+Drama Workshops",WD18 9QD,Chaffinch Lane,https://hit-theatre.org.uk,,,,lag_map,0.625,wp,
+687,"Horse Riding -Welwyn 
+Digswell Place RDA Group",AL8 7SU,Digswell Place RDA Group,https://digswellplacerda.org.uk,,,,lag_map,0.625,wp,
+688,Wembley- Partyman World Of Play,HA0 3HG,Partyman World of Play are proud to offer complimentary morning and evening sessions dedicated to children & young adults with special needs where we close the entire venue just for you.,https://partymanworld.co.uk/location/oxford/admissions/sen,,,,lag_map,0.625,wp,
+689,"Horse Riding - Westminster
+Royal Mews 
+Riding For The Disabled",SW7 1SE,Alternative Name	RDA Royal Mews Group,,,,,lag_map,0.5,np,no_contact
+690,Live Music Now -City of Westminster,,social and personal development in areas including:,https://livemusicnow.org.uk/children_young_people_and_sen,,,,lag_map,0.5,wc,
+691,Miniature Railway -Wokingham,,our railway runs for nearly half a mile through a woodland setting. Why not come down and have a ride.,https://pinewoodrailway.co.uk,,,,lag_map,0.5,wc,
+692,Aldenham Country Park SEN Playground and Camping,WD6 3BA,schools and other organisations to visit.,https://aldenhamcountrypark.co.uk/welcome2,,,,lag_map,0.625,wp,
+693,The Heathway Centre -Dagenham,RM10 7SJ,,https://lbbd.gov.uk/the-heathway-centre,,,,lag_map,0.5,wp,
+694,Stubbers Essex Adventure Centre,RM14 2TY,we have years of experience working and supporting groups with special needs.,https://stubbers.co.uk/schoolsandgroups/index.php/schools-and-groups/special-needs,,,,lag_map,0.625,wp,
+695,"ELHAP
+-Woodford Essex",IG8 8NA,London,https://elhap.org.uk,,,,lag_map,0.625,wp,
+696,Camp Jojo - Essex /Mersea,,and make new friends who understand their situation.,https://campjojo.org,,,https://facebook.com/campjojo2019/photos,lag_map,0.5,wc,
+697,"The Log Cabin -Ealing
+After School Club/Holiday Playschemes",W5 4UA,259 Northfield Avenue,https://logcabin.org.uk,,,,lag_map,0.625,wp,
+698,Guildford Challengers Playcentre,GU1 1TU,water and sand play.,https://disability-challengers.org/guildfordplaycentre,,,,lag_map,0.625,wp,
+699,Hackney Kids Adventure Playground,,Children must be registered to attend.,https://kids.org.uk/hackney-adventure-playground1,,,,lag_map,0.5,wc,
+700,Islington -Hayward Adventure Playground N7 9PL,N7 9PL,London,https://kids.org.uk/hayward-adventure-playground1,,,,lag_map,0.625,wp,
+701,Islington -Timbuktu Adventure Playground,N19 4EJ,discover frogs in the new pond with frogs and go on the thrilling drop slide.,https://islingtonplay.org.uk/adventure-play/timbuktu,,,,lag_map,0.625,wp,
+702,Islington -Three Corners Adventure Playground,EC1R 0HU,http://www.awesomecic.co.uk/adventure-play/three-corners-adventure-playground/   (http://www.awesomecic.co.uk/adventure-play/three-corners-adventure-playground/  ),https://awesomecic.co.uk/adventure-play/three-corners-adventure-playground,,,,lag_map,0.625,wp,
+703,LIttle Wormwood Scrubs Adventure Playground,W10 5LL,London,https://epiccic.org.uk/lws-adventure-playground,,,,lag_map,0.625,wp,
+704,Luton- Hart Hill Adventure Playground,LU2 0FN,Falk’s Hill (off Tower Road),,,,,lag_map,0.5,np,no_contact
+705,Reading- Camp Mohawk,RG10 8PU,socialise and learn in a secure and caring environment.,https://campmohawk.org.uk,,,,lag_map,0.625,wp,
+706,"Richmond-
+Marble Hill Adventure Playground",TW1 2NL,Richmond Road,,,,,lag_map,0.5,np,no_contact
+707,Somerford Grove Adventure Playground,,Haringey Autism holds a number of Saturday morning sessions at Somerford Grove Adventure Playground in Tottenham spring to autumn.,https://haringeyautism.port5.com,,,,lag_map,0.5,wc,
+708,"Southend  S.N.A.P.S
+ (special needs activity play session)",,info@kidskingdom-southend.co.uk,https://kidskingdom-southend.co.uk,,,,lag_map,0.5,wc,
+709,Thames Valley Adventure Playground,SL6 0PR,Taplow,https://tvap.co.uk,,,,lag_map,0.625,wp,
+710,Wandsworth -The Lady Allen Adventure Playground,,http://www.kids.org.uk/Event/lady-allen-adventure-playground-1,https://kids.org.uk/Event/lady-allen-adventure-playground-1,,,,lag_map,0.5,wc,
+711,Disability Law Service,,,,,,,lag_map,0.25,,no_contact
+712,Disability Rights UK,,,,,,,lag_map,0.25,,no_contact
+713,N16 SEN Hackney Parent Support Group,,,,,,,lag_map,0.25,,no_contact
+714,London -Jenny Berman AutismConsultancy,,,,,,,lag_map,0.25,,no_contact
+715,"Oxted Surrey - Social actvities for 
+Autistic over 18´s",,,,,,,lag_map,0.25,,no_contact
+716,ADHD Richmond,,,,,,,lag_map,0.25,,no_contact
+717,"Wandsworth -Sen Talk
+Sensory Integration drop in sessions",,,https://sentalk.org,,,,lag_map,0.375,,
+718,"Wokingham REACH
+Parent Carer Forum",,,https://reachwokingham.com,,,,lag_map,0.375,,
+719,Sport -Alexandra Palace Football Group,,,,,,,lag_map,0.25,,no_contact
+720,Pinner - Arts for life,,,https://artsforlifeproject.org,,,,lag_map,0.375,,

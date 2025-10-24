@@ -1,0 +1,35 @@
+{
+  "center_name": "Ealing Community Cafe",
+  "website_url": "https://londonautismgroupcharity.org/community-cafes",
+  "description_short": "The Ealing Community Cafe provides a safe, inclusive, and free space for the Autistic community and carers to meet, socialize, and connect. It offers refreshments and an optional music therapy session.",
+  "category": "Community & Social",
+  "subcategory": "Local Groups",
+  "age_range": "All ages",
+  "conditions_supported": [
+    "Autism/ASC",
+    "Learning Disabilities",
+    "Anxiety"
+  ],
+  "specific_services": [
+    "Community Cafe",
+    "Social gatherings",
+    "Peer support",
+    "Music Therapy",
+    "Refreshments"
+  ],
+  "organization_type": "Charity/Non-profit",
+  "contact_info": {
+    "phone": "Not specified",
+    "email": "Not specified",
+    "address": "St Andrews Church, Mount Park Road, London W5 2RS"
+  },
+  "address_components": {
+    "postal_code": "W5 2RS",
+    "postal_town": "London",
+    "admin_area_level_1": "England",
+    "admin_area_level_2": "Ealing"
+  },
+  "additional_notes": "No official diagnosis is necessary to attend. The cafe is completely free to attend and offers free tea, coffee, biscuits, and snacks. It is held on the first Saturday of every month at 1:30pm-3:30pm.",
+  "data_confidence": "High",
+  "reasoning": "The Ealing Community Cafe is described as a safe space for the Autistic community and carers to meet up, socialize, and connect, offering peer support and social interaction, which aligns with the 'Community & Social' category and 'Local Groups' subcategory."
+}
