@@ -307,18 +307,15 @@ python run.py extract \
 
 ### 4. Categorization Engine
 
-**File**: `src/categorize_resources.py`
+**Note**: Categorization is now built into the main enrichment pipeline. Use the `--categorize` flag with the enrich command.
 
 #### Purpose
 Fast keyword-based categorization of resources into 15 predefined categories. Processes 1000+ resources per second.
 
 #### Usage
 ```bash
-# Via CLI
-python run.py categorize [options]
-
-# Direct
-python src/categorize_resources.py [options]
+# Via CLI (built into enrich command)
+python run.py enrich --categorize [options]
 ```
 
 #### Input File Requirements
@@ -399,19 +396,17 @@ The system assigns one of these 15 categories:
 #### Examples
 
 ```bash
-# Categorize enriched data
-python run.py categorize \
-  --input data/output/enriched_resources.xlsx \
-  --output data/output/categorized_resources.xlsx
+# Enrich and categorize in one step
+python run.py enrich \
+  --input data/input/resources.csv \
+  --categorize \
+  --workers 5
 
-# Re-categorize with new logic (overwrite existing)
-python run.py categorize \
+# Re-categorize existing data (overwrite existing)
+python run.py enrich \
   --input data/output/old_categories.xlsx \
-  --overwrite
-
-# Auto-named output
-python run.py categorize --input data/output/enriched.xlsx
-# Creates: data/output/enriched_categorized.xlsx
+  --categorize \
+  --workers 5
 ```
 
 #### Categorization Logic
@@ -848,10 +843,13 @@ python run.py enrich \
 
 **Output**: `data/output/enriched_resources_parallel_20231021_153045.xlsx`
 
-### Step 3: Categorize
+### Step 3: Categorize (Optional - can be done in Step 2)
 ```bash
-python run.py categorize \
-  --input data/output/enriched_resources_parallel_20231021_153045.xlsx
+# If not done in Step 2, run categorization separately
+python run.py enrich \
+  --input data/output/enriched_resources_parallel_20231021_153045.xlsx \
+  --categorize \
+  --workers 5
 ```
 
 **Output**: `data/output/enriched_resources_parallel_20231021_153045_categorized.xlsx`

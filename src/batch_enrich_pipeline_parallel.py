@@ -20,7 +20,9 @@ from typing import Dict, List, Optional, Tuple
 # Load environment variables from .env file
 try:
     from dotenv import load_dotenv
-    env_path = Path(__file__).parent / '.env'
+    # Load .env from project root (parent of src directory)
+    project_root = Path(__file__).parent.parent
+    env_path = project_root / '.env'
     load_dotenv(dotenv_path=env_path)
 except ImportError:
     pass  # python-dotenv not installed, will use system env vars
@@ -78,8 +80,10 @@ COLUMN_MAPPING = {
     "is_neurodivergent_related": "is_neurodivergent_related",
     "neurodivergent_relevance_score": "neurodivergent_relevance_score",
     "neurodivergent_focus": "neurodivergent_focus",
-    # Resource categorization
-    "resource_category": "resource_category",
+    # Resource categorization (from LLM)
+    "category": "category",
+    "subcategory": "subcategory",
+    "resource_category": "resource_category",  # Deprecated - use 'category' instead
 }
 
 # Thread-safe locks
@@ -181,7 +185,7 @@ def call_web_llm_extract(
     # Build command
     cmd = [
         sys.executable,
-        "web_llm_extract.py",
+        str(Path(__file__).parent / "web_llm_extract.py"),
         "--center-name", center_name,
         "--url", website_url,
         "--backend", backend,
@@ -204,7 +208,7 @@ def call_web_llm_extract(
         cmd.extend(["--gemini-key", kwargs["gemini_key"]])
     
     try:
-        # Pass current environment to subprocess (includes .env vars)
+        # Pass current environment to subprocess
         env = os.environ.copy()
         
         result = subprocess.run(
@@ -387,84 +391,86 @@ def is_valid_place_id(place_id: str) -> bool:
 
 def categorize_resource(row: Dict[str, str], backend: str = "gemini") -> str:
     """
-    Categorize a resource based on its description and other fields.
-    Returns a category from RESOURCE_CATEGORIES.
+    Categorize a resource using LLM-based intelligent analysis.
+    Returns a category from the refined LLM categories.
     """
     name = row.get("gmaps_name", "")
     description = row.get("description_short", "")
-    services = row.get("specific_services", "")
-    org_type = row.get("organization_type", "")
+    website = row.get("gmaps_website", "")
     
-    # If no description, return Unknown
+    # If no description or website, return Unknown
     if not description or description.strip().lower() in ["", "nan", "none", "null", "n/a", "not available"]:
-        return "Unknown Category"
+        return "Unknown/Uncategorized"
     
-    # Use simple keyword-based categorization for speed
-    name_lower = name.lower()
-    desc_lower = description.lower()
-    services_lower = (services or "").lower()
-    combined = f"{name_lower} {desc_lower} {services_lower}"
+    # If we have a website, use LLM-based categorization
+    if website and website.strip():
+        try:
+            # Call web_llm_extract.py for intelligent categorization
+            result = call_web_llm_extract(
+                center_name=name,
+                website_url=website,
+                backend=backend,
+                model=None,  # Use default model
+                enhance_with_websearch=False,  # Skip web search for speed
+                cache_dir=".cache/categorization",  # Separate cache for categorization
+                use_rate_limit=True
+            )
+            
+            if result and "data" in result and "error" not in result["data"]:
+                category = result["data"].get("category", "Unknown/Uncategorized")
+                # Map LLM categories to our categories if needed
+                return map_llm_category_to_our_category(category)
+            else:
+                # LLM failed, return Unknown/Uncategorized
+                return "Unknown/Uncategorized"
+                
+        except Exception:
+            # LLM failed, return Unknown/Uncategorized
+            return "Unknown/Uncategorized"
+    else:
+        # No website, return Unknown/Uncategorized
+        return "Unknown/Uncategorized"
+
+
+def map_llm_category_to_our_category(llm_category: str) -> str:
+    """
+    Map LLM categories to our simplified 9-category system.
+    """
+    # Direct mapping for exact matches
+    if llm_category in [
+        "Assessment & Diagnosis",
+        "Crisis & Emergency", 
+        "Education & Learning",
+        "Employment",
+        "Housing & Benefits",
+        "Transport & Accessibility",
+        "Community & Social",
+        "Recreation & Activities",
+        "Unknown/Uncategorized"
+    ]:
+        return llm_category
     
-    # National Autistic Society branches
-    if "national autistic society" in combined and ("branch" in combined or "nas " in combined):
-        return "National Autistic Society Branches"
+    # Legacy mapping for old categories
+    legacy_mapping = {
+        "Assessment & Diagnosis": "Assessment & Diagnosis",
+        "Crisis & Emergency": "Crisis & Emergency", 
+        "Education Support": "Education & Learning",
+        "Employment Support": "Employment",
+        "Employment and Skills Services": "Employment",
+        "Housing Support": "Housing & Benefits",
+        "Benefits Support": "Housing & Benefits",
+        "Transport Support": "Transport & Accessibility",
+        "Community Support": "Community & Social",
+        "Local Support Services and Groups": "Community & Social",
+        "National Autistic Society Branches": "Community & Social",
+        "Autism Friendly Entertainment": "Recreation & Activities",
+        "Autism Friendly Sports Activities": "Recreation & Activities",
+        "Special Needs Play Centres": "Recreation & Activities",
+        "Special Interests and Hobbies": "Recreation & Activities",
+        "Unknown Category": "Unknown/Uncategorized"
+    }
     
-    # Assessment & Diagnosis
-    if any(keyword in combined for keyword in ["assessment", "diagnosis", "diagnostic", "evaluation", "camhs"]):
-        return "Assessment & Diagnosis"
-    
-    # Crisis & Emergency  
-    if any(keyword in combined for keyword in ["crisis", "emergency", "helpline", "24/7", "urgent"]):
-        return "Crisis & Emergency"
-    
-    # Employment
-    if any(keyword in combined for keyword in ["employment", "job", "work", "career", "skills training", "employability"]):
-        if "skills" in combined:
-            return "Employment and Skills Services"
-        return "Employment Support"
-    
-    # Sports
-    if any(keyword in combined for keyword in ["sport", "swimming", "football", "cycling", "gymnastics", "fitness", "physical activity"]):
-        return "Autism Friendly Sports Activities"
-    
-    # Entertainment & Arts
-    if any(keyword in combined for keyword in ["theatre", "cinema", "music", "art", "drama", "dance", "entertainment", "museum", "gallery"]):
-        return "Autism Friendly Entertainment"
-    
-    # Special interests & hobbies
-    if any(keyword in combined for keyword in ["hobby", "hobbies", "club", "railway", "model", "crafts"]):
-        return "Special Interests and Hobbies"
-    
-    # Play centres
-    if any(keyword in combined for keyword in ["play centre", "playscheme", "playground", "play group", "playgroup"]):
-        return "Special Needs Play Centres"
-    
-    # Education
-    if any(keyword in combined for keyword in ["school", "education", "learning", "teaching", "tutoring", "sen support"]):
-        return "Education Support"
-    
-    # Housing
-    if any(keyword in combined for keyword in ["housing", "accommodation", "residential", "living"]):
-        return "Housing Support"
-    
-    # Benefits
-    if any(keyword in combined for keyword in ["benefit", "welfare", "dla", "pip", "financial support"]):
-        return "Benefits Support"
-    
-    # Transport
-    if any(keyword in combined for keyword in ["transport", "travel", "mobility", "accessible transport"]):
-        return "Transport Support"
-    
-    # Local support groups (parent groups, support groups, etc.)
-    if any(keyword in combined for keyword in ["parent", "carer", "support group", "meetup", "coffee morning", "forum"]):
-        return "Local Support Services and Groups"
-    
-    # Community support (general)
-    if any(keyword in combined for keyword in ["community", "support", "advice", "guidance", "help"]):
-        return "Community Support"
-    
-    # Default
-    return "Unknown Category"
+    return legacy_mapping.get(llm_category, "Unknown/Uncategorized")
 
 
 def populate_missing_urls(rows: List[Dict[str, str]], use_api: bool = True) -> Tuple[int, int]:

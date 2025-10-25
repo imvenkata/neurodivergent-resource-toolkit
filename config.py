@@ -1,0 +1,194 @@
+#!/usr/bin/env python3
+"""
+Configuration file for the Neurodivergent Resource Enrichment Toolkit.
+All non-secret settings are defined here for easy management.
+"""
+
+from pathlib import Path
+from typing import Dict, Any
+
+# Base paths
+PROJECT_ROOT = Path(__file__).parent
+DATA_DIR = PROJECT_ROOT / "data"
+CACHE_DIR = PROJECT_ROOT / ".cache"
+OUTPUT_DIR = DATA_DIR / "output"
+
+# Default input/output files
+DEFAULT_INPUT = DATA_DIR / "input" / "enriched_resources.csv"
+DEFAULT_OUTPUT = OUTPUT_DIR / "enriched_resources_complete.xlsx"
+
+# LLM Configuration
+LLM_CONFIG = {
+    "backend": "gemini",  # Options: gemini, openai, ollama
+    "model": "gemini-1.5-flash",  # Model name (None for default)
+    "enhance_with_websearch": True,
+    "cache_dir": ".cache/llm_extractions",
+    "rate_limit": 15,  # requests per minute
+}
+
+# Processing Configuration
+PROCESSING_CONFIG = {
+    "workers": 10,  # Number of parallel workers
+    "max_rows": None,  # None for all rows, or specify number
+    "start_row": 0,  # Starting row index
+    "fields_to_check": "description_short,age_range,organization_type,specific_services",
+    "skip_no_website": True,
+    "populate_urls": True,
+    "categorize": False,
+}
+
+# Ollama Configuration (for local LLM)
+OLLAMA_CONFIG = {
+    "url": "http://localhost:11434",
+    "auth": None,  # Set in .env if needed
+}
+
+# File Processing Configuration
+FILE_CONFIG = {
+    "input_encoding": "utf-8",  # Fallback encodings: utf-8-sig, latin-1, cp1252
+    "output_format": "xlsx",  # Options: xlsx, csv
+    "highlight_changes": True,
+}
+
+# Resource Categories (Simplified 9-Category System)
+RESOURCE_CATEGORIES = [
+    "Assessment & Diagnosis",
+    "Crisis & Emergency", 
+    "Education & Learning",
+    "Employment",
+    "Housing & Benefits",
+    "Transport & Accessibility",
+    "Community & Social",
+    "Recreation & Activities",
+    "Unknown/Uncategorized",
+]
+
+# Category Descriptions for LLM Understanding
+CATEGORY_DESCRIPTIONS = {
+    "Assessment & Diagnosis": "Diagnostic Centers, Assessment Clinics, Psychoeducational Evaluation",
+    "Crisis & Emergency": "Crisis Helplines, Emergency Intervention, Mental Health Crisis Teams",
+    "Education & Learning": "SEN Schools, Mainstream School Resources, Training Programs, Skills Development, Tutoring Services",
+    "Employment": "Job Coaching, Workplace Accommodations, Vocational Training, Supported Employment",
+    "Housing & Benefits": "Housing Assistance, Benefits Advice, Independent Living Programs, Welfare Navigation",
+    "Transport & Accessibility": "Accessible Transport, Travel Training, Mobility Services, Transport Subsidies",
+    "Community & Social": "Local Groups, National Organization Branches, Peer Networks, Social Meetups, Parent/Carer Groups",
+    "Recreation & Activities": "Sports & Fitness, Arts & Entertainment, Play Centers, Hobby Clubs, Social Activities",
+    "Unknown/Uncategorized": "Use only when the description doesn't clearly fit any category"
+}
+
+# Preset configurations for common use cases
+PRESETS = {
+    "quick_test": {
+        "max_rows": 25,
+        "workers": 10,
+        "rate_limit": 10,
+        "enhance_with_websearch": True,
+    },
+    "production": {
+        "workers": 20,
+        "rate_limit": 30,
+        "enhance_with_websearch": True,
+    },
+    "conservative": {
+        "workers": 3,
+        "rate_limit": 10,
+        "enhance_with_websearch": False,
+    },
+    "local_ollama": {
+        "backend": "ollama",
+        "model": "llama3.1:8b-instruct",
+        "workers": 5,
+        "rate_limit": 0,  # No rate limit for local
+    }
+}
+
+def get_config(preset: str = None) -> Dict[str, Any]:
+    """
+    Get configuration with optional preset override.
+    
+    Args:
+        preset: Name of preset to apply (quick_test, production, conservative, local_ollama)
+    
+    Returns:
+        Combined configuration dictionary
+    """
+    config = {
+        "llm": LLM_CONFIG.copy(),
+        "processing": PROCESSING_CONFIG.copy(),
+        "ollama": OLLAMA_CONFIG.copy(),
+        "file": FILE_CONFIG.copy(),
+    }
+    
+    if preset and preset in PRESETS:
+        preset_config = PRESETS[preset]
+        
+        # Apply preset overrides
+        for key, value in preset_config.items():
+            if key in config["llm"]:
+                config["llm"][key] = value
+            elif key in config["processing"]:
+                config["processing"][key] = value
+            elif key in config["ollama"]:
+                config["ollama"][key] = value
+    
+    return config
+
+def get_command_args(config: Dict[str, Any], input_file: str = None, output_file: str = None) -> list:
+    """
+    Generate command line arguments from configuration.
+    
+    Args:
+        config: Configuration dictionary
+        input_file: Override input file path
+        output_file: Override output file path
+    
+    Returns:
+        List of command line arguments
+    """
+    args = []
+    
+    # Input/Output
+    if input_file:
+        args.extend(["--input", str(input_file)])
+    if output_file:
+        args.extend(["--output", str(output_file)])
+    
+    # LLM settings
+    llm = config["llm"]
+    if llm["backend"]:
+        args.extend(["--backend", llm["backend"]])
+    if llm["model"]:
+        args.extend(["--model", llm["model"]])
+    if llm["enhance_with_websearch"]:
+        args.append("--enhance-with-websearch")
+    if llm["cache_dir"]:
+        args.extend(["--cache-dir", llm["cache_dir"]])
+    if llm["rate_limit"]:
+        args.extend(["--rate-limit", str(llm["rate_limit"])])
+    
+    # Processing settings
+    proc = config["processing"]
+    if proc["max_rows"]:
+        args.extend(["--max-rows", str(proc["max_rows"])])
+    if proc["start_row"]:
+        args.extend(["--start-row", str(proc["start_row"])])
+    if proc["fields_to_check"]:
+        args.extend(["--fields-to-check", proc["fields_to_check"]])
+    if proc["skip_no_website"]:
+        args.append("--skip-no-website")
+    if proc["workers"]:
+        args.extend(["--workers", str(proc["workers"])])
+    if proc["populate_urls"]:
+        args.append("--populate-urls")
+    if proc["categorize"]:
+        args.append("--categorize")
+    
+    # Ollama settings (only if using Ollama backend)
+    if llm["backend"] == "ollama":
+        ollama = config["ollama"]
+        if ollama["url"]:
+            args.extend(["--ollama-url", ollama["url"]])
+        if ollama["auth"]:
+            args.extend(["--ollama-auth", ollama["auth"]])
+    
+    return args
