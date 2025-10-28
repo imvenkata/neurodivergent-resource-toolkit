@@ -1,412 +1,571 @@
-# Data Scraper
+# Data Scraper - Neurodivergent Resource Enrichment Toolkit
 
-Tools for scraping and enriching neurodivergent service center information.
+A comprehensive toolkit for enriching, categorizing, and managing neurodivergent support resources using AI-powered data extraction and categorization.
 
-## Table of Contents
+## 🚀 Quick Start
 
-1. [web_llm_extract.py](#web_llm_extractpy) - Single service center extraction
-2. [batch_enrich_pipeline.py](#batch_enrich_pipelinepy) - Batch processing pipeline
-
----
-
-## web_llm_extract.py
-
-Extract structured information from service center websites using LLMs.
-
-### Features
-
-- **Website Crawling**: Automatically crawls multiple pages from a website
-- **LLM Extraction**: Uses Ollama, OpenAI, or Gemini to extract structured data
-- **Smart Categorization**: Categorizes services into 9 predefined categories
-- **Web Search Enhancement**: Optionally searches the web for missing contact information from reliable sources
-
-### Usage
-
-Basic usage:
 ```bash
-python web_llm_extract.py \
-  --center-name "Example Center" \
+# 1. Install dependencies
+uv sync
+
+# 2. Set up environment variables
+cp .env.example .env
+# Edit .env and add your API keys
+
+# 3. Run the enrichment pipeline
+python run.py enrich --workers 5 --rate-limit 15
+
+# 4. Categorize the results
+python run.py categorize --input data/output/enriched_resources_*.xlsx
+```
+
+## 📁 Project Structure
+
+```
+data_scraper/
+├── src/                          # Source code
+│   ├── batch_enrich_pipeline_parallel.py  # Main enrichment pipeline (FAST)
+│   ├── web_llm_extract.py                 # Single website extractor
+│   ├── populate_gmaps_url.py              # URL population
+│   ├── filter_neurodivergent.py           # Relevance filtering
+│   └── utils/                    # Utility scripts
+│       ├── enrich_with_google.py
+│       ├── llm_enrich_description.py
+│       ├── merge_services.py
+│       └── scraper.py
+├── data/                         # Data files
+│   ├── input/                    # Input data
+│   │   └── to_be_normalised/     # Raw input files
+│   ├── output/                   # Generated output files
+│   └── archive/                  # Archived data
+├── tests/                        # Test files
+├── docs/                         # Documentation
+├── config/                       # Configuration scripts
+├── .cache/                       # LLM response cache
+├── run.py                        # Main CLI entry point
+└── pyproject.toml                # Project dependencies
+
+```
+
+## 🛠️ Available Commands
+
+### 1. **Enrich Resources** (Recommended - Fast & Parallel)
+
+#### **Complete Command with All Arguments:**
+```bash
+python run.py enrich \
+  --input "data/input/enriched_resources.csv" \
+  --output "data/output/enriched_resources_complete.xlsx" \
+  --backend "gemini" \
+  --model "gemini-1.5-flash" \
+  --enhance-with-websearch \
+  --max-rows 10 \
+  --start-row 0 \
+  --cache-dir ".cache/llm_extractions" \
+  --fields-to-check "description_short,age_range,organization_type,specific_services" \
+  --skip-no-website \
+  --workers 10 \
+  --rate-limit 15 \
+  --populate-urls \
+  --categorize \
+  --ollama-url "http://localhost:11434" \
+  --ollama-auth "Bearer your-token" \
+  --openai-key "sk-your-openai-key" \
+  --gemini-key "your-gemini-key"
+```
+
+#### **Common Use Cases:**
+
+**Basic Enrichment (Default Settings):**
+```bash
+python run.py enrich --input data/input/resources.csv
+```
+
+**High-Performance Parallel Processing:**
+```bash
+python run.py enrich \
+  --input data/input/resources.csv \
+  --workers 20 \
+  --rate-limit 30 \
+  --categorize
+```
+
+**Testing with Limited Data:**
+```bash
+python run.py enrich \
+  --input data/input/resources.csv \
+  --max-rows 10 \
+  --workers 2 \
+  --backend gemini
+```
+
+**Full Pipeline with URL Population:**
+```bash
+python run.py enrich \
+  --input data/input/resources.csv \
+  --output data/output/enriched_complete.xlsx \
+  --populate-urls \
+  --categorize \
+  --enhance-with-websearch \
+  --workers 15
+```
+
+**Ollama Local Processing:**
+```bash
+python run.py enrich \
+  --input data/input/resources.csv \
+  --backend ollama \
+  --model "llama3.1:8b-instruct" \
+  --ollama-url "http://localhost:11434" \
+  --workers 5
+```
+
+**OpenAI Processing:**
+```bash
+python run.py enrich \
+  --input data/input/resources.csv \
+  --backend openai \
+  --model "gpt-4o-mini" \
+  --openai-key "sk-your-key-here" \
+  --workers 8
+```
+
+#### **All Available Arguments:**
+
+| Argument | Type | Default | Description |
+|----------|------|---------|-------------|
+| `--input` | str | `data/input/to_be_normalised/enriched_resources.csv` | Input CSV file path |
+| `--output` | str | `None` (auto-generated) | Output file path |
+| `--backend` | choice | `gemini` | LLM backend: `ollama`, `openai`, `gemini` |
+| `--model` | str | `None` | Specific model name |
+| `--enhance-with-websearch` | flag | `False` | Enable web search enhancement |
+| `--max-rows` | int | `None` | Maximum rows to process |
+| `--start-row` | int | `0` | Starting row index |
+| `--cache-dir` | str | `.cache/llm_extractions` | Cache directory |
+| `--fields-to-check` | str | `description_short,age_range,organization_type` | Fields to check for enrichment |
+| `--skip-no-website` | flag | `False` | Skip rows without websites |
+| `--workers` | int | `10` | Number of parallel workers |
+| `--rate-limit` | int | `15` | API requests per minute |
+| `--populate-urls` | flag | `False` | Populate missing Google Maps URLs |
+| `--categorize` | flag | `False` | Auto-categorize resources |
+| `--ollama-url` | str | `None` | Ollama server URL |
+| `--ollama-auth` | str | `None` | Ollama authentication |
+| `--openai-key` | str | `None` | OpenAI API key |
+| `--gemini-key` | str | `None` | Gemini API key |
+
+**Features:**
+- Parallel processing (5-10x faster)
+- LLM-powered data extraction
+- Web search enhancement
+- Automatic URL population
+- Built-in categorization
+- Rate limiting for API compliance
+- Intelligent caching
+
+### 2. **Populate Missing URLs**
+
+#### **Complete Command with All Arguments:**
+```bash
+python run.py populate-urls \
+  --input "data/input/resources.csv" \
+  --output "data/output/with_urls.xlsx" \
+  --use-directions \
+  --no-api \
+  --max-rows 100 \
+  --rate-limit 0.1
+```
+
+#### **Common Use Cases:**
+
+**Basic URL Population:**
+```bash
+python run.py populate-urls --input data/input/resources.csv
+```
+
+**With API Calls:**
+```bash
+python run.py populate-urls \
+  --input data/input/resources.csv \
+  --output data/output/with_urls.xlsx
+```
+
+**No API (Construct URLs Only):**
+```bash
+python run.py populate-urls \
+  --input data/input/resources.csv \
+  --no-api
+```
+
+#### **All Available Arguments:**
+
+| Argument | Type | Default | Description |
+|----------|------|---------|-------------|
+| `--input` | str | **Required** | Input Excel or CSV file |
+| `--output` | str | `None` (auto-generated) | Output file (adds _with_urls suffix) |
+| `--use-directions` | flag | `False` | Use directions URL format instead of place URL format |
+| `--no-api` | flag | `False` | Don't call API, only construct URLs from existing data |
+| `--max-rows` | int | `None` | Maximum rows to process (for testing) |
+| `--rate-limit` | float | `0.1` | Delay between API calls in seconds |
+
+### 3. **Filter by Neurodivergent Relevance**
+
+#### **Complete Command with All Arguments:**
+```bash
+python run.py filter \
+  --input "data/output/enriched_resources.xlsx" \
+  --analyze \
+  --filter \
+  --output "data/output/neurodivergent_only.xlsx" \
+  --min-score "High" \
+  --show-non-nd \
+  --include-unknown
+```
+
+#### **Common Use Cases:**
+
+**Filter High-Quality Resources Only:**
+```bash
+python run.py filter \
+  --input data/output/enriched_resources.xlsx \
+  --filter \
+  --min-score High \
+  --output data/output/high_quality_resources.xlsx
+```
+
+**Analyze Relevance Distribution:**
+```bash
+python run.py filter \
+  --input data/output/enriched_resources.xlsx \
+  --analyze
+```
+
+**Show All Resources (Including Non-Neurodivergent):**
+```bash
+python run.py filter \
+  --input data/output/enriched_resources.xlsx \
+  --filter \
+  --show-non-nd \
+  --include-unknown
+```
+
+#### **All Available Arguments:**
+
+| Argument | Type | Default | Description |
+|----------|------|---------|-------------|
+| `--input` | str | **Required** | Input Excel file |
+| `--analyze` | flag | `False` | Analyze relevance distribution |
+| `--filter` | flag | `False` | Filter neurodivergent-related only |
+| `--output` | str | `None` | Output file for filtered results |
+| `--min-score` | choice | `None` | Minimum relevance score: `High`, `Medium`, `Low` |
+| `--show-non-nd` | flag | `False` | Show non-neurodivergent resources |
+| `--include-unknown` | flag | `False` | Include resources with unknown validation |
+
+### 4. **Extract from Single Website**
+
+#### **Complete Command with All Arguments:**
+```bash
+python run.py extract \
+  --center-name "Resource Name" \
+  --url "https://example.com" \
+  --backend "gemini" \
+  --model "gemini-1.5-flash" \
+  --max-pages 5 \
+  --out "output.json" \
+  --enhance-with-websearch \
+  --ollama-url "http://localhost:11434" \
+  --ollama-auth "Bearer your-token" \
+  --openai-key "sk-your-openai-key" \
+  --gemini-key "your-gemini-key"
+```
+
+#### **Common Use Cases:**
+
+**Basic Extraction:**
+```bash
+python run.py extract \
+  --center-name "Autism Support Center" \
   --url "https://example.com" \
   --backend gemini
 ```
 
-With web search enhancement:
+**With Web Search Enhancement:**
 ```bash
-python web_llm_extract.py \
-  --center-name "Example Center" \
+python run.py extract \
+  --center-name "Autism Support Center" \
   --url "https://example.com" \
   --backend gemini \
   --enhance-with-websearch
 ```
 
-### Arguments
-
-- `--center-name`: Name of the service center (required)
-- `--url`: Website URL to analyze (required)
-- `--backend`: LLM backend to use: `ollama`, `openai`, or `gemini` (default: ollama)
-- `--model`: Model name (optional, uses sensible defaults)
-- `--max-pages`: Maximum pages to crawl (default: 6)
-- `--enhance-with-websearch`: Enable web search for missing contact info
-- `--out`: Output JSON file path (optional)
-
-### Backend-Specific Arguments
-
-**Ollama:**
-- `--ollama-url`: Ollama server URL (default: http://localhost:11434)
-- `--ollama-auth`: Authentication header or token
-
-**OpenAI:**
-- `--openai-key`: API key (or set OPENAI_API_KEY env var)
-
-**Gemini:**
-- `--gemini-key`: API key (or set GEMINI_API_KEY or GOOGLE_API_KEY env var)
-
-### Web Search Enhancement
-
-When `--enhance-with-websearch` is enabled:
-- Searches for missing phone, email, and address information
-- Only searches reliable sources: NHS, gov.uk, charity websites, Google Maps, etc.
-- Adds `_metadata` field to track enhanced fields and sources
-- Outputs progress to stderr
-
-Example output with enhancement:
-```json
-{
-  "center_name": "Example Center",
-  "website_url": "https://example.com",
-  "description_short": "A specialist center providing ADHD assessments and support.",
-  "category": "Assessment & Diagnosis",
-  "subcategory": "Diagnostic Centers",
-  "age_range": "Adults (18+)",
-  "conditions_supported": ["ADHD", "Autism/ASC"],
-  "specific_services": ["ADHD Assessment", "Medication Management", "Ongoing care"],
-  "organization_type": "NHS Service",
-  "contact_info": {
-    "phone": "020 1234 5678",
-    "email": "info@example.com",
-    "address": "123 Main St, London, SW1A 1AA"
-  },
-  "address_components": {
-    "postal_code": "SW1A 1AA",
-    "postal_town": "London",
-    "admin_area_level_1": "England",
-    "admin_area_level_2": "Greater London"
-  },
-  "additional_notes": "NHS referral required",
-  "data_confidence": "High",
-  "reasoning": "Clear service description and explicit ADHD assessment focus",
-  "_metadata": {
-    "enhanced_fields": ["phone", "email", "address_components"],
-    "enhancement_sources": [
-      "https://www.nhs.uk/example",
-      "https://www.google.com/maps/example"
-    ],
-    "enhancement_note": "Contact information enhanced via web search from reliable sources"
-  }
-}
+**Ollama Local Processing:**
+```bash
+python run.py extract \
+  --center-name "Autism Support Center" \
+  --url "https://example.com" \
+  --backend ollama \
+  --model "llama3.1:8b-instruct" \
+  --ollama-url "http://localhost:11434"
 ```
 
-### Categories
+#### **All Available Arguments:**
+
+| Argument | Type | Default | Description |
+|----------|------|---------|-------------|
+| `--center-name` | str | **Required** | Name of the center/organization |
+| `--url` | str | **Required** | Website URL to extract from |
+| `--backend` | choice | `gemini` | LLM backend: `ollama`, `openai`, `gemini` |
+| `--model` | str | `None` | Model name (ollama: llama3.1:8b-instruct; openai: gpt-4o-mini; gemini: gemini-1.5-flash) |
+| `--max-pages` | int | `None` | Maximum pages to crawl |
+| `--out` | str | `None` | Optional path to write JSON output |
+| `--enhance-with-websearch` | flag | `False` | Search web for missing contact info from reliable sources |
+| `--ollama-url` | str | `None` | Ollama server URL |
+| `--ollama-auth` | str | `None` | Ollama authentication (Header line or bare token) |
+| `--openai-key` | str | `None` | OpenAI API key |
+| `--gemini-key` | str | `None` | Gemini API key |
+
+### 5. **Resource Categories (Simplified 9-Category System)**
+
+The system automatically categorizes resources into these simplified categories:
 
 1. **Assessment & Diagnosis** - Diagnostic Centers, Assessment Clinics, Psychoeducational Evaluation
-2. **Crisis & Emergency** - Crisis Helplines, Emergency Intervention, Mental Health Crisis Teams
-3. **Education & Learning** - SEN Schools, Mainstream Resources, Training, Skills Development, Tutoring
+2. **Crisis & Emergency** - Crisis Helplines, Emergency Intervention, Mental Health Crisis Teams  
+3. **Education & Learning** - SEN Schools, Mainstream School Resources, Training Programs, Skills Development, Tutoring Services
 4. **Employment** - Job Coaching, Workplace Accommodations, Vocational Training, Supported Employment
-5. **Housing & Benefits** - Housing Assistance, Benefits Advice, Independent Living, Welfare Navigation
-6. **Transport & Accessibility** - Accessible Transport, Travel Training, Mobility Services, Subsidies
-7. **Community & Social** - Local Groups, Organization Branches, Peer Networks, Meetups, Parent/Carer Groups
-8. **Recreation & Activities** - Sports & Fitness, Arts & Entertainment, Play Centers, Hobby Clubs
-9. **Unknown/Uncategorized** - Only when no other category fits
+5. **Housing & Benefits** - Housing Assistance, Benefits Advice, Independent Living Programs, Welfare Navigation
+6. **Transport & Accessibility** - Accessible Transport, Travel Training, Mobility Services, Transport Subsidies
+7. **Community & Social** - Local Groups, National Organization Branches, Peer Networks, Social Meetups, Parent/Carer Groups
+8. **Recreation & Activities** - Sports & Fitness, Arts & Entertainment, Play Centers, Hobby Clubs, Social Activities
+9. **Unknown/Uncategorized** - Use only when the description doesn't clearly fit any category
 
-### Output Schema
+## 📊 Pipeline Workflow
 
-```json
-{
-  "center_name": "string",
-  "website_url": "string",
-  "description_short": "string (1-2 sentences)",
-  "category": "string (from categories above)",
-  "subcategory": "string",
-  "age_range": "string (e.g., 'Adults (18+)', 'Ages 4½ to 22', 'All ages')",
-  "conditions_supported": ["array of strings (ADHD, Autism/ASC, Dyslexia, etc.)"],
-  "specific_services": ["array of strings (specific services offered)"],
-  "organization_type": "string (NHS Service, Charity/Non-profit, etc.)",
-  "contact_info": {
-    "phone": "string",
-    "email": "string",
-    "address": "string (full address)"
-  },
-  "address_components": {
-    "postal_code": "string (e.g., 'E1 8DE')",
-    "postal_town": "string (e.g., 'London')",
-    "admin_area_level_1": "string (e.g., 'England')",
-    "admin_area_level_2": "string (e.g., 'Greater London', 'Hertfordshire')"
-  },
-  "additional_notes": "string",
-  "data_confidence": "string (High/Medium/Low)",
-  "reasoning": "string"
-}
+```
+1. Input Data
+   ↓
+2. Populate Missing URLs (optional)
+   ↓
+3. Enrich with LLM
+   - Extract descriptions
+   - Identify services
+   - Parse addresses
+   - Validate neurodivergent relevance
+   ↓
+4. Categorize Resources
+   - Keyword-based categorization
+   - Fast & accurate
+   ↓
+5. Filter & Export
+   - Filter by relevance
+   - Export to Excel
 ```
 
-### Address Components
+## ⚙️ Configuration
 
-The system automatically parses UK addresses into structured components:
-- **postal_code**: UK postcode (e.g., "E1 8DE", "SG2 7AH")
-- **postal_town**: City/town name (e.g., "London", "Stevenage", "Basildon")
-- **admin_area_level_1**: Country/region (e.g., "England", "Scotland", "Wales")
-- **admin_area_level_2**: County/area (e.g., "Greater London", "Hertfordshire", "Essex")
-
-Address parsing happens automatically when:
-1. The LLM provides a full address but no components
-2. Web search enhancement finds an address
-
-The parser supports major UK counties and cities.
-
-### Environment Variables
-
-- `OPENAI_API_KEY`: OpenAI API key
-- `GEMINI_API_KEY` or `GOOGLE_API_KEY`: Gemini API key
-- `OLLAMA_URL`: Ollama server URL
-
-### Examples
-
-Using Gemini with web enhancement:
+### Environment Variables (.env)
 ```bash
-export GEMINI_API_KEY="your-key-here"
-python web_llm_extract.py \
-  --center-name "London Autism Center" \
-  --url "https://example-autism-center.org.uk" \
+# Required: At least one LLM API key
+GEMINI_API_KEY=your_gemini_key_here
+GOOGLE_API_KEY=your_google_key_here  # Alternative for Gemini
+OPENAI_API_KEY=your_openai_key_here  # Optional
+
+# Optional: Ollama configuration
+OLLAMA_URL=http://localhost:11434
+OLLAMA_AUTH=your_auth_token
+```
+
+### API Rate Limits
+- **Gemini Free Tier**: 15 requests/minute (use `--rate-limit 15`)
+- **OpenAI**: 60 requests/minute (use `--rate-limit 60`)
+- **Ollama**: No limit (local)
+
+## 🎯 Common Use Cases
+
+### Full Pipeline with All Features
+```bash
+python run.py enrich \
+  --input data/input/to_be_normalised/enriched_resources.csv \
   --backend gemini \
   --enhance-with-websearch \
-  --out results.json
+  --populate-urls \
+  --categorize \
+  --workers 5 \
+  --rate-limit 15
 ```
 
-Using local Ollama:
+### Quick Test Run (First 10 Rows)
 ```bash
-python web_llm_extract.py \
-  --center-name "Local Support Group" \
-  --url "https://localsupport.org" \
-  --backend ollama \
-  --model llama3.1:8b-instruct
-```
-
-### Notes
-
-- Web search enhancement requires internet access
-- Web search uses DuckDuckGo (no API key required)
-- Only reliable sources are used for enhancement (NHS, gov.uk, charity sites, etc.)
-- Enhancement is optional and fails gracefully if issues occur
-- Phone number patterns are optimized for UK formats
-
----
-
-## batch_enrich_pipeline.py
-
-Batch processing pipeline to enrich multiple service centers from a CSV file.
-
-### Features
-
-- **Batch Processing**: Process hundreds or thousands of service centers automatically
-- **Smart Detection**: Only processes rows with missing information
-- **Caching**: Caches LLM results to avoid duplicate API calls
-- **Resume Support**: Can resume from any row number
-- **Excel Export**: Exports to XLSX with highlighted changes
-- **Progress Tracking**: Real-time progress updates and statistics
-- **Intelligent Merging**: Only fills in missing fields, preserves existing data
-
-### Column Mapping
-
-The pipeline automatically maps extracted data to CSV columns:
-
-| Extracted Field | CSV Column |
-|----------------|------------|
-| center_name | gmaps_name |
-| website_url | gmaps_website |
-| description_short | description_short |
-| age_range | age_range |
-| conditions_supported | conditions_supported |
-| specific_services | specific_services |
-| organization_type | organization_type |
-| contact_info.phone | gmaps_phone |
-| contact_info.address | gmaps_formatted_address |
-| address_components.postal_code | gmaps_addr_postal_code |
-| address_components.postal_town | gmaps_addr_postal_town |
-| address_components.admin_area_level_1 | gmaps_addr_admin_area_level_1 |
-| address_components.admin_area_level_2 | gmaps_addr_admin_area_level_2 |
-
-### Usage
-
-Basic usage (process first 10 rows with missing data):
-```bash
-python batch_enrich_pipeline.py \
-  --input to_be_normalised/enriched_resources.csv \
-  --output enriched_output.xlsx \
-  --backend gemini \
-  --max-rows 10
-```
-
-Full pipeline with web search enhancement:
-```bash
-export GEMINI_API_KEY="your-key-here"
-
-python batch_enrich_pipeline.py \
-  --input to_be_normalised/enriched_resources.csv \
-  --output enriched_resources_updated.xlsx \
-  --backend gemini \
-  --enhance-with-websearch \
-  --skip-no-website \
-  --delay 2.0
-```
-
-Resume processing from row 500:
-```bash
-python batch_enrich_pipeline.py \
-  --input to_be_normalised/enriched_resources.csv \
-  --start-row 500 \
+python run.py enrich \
+  --max-rows 10 \
+  --workers 2 \
   --backend gemini
 ```
 
-Test on a small sample:
+### Re-categorize Existing Data
 ```bash
-bash test_pipeline.sh
+python run.py categorize \
+  --input data/output/enriched_resources_20231021.xlsx \
+  --overwrite
 ```
 
-### Arguments
-
-**Input/Output:**
-- `--input`: Input CSV file path (default: `to_be_normalised/enriched_resources.csv`)
-- `--output`: Output XLSX file path (default: auto-generated with timestamp)
-- `--cache-dir`: Directory to cache LLM results (default: `.cache/llm_extractions`)
-
-**Processing Control:**
-- `--max-rows`: Maximum number of rows to process (for testing)
-- `--start-row`: Row number to start from (0-indexed, for resuming)
-- `--delay`: Delay between API calls in seconds (default: 1.0)
-- `--skip-no-website`: Skip rows without a website URL
-
-**Enrichment Control:**
-- `--fields-to-check`: Comma-separated list of fields to check for missing data  
-  (default: `description_short,age_range,organization_type`)
-- `--enhance-with-websearch`: Enable web search for missing contact info
-
-**LLM Backend:**
-- `--backend`: Choose `ollama`, `openai`, or `gemini` (default: `gemini`)
-- `--model`: Model name (optional, uses sensible defaults)
-
-**Backend-Specific:**
-- `--ollama-url`: Ollama server URL
-- `--ollama-auth`: Ollama authentication
-- `--openai-key`: OpenAI API key
-- `--gemini-key`: Gemini API key
-
-### How It Works
-
-1. **Load CSV**: Reads the input CSV file with service center data
-2. **Filter Rows**: Identifies rows with missing information in specified fields
-3. **Extract Data**: Calls `web_llm_extract.py` for each service center
-4. **Merge Data**: Intelligently merges extracted data, only filling empty fields
-5. **Cache Results**: Caches LLM responses to avoid duplicate API calls
-6. **Export**: Exports to Excel with changed cells highlighted in yellow
-7. **Statistics**: Displays summary of processed, enriched, failed, and skipped rows
-
-### Output Format
-
-The pipeline generates an Excel file (.xlsx) with:
-- **All original columns** preserved
-- **Updated fields** highlighted in yellow
-- **Auto-sized columns** for readability
-- **Header row** with blue background
-
-### Caching
-
-The pipeline automatically caches LLM extraction results in `.cache/llm_extractions/`:
-- Avoids duplicate API calls for the same service center
-- Enables quick re-runs without re-processing
-- Can be manually cleared by deleting the cache directory
-
-### Error Handling
-
-- Gracefully handles timeouts (180s per extraction)
-- Continues processing on individual failures
-- Provides detailed error messages
-- Tracks failed rows in statistics
-
-### Performance Tips
-
-1. **Start Small**: Test with `--max-rows 5` first
-2. **Use Caching**: Re-run uses cached results automatically
-3. **Resume Support**: Use `--start-row` to resume after interruption
-4. **Rate Limiting**: Adjust `--delay` to avoid API rate limits
-5. **Skip Empties**: Use `--skip-no-website` to skip rows without URLs
-
-### Example Output
-
-```
-Reading to_be_normalised/enriched_resources.csv...
-Loaded 1925 rows
-Found 847 rows that need enrichment
-
-[1/847] Processing: East London NHS Foundation Trust
-  Website: http://www.elft.nhs.uk/
-  ✓ Using cached data
-  ✓ Updated fields: description_short, age_range, organization_type
-
-[2/847] Processing: C N W L Mental Health Clinic
-  Website: http://www.cnwl.nhs.uk/
-  ✓ Updated fields: description_short, specific_services
-
-...
-
-============================================================
-SUMMARY
-============================================================
-Total rows in input:     1925
-Rows needing enrichment: 847
-Successfully processed:  820
-Successfully enriched:   803
-Failed:                  17
-Skipped:                 10
-
-Output saved to: enriched_resources_updated_20251012_143022.xlsx
-Changed cells are highlighted in yellow
-============================================================
-```
-
-### Best Practices
-
-1. **Test First**: Always test with `--max-rows` before full run
-2. **Monitor Progress**: Watch for patterns in failures
-3. **Check Output**: Review highlighted changes in Excel
-4. **Backup Original**: Keep a copy of your original CSV
-5. **Use Appropriate Backend**: Gemini is fast and affordable for batch processing
-6. **Enable Web Search**: Use `--enhance-with-websearch` for maximum data completeness
-
-### Troubleshooting
-
-**"No rows need enrichment"**
-- Check `--fields-to-check` - adjust fields to check
-- Verify your CSV has empty fields
-
-**"Timeout after 180s"**
-- Some websites are slow or blocked
-- These rows will be marked as failed and you can continue
-
-**"Module 'openpyxl' not found"**
+### Extract High-Quality Neurodivergent Resources Only
 ```bash
-pip install openpyxl
-# or with uv
-uv pip install openpyxl
+python run.py filter \
+  --input data/output/enriched_resources.xlsx \
+  --filter \
+  --min-score High \
+  --output data/output/high_quality_resources.xlsx
 ```
 
-**API rate limits**
-- Increase `--delay` value
-- Use caching to avoid re-processing
-- Consider processing in smaller batches
+## 📈 Performance
 
-### Requirements
+- **Parallel Pipeline**: ~0.5-2 seconds per resource
+- **Caching**: Instant for previously processed resources
+- **Categorization**: ~1000 resources/second (keyword-based)
+- **URL Population**: ~300-400 URLs/second
 
-- Python 3.12+
-- openpyxl (for Excel export)
-- Valid API key for chosen backend (Gemini, OpenAI, or Ollama)
-- Internet connection for web scraping and API calls
+## 🔧 Troubleshooting
+
+### API Rate Limit Errors
+```bash
+# Reduce workers and rate limit
+python run.py enrich --workers 3 --rate-limit 10
+```
+
+### Memory Issues
+```bash
+# Process in batches
+python run.py enrich --max-rows 500 --start-row 0
+python run.py enrich --max-rows 500 --start-row 500
+```
+
+### Invalid URLs
+```bash
+# Re-populate URLs with validation
+python run.py populate-urls --input data/output/bad_urls.xlsx
+```
+
+## 📚 Documentation
+
+- [Quick Start Guide](docs/START_HERE.md)
+- [Setup Instructions](docs/SETUP.md)
+- [Parallel Pipeline Guide](docs/PARALLEL_GUIDE.md)
+- [Rate Limit Fix](docs/RATE_LIMIT_FIX.md)
+- [Environment Setup](docs/README_ENV.md)
+- [Changes Log](docs/CHANGES.md)
+
+## 🧪 Testing
+
+```bash
+# Run tests
+python -m pytest tests/
+
+# Verify data integrity
+python tests/verify_matches.py
+```
+
+## 📝 Output Format
+
+All output files are Excel (.xlsx) with:
+- ✅ **Yellow highlighting** for modified cells
+- ✅ **Auto-adjusted column widths**
+- ✅ **Clean encoding** (no ? or � characters)
+- ✅ **Validation columns** (neurodivergent relevance)
+- ✅ **Category assignments**
+
+## 🤝 Contributing
+
+1. Add new features to `src/`
+2. Update tests in `tests/`
+3. Document in `docs/`
+4. Test with sample data in `data/input/`
+
+## 📋 Complete Command Reference
+
+### **Quick Command Cheat Sheet:**
+
+```bash
+# Get help for any command
+python run.py <command> --help
+
+# Basic enrichment
+python run.py enrich --input data/input/resources.csv
+
+# Full pipeline with all features
+python run.py enrich \
+  --input data/input/resources.csv \
+  --backend gemini \
+  --enhance-with-websearch \
+  --populate-urls \
+  --categorize \
+  --workers 10 \
+  --rate-limit 15
+
+# Test with limited data
+python run.py enrich \
+  --input data/input/resources.csv \
+  --max-rows 10 \
+  --workers 2
+
+# Populate missing URLs
+python run.py populate-urls --input data/input/resources.csv
+
+# Filter high-quality resources
+python run.py filter \
+  --input data/output/enriched_resources.xlsx \
+  --filter \
+  --min-score High
+
+# Extract from single website
+python run.py extract \
+  --center-name "Resource Name" \
+  --url "https://example.com" \
+  --backend gemini
+```
+
+### **Environment Variables (.env file):**
+```bash
+# Required: At least one LLM API key
+GEMINI_API_KEY=your_gemini_key_here
+GOOGLE_API_KEY=your_google_key_here  # Alternative for Gemini
+OPENAI_API_KEY=your_openai_key_here  # Optional
+
+# Optional: Ollama configuration
+OLLAMA_URL=http://localhost:11434
+OLLAMA_AUTH=your_auth_token
+```
+
+### **Performance Tuning:**
+```bash
+# High performance (more workers, higher rate limit)
+python run.py enrich --workers 20 --rate-limit 30
+
+# Conservative (fewer workers, lower rate limit)
+python run.py enrich --workers 3 --rate-limit 10
+
+# Local processing (no API limits)
+python run.py enrich --backend ollama --workers 5
+```
+
+### **Batch Processing:**
+```bash
+# Process in chunks
+python run.py enrich --max-rows 500 --start-row 0
+python run.py enrich --max-rows 500 --start-row 500
+python run.py enrich --max-rows 500 --start-row 1000
+```
+
+## 📜 License
+
+[Your License Here]
+
+## 🆘 Support
+
+For issues or questions:
+1. Check [docs/QUICKFIX.md](docs/QUICKFIX.md)
+2. Review [docs/TROUBLESHOOTING.md](docs/SETUP.md)
+3. Open an issue on GitHub
+
+---
+
+**Built with ❤️ for the neurodivergent community**
 

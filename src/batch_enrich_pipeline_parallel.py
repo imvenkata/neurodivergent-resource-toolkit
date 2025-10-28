@@ -244,6 +244,18 @@ def merge_data(original_row: Dict[str, str], extracted_data: Dict) -> Tuple[Dict
     updated_row = original_row.copy()
     changes = []
     
+    # Special handling: Update website URL if a corrected version was found
+    if "website_url_corrected" in extracted_data:
+        corrected_url = extracted_data["website_url_corrected"]
+        original_url = extracted_data.get("website_url_original", "")
+        current_url = updated_row.get("gmaps_website", "")
+        
+        # Update with corrected URL (standardized, working version)
+        if corrected_url and corrected_url != current_url:
+            updated_row["gmaps_website"] = corrected_url
+            updated_row["gmaps_website_original"] = original_url or current_url
+            changes.append("gmaps_website")
+    
     for extract_key, csv_column in COLUMN_MAPPING.items():
         if csv_column is None:
             continue

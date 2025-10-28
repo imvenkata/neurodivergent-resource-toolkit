@@ -2,8 +2,11 @@ import argparse
 import html
 import json
 import os
+import random
 import re
+import ssl
 import sys
+import time
 from pathlib import Path
 # dataclass reserved for future structuring; avoid unused import for now
 from typing import Dict, List, Optional, Set, Tuple
@@ -21,20 +24,191 @@ except ImportError:
     pass  # python-dotenv not installed, will use system env vars
 
 
-USER_AGENT = (
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-    "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15"
-)
+# Multiple User-Agent strings to rotate (avoid bot detection)
+USER_AGENTS = [
+    # Chrome on Windows
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    # Chrome on Mac
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    # Firefox on Windows
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0",
+    # Safari on Mac
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Safari/605.1.15",
+    # Edge on Windows
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0",
+]
+
+def get_browser_headers(url: str = None) -> dict:
+    """
+    Generate realistic browser headers to avoid bot detection.
+    Rotates User-Agent and includes common browser headers.
+    """
+    user_agent = random.choice(USER_AGENTS)
+    
+    headers = {
+        "User-Agent": user_agent,
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+        "Accept-Language": "en-GB,en;q=0.9,en-US;q=0.8",
+        "Accept-Encoding": "gzip, deflate, br",
+        "DNT": "1",
+        "Connection": "keep-alive",
+        "Upgrade-Insecure-Requests": "1",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "none",
+        "Sec-Fetch-User": "?1",
+        "Cache-Control": "max-age=0",
+    }
+    
+    # Add Referer for non-initial requests (looks more natural)
+    if url:
+        parsed = parse.urlparse(url)
+        if parsed.netloc:
+            headers["Referer"] = f"{parsed.scheme}://{parsed.netloc}/"
+    
+    return headers
 
 
-def fetch_url(url: str, timeout: int = 20) -> Optional[str]:
-    req = request.Request(url, headers={"User-Agent": USER_AGENT})
+def get_root_url(url: str) -> str:
+    """Extract root domain from URL (e.g., https://example.com/path -> https://example.com/)"""
+    parsed = parse.urlparse(url)
+    # Ensure www. is included if present, or add it if missing
+    netloc = parsed.netloc
+    if not netloc.startswith('www.'):
+        # Try adding www. for fallback
+        netloc_with_www = f"www.{netloc}"
+    else:
+        netloc_with_www = netloc
+    
+    root_url = f"{parsed.scheme}://{parsed.netloc}/"
+    root_url_with_www = f"{parsed.scheme}://{netloc_with_www}/" if netloc_with_www != netloc else None
+    
+    return root_url, root_url_with_www
+
+
+def fetch_url(url: str, timeout: int = 20) -> Optional[Tuple[str, str]]:
+    """
+    Fetch URL with comprehensive error handling and fallback strategies.
+    
+    Returns:
+        Tuple of (content, working_url) if successful, None if all strategies fail
+        The working_url is the URL that actually worked (may differ from input)
+    
+    Fallback strategy:
+    1. Add protocol if missing (https://)
+    2. Try HTTPS with SSL verification
+    3. If SSL error → Try HTTPS without verification
+    4. If still fails → Try HTTP
+    5. If still fails → Try root domain
+    6. If still fails → Try root domain with www.
+    """
+    # Fix URLs missing protocol (e.g., "www.example.com" → "https://www.example.com")
+    if url and not url.startswith(('http://', 'https://')):
+        url = f'https://{url}'
+    
+    # Add small random delay to avoid rate limiting (0.1-0.5 seconds)
+    time.sleep(random.uniform(0.1, 0.5))
+    
+    # Strategy 1: Try HTTPS with normal SSL verification
+    headers = get_browser_headers(url)
+    req = request.Request(url, headers=headers)
     try:
         with request.urlopen(req, timeout=timeout) as resp:
             charset = resp.headers.get_content_charset() or "utf-8"
-            return resp.read().decode(charset, errors="ignore")
+            content = resp.read().decode(charset, errors="ignore")
+            return (content, url)
+    except ssl.SSLError:
+        # Strategy 2: Try HTTPS without SSL verification (many small charity sites have SSL issues)
+        try:
+            context = ssl._create_unverified_context()
+            with request.urlopen(req, timeout=timeout, context=context) as resp:
+                charset = resp.headers.get_content_charset() or "utf-8"
+                content = resp.read().decode(charset, errors="ignore")
+                return (content, url)
+        except Exception:
+            pass
     except (request.URLError, TimeoutError, ValueError):
-        return None
+        pass
+    
+    # Strategy 3: Try HTTP instead of HTTPS
+    if url.startswith('https://'):
+        http_url = url.replace('https://', 'http://')
+        try:
+            req_http = request.Request(http_url, headers=get_browser_headers(http_url))
+            with request.urlopen(req_http, timeout=timeout) as resp:
+                charset = resp.headers.get_content_charset() or "utf-8"
+                content = resp.read().decode(charset, errors="ignore")
+                return (content, http_url)
+        except Exception:
+            pass
+    
+    # Strategy 4: Try root domain as fallback
+    root_url, root_url_with_www = get_root_url(url)
+    
+    # Don't retry root if we're already at root
+    if url.rstrip('/') != root_url.rstrip('/'):
+        # Try root URL with HTTPS
+        try:
+            req_root = request.Request(root_url, headers=get_browser_headers(root_url))
+            try:
+                with request.urlopen(req_root, timeout=timeout) as resp:
+                    charset = resp.headers.get_content_charset() or "utf-8"
+                    content = resp.read().decode(charset, errors="ignore")
+                    return (content, root_url)
+            except ssl.SSLError:
+                # Try root without SSL verification
+                context = ssl._create_unverified_context()
+                with request.urlopen(req_root, timeout=timeout, context=context) as resp:
+                    charset = resp.headers.get_content_charset() or "utf-8"
+                    content = resp.read().decode(charset, errors="ignore")
+                    return (content, root_url)
+        except Exception:
+            pass
+        
+        # Try root URL with HTTP
+        if root_url.startswith('https://'):
+            http_root = root_url.replace('https://', 'http://')
+            try:
+                req_http_root = request.Request(http_root, headers=get_browser_headers(http_root))
+                with request.urlopen(req_http_root, timeout=timeout) as resp:
+                    charset = resp.headers.get_content_charset() or "utf-8"
+                    content = resp.read().decode(charset, errors="ignore")
+                    return (content, http_root)
+            except Exception:
+                pass
+        
+        # Strategy 5: Try with www. prefix if different
+        if root_url_with_www and root_url_with_www != root_url:
+            try:
+                req_www = request.Request(root_url_with_www, headers=get_browser_headers(root_url_with_www))
+                try:
+                    with request.urlopen(req_www, timeout=timeout) as resp:
+                        charset = resp.headers.get_content_charset() or "utf-8"
+                        content = resp.read().decode(charset, errors="ignore")
+                        return (content, root_url_with_www)
+                except ssl.SSLError:
+                    # Try www without SSL verification
+                    context = ssl._create_unverified_context()
+                    with request.urlopen(req_www, timeout=timeout, context=context) as resp:
+                        charset = resp.headers.get_content_charset() or "utf-8"
+                        content = resp.read().decode(charset, errors="ignore")
+                        return (content, root_url_with_www)
+            except Exception:
+                pass
+            
+            # Try www with HTTP
+            if root_url_with_www.startswith('https://'):
+                http_www = root_url_with_www.replace('https://', 'http://')
+                try:
+                    req_http_www = request.Request(http_www, headers=get_browser_headers(http_www))
+                    with request.urlopen(req_http_www, timeout=timeout) as resp:
+                        charset = resp.headers.get_content_charset() or "utf-8"
+                        content = resp.read().decode(charset, errors="ignore")
+                        return (content, http_www)
+                except Exception:
+                    pass
+    
+    return None
 
 
 TAG_RE = re.compile(r"<[^>]+>")
@@ -106,10 +280,48 @@ def rank_link(url: str) -> int:
     return score
 
 
-def crawl_site(start_url: str, max_pages: int = 6) -> List[Tuple[str, str]]:
+def crawl_site(start_url: str, max_pages: int = 6) -> Tuple[List[Tuple[str, str]], str]:
+    """
+    Crawl website starting from start_url.
+    If start_url fails, automatically falls back to root domain (handled by fetch_url).
+    
+    Returns:
+        Tuple of (collected_pages, working_url)
+        - collected_pages: List of (url, html_content) tuples
+        - working_url: The URL that actually worked (may differ from start_url)
+    """
     visited: Set[str] = set()
     queue: List[str] = [start_url]
     collected: List[Tuple[str, str]] = []
+    working_url = start_url  # Track the URL that actually works
+    
+    # Try to fetch the starting URL (fetch_url will handle fallback to root)
+    result = fetch_url(start_url)
+    if not result:
+        # If even root domain fails, try explicit root URL fallback
+        root_url, root_url_with_www = get_root_url(start_url)
+        result = fetch_url(root_url)
+        if result:
+            # Use root URL as starting point instead
+            start_url = root_url
+            print(f"⚠️  Original URL failed, using root domain: {root_url}")
+        elif root_url_with_www:
+            result = fetch_url(root_url_with_www)
+            if result:
+                start_url = root_url_with_www
+                print(f"⚠️  Original URL failed, using www domain: {root_url_with_www}")
+    
+    if result:
+        initial_html, actual_working_url = result
+        working_url = actual_working_url  # Save the URL that actually worked
+        visited.add(start_url)
+        collected.append((start_url, initial_html))
+        # Extract and queue links from the starting page
+        links = [lnk for lnk in extract_links(start_url, initial_html) if same_site(lnk, start_url)]
+        links = sorted(set(links), key=lambda u: -rank_link(u))
+        queue.extend([l for l in links if l not in visited])
+    
+    # Continue crawling additional pages
     while queue and len(collected) < max_pages:
         url = queue.pop(0)
         if url in visited:
@@ -117,16 +329,17 @@ def crawl_site(start_url: str, max_pages: int = 6) -> List[Tuple[str, str]]:
         visited.add(url)
         if not same_site(url, start_url):
             continue
-        html_doc = fetch_url(url)
-        if not html_doc:
+        result = fetch_url(url)
+        if not result:
             continue
+        html_doc, _ = result  # Unpack tuple
         collected.append((url, html_doc))
         links = [lnk for lnk in extract_links(url, html_doc) if same_site(lnk, start_url)]
         links = sorted(set(links), key=lambda u: -rank_link(u))
         for l in links:
             if l not in visited and l not in queue:
                 queue.append(l)
-    return collected
+    return (collected, working_url)
 
 
 def build_prompt(center_name: str, website_url: str, docs: List[Tuple[str, str]]) -> str:
@@ -172,18 +385,29 @@ def build_prompt(center_name: str, website_url: str, docs: List[Tuple[str, str]]
         "• data_confidence: High (clear info), Medium (some ambiguity), or Low (limited info)\n"
         "• reasoning: Brief explanation of your categorization choice\n\n"
         "NEURODIVERGENT RELEVANCE CHECK (CRITICAL - READ CAREFULLY):\n\n"
-        "ASK YOURSELF: Is this service SPECIFICALLY DESIGNED for neurodivergent people?\n\n"
+        "GOAL: This directory helps neurodivergent people and their families find support.\n"
+        "ASK YOURSELF: Would a neurodivergent person or their family find this resource valuable?\n\n"
         "• neurodivergent_relevance_score: High/Medium/Low/None\n\n"
-        "  HIGH = Service explicitly specializes in neurodivergent conditions\n"
-        "    ✓ Name contains: autism, ADHD, dyslexia, neurodivergent\n"
-        "    ✓ Primary purpose: ND diagnosis, therapy, education, support\n"
-        "    ✓ conditions_supported: Must list specific ND conditions (ADHD, Autism, Dyslexia, etc.)\n"
-        "    Examples: \"London ADHD Clinic\", \"Autism Education Trust\", \"Dyslexia Action\"\n\n"
-        "  MEDIUM = Offers dedicated ND programs (not just general accessibility)\n"
-        "    ✓ Has specific ND services/programs (e.g., autism support groups, ND counseling)\n"
-        "    ✓ Website explicitly mentions serving ND population\n"
-        "    ✓ conditions_supported: Must list at least one ND condition\n"
-        "    Examples: \"Mental health charity with ADHD counseling program\", \"School with dedicated autism unit\"\n\n"
+        "  HIGH = PRIMARY neurodivergent service (people seek this OUT for ND support)\n"
+        "    ✓ Name contains ND keywords: autism, ADHD, dyslexia, neurodivergent\n"
+        "    ✓ Primary purpose: ND diagnosis, ND-specific therapy, ND education\n"
+        "    ✓ Specialist ND schools, clinics, assessment centers\n"
+        "    ✓ ND advocacy organizations (NAS, ADHD Foundation)\n"
+        "    Examples: \"ADHD Assessment Clinic\", \"Autism Specialist School\", \"Dyslexia Tutoring\", \"National Autistic Society\"\n\n"
+        "  MEDIUM = SIGNIFICANTLY HELPS neurodivergent people (valuable in ND directory)\n"
+        "    ✓ SEND/SEN services (Special Educational Needs includes autism, ADHD, dyslexia)\n"
+        "    ✓ Autism-friendly or sensory-friendly activities\n"
+        "    ✓ Mental health services (70% of autistic people have mental health conditions)\n"
+        "    ✓ Crisis support services (ND people have higher rates of mental health crisis)\n"
+        "    ✓ Parent/carer support groups (for families of ND children)\n"
+        "    ✓ Therapeutic services: OT, speech therapy, music therapy, art therapy\n"
+        "    ✓ Disability charities: RDA, special needs playgrounds, adaptive sports\n"
+        "    ✓ Social skills groups, life skills training\n"
+        "    ✓ Employment support for people with disabilities\n"
+        "    ✓ Benefits advice, housing support for disabled/SEND\n"
+        "    Examples: \"SEND swimming\", \"Mental health counseling\", \"Samaritans crisis line\", \n"
+        "              \"Parent Carer Forum\", \"RDA riding center\", \"Autism-friendly cinema\", \n"
+        "              \"Occupational therapy\", \"Social skills group\"\n\n"
         "  LOW = Generic service, not ND-specific\n"
         "    ✗ General services that ND people might use (but so does everyone)\n"
         "    ✗ Has accessibility features but not ND-specific\n"
@@ -215,11 +439,21 @@ def build_prompt(center_name: str, website_url: str, docs: List[Tuple[str, str]]
         "  ✓ is_neurodivergent_related: true\n"
         "  ✓ conditions_supported: [\"ADHD\"]\n"
         "  ✓ neurodivergent_focus: \"Specialist clinic for ADHD assessment and treatment\"\n\n"
-        "Example 3: \"Community Mental Health Team (with autism specialist)\"\n"
-        "  ✓ Has dedicated autism services → MEDIUM\n"
+        "Example 3: \"Mental Health Counseling Service (anxiety, depression, trauma)\"\n"
+        "  ✓ Mental health services help ND people significantly → MEDIUM\n"
         "  ✓ is_neurodivergent_related: true\n"
-        "  ✓ conditions_supported: [\"Autism/ASC\"]\n"
-        "  ✓ neurodivergent_focus: \"General mental health with dedicated autism specialist services\"\n\n"
+        "  ✓ conditions_supported: [\"Co-occurring mental health (anxiety, depression common in ND)\"]\n"
+        "  ✓ neurodivergent_focus: \"Mental health counseling for anxiety and depression. Highly relevant as 70% of autistic people and 50% of ADHD adults have co-occurring mental health conditions.\"\n\n"
+        "Example 3b: \"Samaritans Crisis Helpline\"\n"
+        "  ✓ Crisis support critical for ND community → MEDIUM\n"
+        "  ✓ is_neurodivergent_related: true\n"
+        "  ✓ conditions_supported: [\"Mental health crisis (ND people have 9x higher suicide risk)\"]\n"
+        "  ✓ neurodivergent_focus: \"24/7 emotional support and crisis intervention. Critical resource as autistic people have 9x higher suicide rates and ADHD 5x higher suicide attempts.\"\n\n"
+        "Example 3c: \"Parent Carer Forum for SEND Families\"\n"
+        "  ✓ Supports families of ND children → MEDIUM\n"
+        "  ✓ is_neurodivergent_related: true\n"
+        "  ✓ conditions_supported: [\"SEND (includes autism, ADHD, dyslexia)\"]\n"
+        "  ✓ neurodivergent_focus: \"Support network for parents and carers of children with Special Educational Needs, which includes neurodivergent conditions.\"\n\n"
         "Example 4: \"Transport for London (TfL)\"\n"
         "  ✗ General public transport → NONE\n"
         "  ✗ is_neurodivergent_related: false\n"
@@ -235,16 +469,73 @@ def build_prompt(center_name: str, website_url: str, docs: List[Tuple[str, str]]
         "  ✗ is_neurodivergent_related: false\n"
         "  ✗ conditions_supported: []\n"
         "  ✗ neurodivergent_focus: \"General healthcare. Not neurodivergent-specific unless has ND clinic.\"\n\n"
-        "Example 7: \"Museum with 'autism-friendly' sessions\"\n"
+        "Example 7: \"SEND Swimming Lessons / Hydrotherapy for Disabled Children\"\n"
+        "  ✓ Explicitly serves SEND/SEN population → MEDIUM\n"
+        "  ✓ is_neurodivergent_related: true\n"
+        "  ✓ conditions_supported: [\"SEND/SEN (includes autism, ADHD)\"]\n"
+        "  ✓ neurodivergent_focus: \"Swimming lessons specifically for children with Special Educational Needs (SEND), which includes neurodivergent conditions.\"\n\n"
+        "Example 8: \"Country Park with SEND Pavilion / Special Needs Playground\"\n"
+        "  ✓ Has dedicated SEND facilities → MEDIUM\n"
+        "  ✓ is_neurodivergent_related: true\n"
+        "  ✓ conditions_supported: [\"SEND/SEN (includes autism, ADHD)\"]\n"
+        "  ✓ neurodivergent_focus: \"Recreation facility with specialist playground and pavilion designed for children with special educational needs.\"\n\n"
+        "Example 9: \"RDA Riding Center / Therapeutic Horse Riding for Disabled\"\n"
+        "  ✓ Disability charity serving ND individuals → MEDIUM\n"
+        "  ✓ is_neurodivergent_related: true\n"
+        "  ✓ conditions_supported: [\"Autism\", \"ADHD\", \"Learning disabilities\"]\n"
+        "  ✓ neurodivergent_focus: \"Riding for the Disabled Association center providing therapeutic equine activities for disabled individuals, including those with autism and ADHD.\"\n\n"
+        "Example 10: \"Farm with Autism-Friendly Sessions\"\n"
+        "  ✓ Offers autism-friendly programs → MEDIUM\n"
+        "  ✓ is_neurodivergent_related: true\n"
+        "  ✓ conditions_supported: [\"Autism/ASC\"]\n"
+        "  ✓ neurodivergent_focus: \"Farm offering sensory-friendly and autism-friendly visiting sessions specifically designed for neurodivergent children.\"\n\n"
+        "Example 11: \"Occupational Therapy Service (pediatric, general)\"\n"
+        "  ✓ Therapeutic service commonly used by ND individuals → MEDIUM\n"
+        "  ✓ is_neurodivergent_related: true\n"
+        "  ✓ conditions_supported: [\"Commonly used by autistic children for sensory processing, motor skills\"]\n"
+        "  ✓ neurodivergent_focus: \"Occupational therapy services. Frequently used by autistic and ADHD individuals for sensory processing, motor skills, and daily living skills development.\"\n\n"
+        "Example 12: \"Speech and Language Therapy Clinic\"\n"
+        "  ✓ Therapeutic service commonly used by ND individuals → MEDIUM\n"
+        "  ✓ is_neurodivergent_related: true\n"
+        "  ✓ conditions_supported: [\"Commonly used by autistic children for communication development\"]\n"
+        "  ✓ neurodivergent_focus: \"Speech and language therapy. Frequently accessed by autistic children and those with developmental language disorders.\"\n\n"
+        "Example 13: \"General Museum with occasional 'quiet hours'\"\n"
         "  ✗ Primary purpose is museum, not ND support → LOW\n"
         "  ✗ is_neurodivergent_related: false\n"
         "  ✗ conditions_supported: []\n"
-        "  ✗ neurodivergent_focus: \"Museum with occasional autism sessions, but not ND-specific organization.\"\n\n"
-        "WHEN IN DOUBT:\n"
-        "• If conditions_supported is empty → Probably NOT neurodivergent-specific\n"
-        "• If name/description lacks ND keywords (autism, ADHD, dyslexia, etc.) → Probably NOT ND-specific\n"
-        "• If it's a service EVERYONE uses → Probably NOT ND-specific\n"
-        "• If unsure, err on the side of false (LOW or NONE)\n\n"
+        "  ✗ neurodivergent_focus: \"Museum with occasional quiet sessions, but not ND-specific organization. Primary purpose is general tourism.\"\n\n"
+        "Example 14: \"Southwark Council (General)\"\n"
+        "  ✗ General local authority → NONE\n"
+        "  ✗ is_neurodivergent_related: false\n"
+        "  ✗ conditions_supported: []\n"
+        "  ✗ neurodivergent_focus: \"General council services. May have SEND department but not an ND-specific resource.\"\n\n"
+        "IMPORTANT RECOGNITION PATTERNS (Services That HELP Neurodivergent People):\n\n"
+        "ALWAYS MEDIUM (or Higher):\n"
+        "• SEND/SEN services (Special Educational Needs = includes autism, ADHD, dyslexia)\n"
+        "• \"Autism-friendly\", \"Sensory-friendly\", \"Neurodivergent-friendly\" sessions/venues\n"
+        "• Mental health services (anxiety, depression, trauma counseling)\n"
+        "• Crisis support (helplines, suicide prevention, emotional support)\n"
+        "• Parent/carer support groups (for families of disabled/SEND children)\n"
+        "• Therapeutic services: OT, speech therapy, hydrotherapy, music/art therapy\n"
+        "• RDA (Riding for Disabled) and similar disability charities\n"
+        "• Social skills groups, life skills training, independence programs\n"
+        "• Disability employment services (job coaching, supported employment)\n"
+        "• Special needs playgrounds, sensory rooms, adaptive sports facilities\n"
+        "• Benefits advice, housing support for disabled/SEND individuals\n"
+        "• Respite care, short breaks for disabled children\n\n"
+        "ALWAYS LOW or NONE:\n"
+        "• General public services everyone uses: Transport (TfL), councils, general hospitals\n"
+        "• Pharmacies, dentists, opticians (unless ND-specialist)\n"
+        "• Museums, theatres with only passive \"quiet hours\" (not active ND programs)\n"
+        "• Generic gyms, sports clubs (no adaptive programs)\n"
+        "• Schools without SEN provision\n"
+        "• Administrative offices (council SEND offices that don't provide direct support)\n\n"
+        "DECISION FRAMEWORK:\n"
+        "1. Does the service explicitly mention SEND/SEN/autism/ADHD/dyslexia? → HIGH or MEDIUM\n"
+        "2. Is it mental health/crisis/parent support? → MEDIUM (ND people have high co-morbidity)\n"
+        "3. Is it therapeutic/adaptive (OT, speech, hydrotherapy, riding)? → MEDIUM\n"
+        "4. Is it a general service everyone uses? → LOW or NONE\n"
+        "5. WHEN UNSURE: Ask \"Would an ND family find this in an ND directory?\" If yes → MEDIUM\n\n"
         "OUTPUT: Return ONLY valid JSON in this exact structure:\n"
         "{\n"
         "  \"center_name\": \"" + center_name + "\",\n"
@@ -715,7 +1006,7 @@ def main() -> None:
     args = parser.parse_args()
 
     start = args.url
-    docs = crawl_site(start, max_pages=args.max_pages)
+    docs, working_url = crawl_site(start, max_pages=args.max_pages)
     if not docs:
         print("Failed to fetch website content.")
         sys.exit(2)
@@ -746,6 +1037,11 @@ def main() -> None:
     # Ensure center_name and website_url presence
     obj.setdefault("center_name", args.center_name)
     obj.setdefault("website_url", args.url)
+    
+    # Add the working URL (the one that actually worked)
+    if working_url != args.url:
+        obj["website_url_corrected"] = working_url
+        obj["website_url_original"] = args.url
 
     # Parse address components if address exists but components are missing
     if "error" not in obj:

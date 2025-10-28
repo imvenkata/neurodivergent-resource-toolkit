@@ -79,8 +79,8 @@ CATEGORY_DESCRIPTIONS = {
 # Preset configurations for common use cases
 PRESETS = {
     "quick_test": {
-        "max_rows": 25,
-        "workers": 10,
+        "max_rows": 200,
+        "workers": 20,
         "rate_limit": 10,
         "enhance_with_websearch": True,
     },
@@ -132,6 +132,172 @@ def get_config(preset: str = None) -> Dict[str, Any]:
                 config["ollama"][key] = value
     
     return config
+
+# Google Places Scraping Configuration
+GOOGLE_PLACES_CONFIG = {
+    "api_key_env": "GOOGLE_MAPS_API_KEY",
+    "region": "gb",  # UK region bias
+    "sleep_between_calls": 0.5,  # Rate limiting: seconds between API calls
+    "cache_file": ".cache/google_places_scraping_cache.json",
+    "requests_per_minute": 100,  # Conservative limit for Google Places API
+}
+
+# Comprehensive list of keywords for neurodivergent resource discovery
+SEARCH_KEYWORDS = [
+    # Autism-specific
+    "autism support center",
+    "autism assessment clinic",
+    "autism therapy",
+    "autism diagnosis",
+    "autism spectrum services",
+    "ASD support",
+    "autistic services",
+    "autism charities",
+    
+    # ADHD-specific
+    "ADHD assessment",
+    "ADHD clinic",
+    "ADHD support",
+    "ADHD diagnosis",
+    "ADHD therapy",
+    "attention deficit services",
+    
+    # Learning disabilities and difficulties
+    "learning disability support",
+    "dyslexia support",
+    "dyspraxia services",
+    "special educational needs",
+    "SEN support",
+    "special needs center",
+    
+    # General neurodivergent
+    "neurodivergent support",
+    "neurodevelopmental services",
+    "developmental disorders clinic",
+    
+    # Service types
+    "special needs school",
+    "special education",
+    "occupational therapy autism",
+    "speech therapy autism",
+    "behavioral therapy",
+    "sensory processing support",
+    
+    # Employment and life skills
+    "autism employment support",
+    "supported employment neurodivergent",
+    "autism job coaching",
+    "life skills training autism",
+    
+    # Social and community
+    "autism social group",
+    "autism community center",
+    "autism support group",
+    "autism parent support",
+    "autism family support",
+    
+    # Diagnosis and assessment
+    "autism diagnostic center",
+    "neurodevelopmental assessment",
+    "developmental pediatrician",
+    "child development center",
+    
+    # Specific organizations (common UK providers)
+    "National Autistic Society",
+    "Ambitious about Autism",
+    "autism angels",
+]
+
+# UK Counties and Major Regions for systematic coverage
+UK_REGIONS = [
+    # England - Greater London (already covered, but keeping for completeness)
+    {"name": "Greater London", "center": "London, UK", "radius_km": 25},
+    
+    # England - South East
+    {"name": "Kent", "center": "Maidstone, Kent, UK", "radius_km": 30},
+    {"name": "Surrey", "center": "Guildford, Surrey, UK", "radius_km": 25},
+    {"name": "East Sussex", "center": "Lewes, East Sussex, UK", "radius_km": 25},
+    {"name": "West Sussex", "center": "Chichester, West Sussex, UK", "radius_km": 25},
+    {"name": "Hampshire", "center": "Winchester, Hampshire, UK", "radius_km": 30},
+    {"name": "Berkshire", "center": "Reading, Berkshire, UK", "radius_km": 25},
+    {"name": "Buckinghamshire", "center": "Aylesbury, Buckinghamshire, UK", "radius_km": 25},
+    {"name": "Oxfordshire", "center": "Oxford, Oxfordshire, UK", "radius_km": 25},
+    {"name": "Hertfordshire", "center": "Hertford, Hertfordshire, UK", "radius_km": 25},
+    {"name": "Essex", "center": "Chelmsford, Essex, UK", "radius_km": 30},
+    
+    # England - South West
+    {"name": "Bristol", "center": "Bristol, UK", "radius_km": 20},
+    {"name": "Somerset", "center": "Taunton, Somerset, UK", "radius_km": 30},
+    {"name": "Devon", "center": "Exeter, Devon, UK", "radius_km": 35},
+    {"name": "Cornwall", "center": "Truro, Cornwall, UK", "radius_km": 35},
+    {"name": "Dorset", "center": "Dorchester, Dorset, UK", "radius_km": 25},
+    {"name": "Wiltshire", "center": "Trowbridge, Wiltshire, UK", "radius_km": 25},
+    {"name": "Gloucestershire", "center": "Gloucester, UK", "radius_km": 25},
+    
+    # England - Midlands
+    {"name": "Birmingham", "center": "Birmingham, UK", "radius_km": 25},
+    {"name": "West Midlands", "center": "Coventry, UK", "radius_km": 25},
+    {"name": "Warwickshire", "center": "Warwick, UK", "radius_km": 25},
+    {"name": "Staffordshire", "center": "Stafford, UK", "radius_km": 30},
+    {"name": "Leicestershire", "center": "Leicester, UK", "radius_km": 25},
+    {"name": "Nottinghamshire", "center": "Nottingham, UK", "radius_km": 25},
+    {"name": "Derbyshire", "center": "Derby, UK", "radius_km": 25},
+    {"name": "Northamptonshire", "center": "Northampton, UK", "radius_km": 25},
+    {"name": "Worcestershire", "center": "Worcester, UK", "radius_km": 25},
+    {"name": "Herefordshire", "center": "Hereford, UK", "radius_km": 20},
+    {"name": "Shropshire", "center": "Shrewsbury, UK", "radius_km": 25},
+    {"name": "Lincolnshire", "center": "Lincoln, UK", "radius_km": 30},
+    
+    # England - East
+    {"name": "Cambridgeshire", "center": "Cambridge, UK", "radius_km": 25},
+    {"name": "Norfolk", "center": "Norwich, UK", "radius_km": 30},
+    {"name": "Suffolk", "center": "Ipswich, UK", "radius_km": 30},
+    {"name": "Bedfordshire", "center": "Bedford, UK", "radius_km": 20},
+    
+    # England - North West
+    {"name": "Greater Manchester", "center": "Manchester, UK", "radius_km": 25},
+    {"name": "Liverpool", "center": "Liverpool, UK", "radius_km": 20},
+    {"name": "Lancashire", "center": "Preston, UK", "radius_km": 30},
+    {"name": "Cheshire", "center": "Chester, UK", "radius_km": 25},
+    {"name": "Cumbria", "center": "Carlisle, UK", "radius_km": 35},
+    {"name": "Merseyside", "center": "Liverpool, UK", "radius_km": 20},
+    
+    # England - North East
+    {"name": "Newcastle", "center": "Newcastle upon Tyne, UK", "radius_km": 20},
+    {"name": "Durham", "center": "Durham, UK", "radius_km": 25},
+    {"name": "Northumberland", "center": "Morpeth, UK", "radius_km": 30},
+    {"name": "Tyne and Wear", "center": "Newcastle upon Tyne, UK", "radius_km": 20},
+    
+    # England - Yorkshire
+    {"name": "West Yorkshire", "center": "Leeds, UK", "radius_km": 25},
+    {"name": "South Yorkshire", "center": "Sheffield, UK", "radius_km": 25},
+    {"name": "North Yorkshire", "center": "York, UK", "radius_km": 30},
+    {"name": "East Riding", "center": "Beverley, UK", "radius_km": 25},
+    
+    # Wales
+    {"name": "Cardiff", "center": "Cardiff, Wales", "radius_km": 20},
+    {"name": "Swansea", "center": "Swansea, Wales", "radius_km": 20},
+    {"name": "Newport", "center": "Newport, Wales", "radius_km": 15},
+    {"name": "North Wales", "center": "Bangor, Wales", "radius_km": 35},
+    {"name": "Mid Wales", "center": "Aberystwyth, Wales", "radius_km": 35},
+    {"name": "South Wales Valleys", "center": "Merthyr Tydfil, Wales", "radius_km": 25},
+    
+    # Scotland
+    {"name": "Glasgow", "center": "Glasgow, Scotland", "radius_km": 20},
+    {"name": "Edinburgh", "center": "Edinburgh, Scotland", "radius_km": 20},
+    {"name": "Aberdeen", "center": "Aberdeen, Scotland", "radius_km": 20},
+    {"name": "Dundee", "center": "Dundee, Scotland", "radius_km": 15},
+    {"name": "Highlands", "center": "Inverness, Scotland", "radius_km": 40},
+    {"name": "Fife", "center": "Glenrothes, Scotland", "radius_km": 25},
+    {"name": "Ayrshire", "center": "Ayr, Scotland", "radius_km": 25},
+    {"name": "Stirling", "center": "Stirling, Scotland", "radius_km": 20},
+    
+    # Northern Ireland
+    {"name": "Belfast", "center": "Belfast, Northern Ireland", "radius_km": 20},
+    {"name": "Derry", "center": "Derry, Northern Ireland", "radius_km": 15},
+    {"name": "Antrim", "center": "Antrim, Northern Ireland", "radius_km": 20},
+    {"name": "Down", "center": "Downpatrick, Northern Ireland", "radius_km": 20},
+]
 
 def get_command_args(config: Dict[str, Any], input_file: str = None, output_file: str = None) -> list:
     """
