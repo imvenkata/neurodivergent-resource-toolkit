@@ -142,6 +142,7 @@ GOOGLE_PLACES_CONFIG = {
     "requests_per_minute": 100,  # Conservative limit for Google Places API
     "max_searches": None,  # Maximum number of searches to perform (None = unlimited)
     "fetch_details": True,  # Whether to fetch detailed place information
+    "max_results_per_search": 60,  # Max results per keyword (API returns 20/page, will paginate up to this limit)
 }
 
 # Comprehensive list of keywords for neurodivergent resource discovery

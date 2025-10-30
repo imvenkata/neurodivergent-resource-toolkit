@@ -461,6 +461,9 @@ def main():
         if args.no_details:
             fetch_details = False
         
+        # Get max results per search from config
+        max_results_per_search = GOOGLE_PLACES_CONFIG.get("max_results_per_search", 60)
+        
         new_places = scrape_uk_places(
             api_key=api_key,
             keywords=keywords,
@@ -469,6 +472,7 @@ def main():
             rate_limiter=rate_limiter,
             fetch_details=fetch_details,
             max_searches=max_searches,
+            max_results_per_search=max_results_per_search,
         )
         
         # Save scraped data if cache path provided

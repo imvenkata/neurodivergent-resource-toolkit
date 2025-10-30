@@ -136,50 +136,82 @@ def search_places_by_keyword(
     region: str,
     cache: Dict,
     rate_limiter: RateLimiter,
+    max_results: int = 60,  # Maximum total results to fetch (via pagination)
 ) -> List[Dict]:
     """
     Search for places using Google Places API (New) Text Search.
     Returns list of place dictionaries.
+    
+    Note: Google Places API (New) returns max 20 results per request.
+    This function will paginate to fetch up to max_results total results.
     """
     # Build search query (use keyword only; location is provided via locationBias)
     query = keyword.strip()
-    cache_key = f"search_v1:{query}:{location}:r{radius_meters}"
+    cache_key = f"search_v1:{query}:{location}:r{radius_meters}:max{max_results}"
     
     # Check cache
     if cache_key in cache.get("text_search", {}):
         cached = cache["text_search"][cache_key]
         return cached.get("results", [])
     
-    rate_limiter.wait_if_needed()
+    all_results = []
+    next_page_token = None
+    page_count = 0
+    max_pages = (max_results + 19) // 20  # Round up to nearest 20
     
     try:
         url = "https://places.googleapis.com/v1/places:searchText"
         field_mask = (
             "places.id,places.name,places.displayName,places.formattedAddress,"
-            "places.location,places.types,places.businessStatus,places.googleMapsUri"
+            "places.location,places.types,places.businessStatus,places.googleMapsUri,"
+            "nextPageToken"
         )
-        headers = {
-            "X-Goog-Api-Key": api_key,
-            "X-Goog-FieldMask": field_mask,
-        }
-        body: Dict[str, object] = {
-            "textQuery": query,
-            "regionCode": (region or "gb").upper(),
-            "languageCode": "en",
-            "maxResultCount": 20,
-            "rankPreference": "RELEVANCE",
-        }
-        if lat_lng:
-            body["locationBias"] = {
-                "circle": {
-                    "center": {"latitude": float(lat_lng[0]), "longitude": float(lat_lng[1])},
-                    "radius": float(radius_meters),
-                }
+        
+        while page_count < max_pages:
+            rate_limiter.wait_if_needed()
+            
+            headers = {
+                "X-Goog-Api-Key": api_key,
+                "X-Goog-FieldMask": field_mask,
             }
-        data = http_post_json(url, body=body, headers=headers)
-        results = data.get("places", [])
-        cache.setdefault("text_search", {})[cache_key] = {"results": results, "status": "OK"}
-        return results
+            body: Dict[str, object] = {
+                "textQuery": query,
+                "regionCode": (region or "gb").upper(),
+                "languageCode": "en",
+                "maxResultCount": 20,  # API max per request
+                "rankPreference": "RELEVANCE",
+            }
+            
+            # Add location bias
+            if lat_lng:
+                body["locationBias"] = {
+                    "circle": {
+                        "center": {"latitude": float(lat_lng[0]), "longitude": float(lat_lng[1])},
+                        "radius": float(radius_meters),
+                    }
+                }
+            
+            # Add page token for subsequent requests
+            if next_page_token:
+                body["pageToken"] = next_page_token
+            
+            data = http_post_json(url, body=body, headers=headers)
+            results = data.get("places", [])
+            all_results.extend(results)
+            
+            # Check for next page
+            next_page_token = data.get("nextPageToken")
+            page_count += 1
+            
+            # Stop if no more results or reached max
+            if not next_page_token or len(all_results) >= max_results:
+                break
+        
+        # Trim to max_results
+        all_results = all_results[:max_results]
+        
+        cache.setdefault("text_search", {})[cache_key] = {"results": all_results, "status": "OK"}
+        return all_results
     except Exception as e:
         print(f"Error searching '{query}': {e}")
         cache.setdefault("text_search", {})[cache_key] = {"results": [], "error": str(e)}
@@ -334,10 +366,14 @@ def scrape_uk_places(
     rate_limiter: RateLimiter,
     fetch_details: bool = True,
     max_searches: Optional[int] = None,
+    max_results_per_search: int = 60,
 ) -> List[Dict[str, str]]:
     """
     Main scraping function that searches across keywords and regions.
     Returns list of place data dictionaries.
+    
+    Args:
+        max_results_per_search: Maximum results to fetch per keyword/region combo (will paginate)
     """
     cache = load_cache(cache_path)
     all_places: Dict[str, Dict[str, str]] = {}  # place_id -> place_data
@@ -381,6 +417,7 @@ def scrape_uk_places(
                 region=GOOGLE_PLACES_CONFIG["region"],
                 cache=cache,
                 rate_limiter=rate_limiter,
+                max_results=max_results_per_search,
             )
             
             new_places = 0
