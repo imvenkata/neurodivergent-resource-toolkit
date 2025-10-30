@@ -24,6 +24,7 @@ import argparse
 import csv
 import os
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List
 
@@ -36,21 +37,38 @@ try:
 except ImportError:
     pass
 
-from config import GOOGLE_PLACES_CONFIG, SEARCH_KEYWORDS, UK_REGIONS, DATA_DIR
+from config import GOOGLE_PLACES_CONFIG, SEARCH_KEYWORDS, UK_REGIONS
 
 # Import the scraper
 from src.scrape_google_places import scrape_uk_places, RateLimiter
+from src.utils.coverage_tracker import upsert_region
 
 
 def read_csv(path: str) -> List[Dict[str, str]]:
     """Read CSV file and return list of dictionaries."""
     rows = []
-    with open(path, "r", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            # Convert None to empty string
-            rows.append({k: (v if v is not None else "") for k, v in row.items()})
-    return rows
+    
+    # Try multiple encodings
+    encodings = ['utf-8', 'utf-8-sig', 'latin-1', 'cp1252', 'iso-8859-1']
+    
+    for encoding in encodings:
+        try:
+            with open(path, "r", encoding=encoding) as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    # Convert None to empty string
+                    rows.append({k: (v if v is not None else "") for k, v in row.items()})
+            print(f"Successfully read CSV with {encoding} encoding")
+            return rows
+        except UnicodeDecodeError:
+            rows = []  # Reset for next attempt
+            continue
+        except Exception as e:
+            if encoding == encodings[-1]:  # Last encoding attempt
+                raise Exception(f"Failed to read CSV with any encoding: {e}")
+            continue
+    
+    raise Exception(f"Could not read {path} with any of the attempted encodings: {encodings}")
 
 
 def read_excel(path: str) -> List[Dict[str, str]]:
@@ -83,6 +101,44 @@ def load_existing_resources(input_path: str) -> List[Dict[str, str]]:
     
     print(f"✅ Loaded {len(rows)} existing resources")
     return rows
+
+
+# ---------------------------
+# data/db snapshot management
+# ---------------------------
+def get_db_base_dir() -> Path:
+    """Return the data/db directory path (create if missing)."""
+    db_dir = Path(__file__).parent.parent / "data" / "db"
+    db_dir.mkdir(parents=True, exist_ok=True)
+    return db_dir
+
+
+def find_latest_db_file() -> str:
+    """
+    Pick the latest snapshot if present, otherwise the base CSV under data/db/.
+    Priority order by presence time: enriched_resources_*.xlsx, enriched_resources_*.csv, then base CSV.
+    """
+    db_dir = get_db_base_dir()
+
+    candidates = []
+    candidates += list(db_dir.glob("enriched_resources_*.xlsx"))
+    candidates += list(db_dir.glob("enriched_resources_*.csv"))
+
+    if candidates:
+        latest = max(candidates, key=lambda p: p.stat().st_mtime)
+        return str(latest)
+
+    # Fallback base file
+    base = db_dir / "enriched_resources.csv"
+    return str(base)
+
+
+def make_snapshot_path(prefer_ext: str = "xlsx") -> str:
+    """Build a timestamped snapshot filename under data/db/."""
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    db_dir = get_db_base_dir()
+    ext = prefer_ext.lower() if prefer_ext.lower() in ("xlsx", "csv") else "xlsx"
+    return str(db_dir / f"enriched_resources_{ts}.{ext}")
 
 
 def merge_place_data(existing: Dict[str, str], new: Dict[str, str], prefer_existing: bool = True) -> Dict[str, str]:
@@ -272,13 +328,13 @@ def main():
     # I/O arguments
     parser.add_argument(
         "--input",
-        default=str(DATA_DIR / "input" / "enriched_resources_28Oct25.xlsx"),
-        help="Path to existing enriched resources (CSV or Excel)",
+        default=None,
+        help="Path to existing enriched resources (CSV or Excel). If omitted, auto-resolve from data/db/",
     )
     parser.add_argument(
         "--output",
-        required=True,
-        help="Output path for combined dataset (CSV or Excel)",
+        default=None,
+        help="Output path for combined dataset (CSV or Excel). If omitted, a timestamped snapshot is saved under data/db/",
     )
     parser.add_argument(
         "--scraped-cache",
@@ -338,9 +394,11 @@ def main():
     print("\n" + "="*60)
     print("🚀 UK NEURODIVERGENT RESOURCE EXPANSION PIPELINE")
     print("="*60 + "\n")
-    
-    # Load existing resources
-    existing_resources = load_existing_resources(args.input)
+
+    # Resolve input/output based on data/db snapshot policy
+    resolved_input = args.input or find_latest_db_file()
+    print(f"Using input: {resolved_input}")
+    existing_resources = load_existing_resources(resolved_input)
     
     # Scrape or load new places
     new_places = []
@@ -410,6 +468,14 @@ def main():
             write_csv_simple(args.scraped_cache, new_places)
             print(f"💾 Saved scraped data to {args.scraped_cache}")
     
+    # Determine output snapshot location (prefer extension matching input when not provided)
+    if args.output:
+        resolved_output = args.output
+    else:
+        prefer_ext = "xlsx" if str(resolved_input).lower().endswith(".xlsx") else "csv"
+        resolved_output = make_snapshot_path(prefer_ext=prefer_ext)
+    print(f"Snapshot will be written to: {resolved_output}")
+
     # Merge and deduplicate
     print("\n" + "─"*60)
     print("🔀 MERGING AND DEDUPLICATING")
@@ -429,8 +495,48 @@ def main():
         if "sno" not in resource or not resource["sno"]:
             resource["sno"] = str(idx)
     
-    # Write output
-    write_output(merged_resources, args.output)
+    # Write output snapshot
+    write_output(merged_resources, resolved_output)
+
+    # ---------------------------
+    # Coverage tracking per region
+    # Compute per-region new_added and duplicates based on website's search_region
+    # Build existing_by_id to detect duplicates quickly
+    existing_by_id: Dict[str, Dict[str, str]] = {}
+    for res in existing_resources:
+        pid = (res.get("gmaps_place_id") or "").strip()
+        if pid:
+            existing_by_id[pid] = res
+
+    # Aggregate counts per region
+    per_region = {}
+    for np in new_places:
+        rid = np.get("search_region", "Unknown")
+        ent = per_region.setdefault(rid, {"places_found": 0, "new_added": 0, "duplicates": 0})
+        ent["places_found"] += 1
+        pid = (np.get("gmaps_place_id") or "").strip()
+        if pid and pid in existing_by_id:
+            ent["duplicates"] += 1
+        else:
+            ent["new_added"] += 1
+
+    # Upsert coverage rows
+    project_root = Path(__file__).parent.parent
+    searches_attempted = len(regions) * (len(keywords) if not max_searches else min(len(keywords) * len(regions), max_searches))
+    for reg in regions:
+        name = reg["name"]
+        metrics = per_region.get(name, {"places_found": 0, "new_added": 0, "duplicates": 0})
+        upsert_region(
+            project_root=project_root,
+            region_name=name,
+            keywords_attempted=len(keywords),
+            searches_attempted=min(len(keywords), max_searches or len(keywords)),
+            places_found=metrics["places_found"],
+            new_added=metrics["new_added"],
+            duplicates=metrics["duplicates"],
+            last_snapshot_path=resolved_output,
+            notes="auto",
+        )
     
     print("✨ Pipeline complete!\n")
 

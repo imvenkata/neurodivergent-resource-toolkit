@@ -83,6 +83,18 @@ def http_get_json(url: str, headers: Optional[Dict[str, str]] = None) -> Dict:
         return json.loads(data)
 
 
+def http_post_json(url: str, body: Dict, headers: Optional[Dict[str, str]] = None) -> Dict:
+    """Make HTTP POST request with JSON body and return JSON response."""
+    payload = json.dumps(body).encode("utf-8")
+    all_headers = {"Content-Type": "application/json; charset=utf-8"}
+    if headers:
+        all_headers.update(headers)
+    req = urllib.request.Request(url, data=payload, headers=all_headers, method="POST")
+    with urllib.request.urlopen(req, timeout=30) as resp:
+        data = resp.read().decode("utf-8")
+        return json.loads(data)
+
+
 def geocode_location(location_str: str, api_key: str, cache: Dict, rate_limiter: RateLimiter) -> Optional[Tuple[float, float]]:
     """
     Geocode a location string to lat/lng coordinates.
@@ -91,7 +103,7 @@ def geocode_location(location_str: str, api_key: str, cache: Dict, rate_limiter:
     cache_key = f"geocode:{location_str}"
     if cache_key in cache.get("text_search", {}):
         cached = cache["text_search"][cache_key]
-        if cached and "location" in cached:
+        if cached and "location" in cached and cached["location"] is not None:
             return (cached["location"]["lat"], cached["location"]["lng"])
         return None
     
@@ -126,12 +138,12 @@ def search_places_by_keyword(
     rate_limiter: RateLimiter,
 ) -> List[Dict]:
     """
-    Search for places using Google Places Text Search API.
+    Search for places using Google Places API (New) Text Search.
     Returns list of place dictionaries.
     """
-    # Build search query
-    query = f"{keyword} in {location}"
-    cache_key = f"search:{query}:r{radius_meters}"
+    # Build search query (use keyword only; location is provided via locationBias)
+    query = keyword.strip()
+    cache_key = f"search_v1:{query}:{location}:r{radius_meters}"
     
     # Check cache
     if cache_key in cache.get("text_search", {}):
@@ -141,34 +153,33 @@ def search_places_by_keyword(
     rate_limiter.wait_if_needed()
     
     try:
-        params = {
-            "query": query,
-            "key": api_key,
-            "region": region,
+        url = "https://places.googleapis.com/v1/places:searchText"
+        field_mask = (
+            "places.id,places.name,places.displayName,places.formattedAddress,"
+            "places.location,places.types,places.businessStatus,places.googleMapsUri"
+        )
+        headers = {
+            "X-Goog-Api-Key": api_key,
+            "X-Goog-FieldMask": field_mask,
         }
-        
-        # Add location bias if we have coordinates
+        body: Dict[str, object] = {
+            "textQuery": query,
+            "regionCode": (region or "gb").upper(),
+            "languageCode": "en",
+            "maxResultCount": 20,
+            "rankPreference": "RELEVANCE",
+        }
         if lat_lng:
-            params["location"] = f"{lat_lng[0]},{lat_lng[1]}"
-            params["radius"] = str(radius_meters)
-        
-        qs = urllib.parse.urlencode(params)
-        url = f"https://maps.googleapis.com/maps/api/place/textsearch/json?{qs}"
-        data = http_get_json(url)
-        
-        status = data.get("status", "")
-        if status == "OVER_QUERY_LIMIT":
-            raise RuntimeError("Google Places API: OVER_QUERY_LIMIT - please reduce rate or wait")
-        if status == "REQUEST_DENIED":
-            raise RuntimeError(f"Google Places API: REQUEST_DENIED - {data}")
-        
-        results = data.get("results", [])
-        
-        # Cache the results
-        cache.setdefault("text_search", {})[cache_key] = {"results": results, "status": status}
-        
+            body["locationBias"] = {
+                "circle": {
+                    "center": {"latitude": float(lat_lng[0]), "longitude": float(lat_lng[1])},
+                    "radius": float(radius_meters),
+                }
+            }
+        data = http_post_json(url, body=body, headers=headers)
+        results = data.get("places", [])
+        cache.setdefault("text_search", {})[cache_key] = {"results": results, "status": "OK"}
         return results
-        
     except Exception as e:
         print(f"Error searching '{query}': {e}")
         cache.setdefault("text_search", {})[cache_key] = {"results": [], "error": str(e)}
@@ -176,49 +187,46 @@ def search_places_by_keyword(
 
 
 def get_place_details(
-    place_id: str,
+    place_name: str,
     api_key: str,
     cache: Dict,
     rate_limiter: RateLimiter,
     fields: str = None,
 ) -> Optional[Dict]:
     """
-    Get detailed information about a place using Place Details API.
+    Get detailed information about a place using Places API (New).
+    place_name should be the resource name like 'places/{id}' from search results.
     """
     if not fields:
+        # Note: Places API (New) uses different field names
+        # - nationalPhoneNumber instead of formattedPhoneNumber  
+        # - displayName instead of name
+        # - Don't include 'name' as field (it's the resource name)
         fields = (
-            "place_id,name,formatted_address,geometry,opening_hours,current_opening_hours,website,"
-            "formatted_phone_number,international_phone_number,rating,user_ratings_total,reviews,types,"
-            "business_status,editorial_summary,url,address_components,plus_code,photos"
+            "id,displayName,formattedAddress,location,types,businessStatus,googleMapsUri,"
+            "websiteUri,nationalPhoneNumber,addressComponents"
         )
-    
-    cache_key = f"details:{place_id}:{fields}"
+
+    cache_key = f"details_v1:{place_name}:{fields}"
     
     # Check cache
     if cache_key in cache.get("details", {}):
         return cache["details"][cache_key]
     
     rate_limiter.wait_if_needed()
-    
+
     try:
-        params = {"place_id": place_id, "fields": fields, "key": api_key}
-        qs = urllib.parse.urlencode(params)
-        url = f"https://maps.googleapis.com/maps/api/place/details/json?{qs}"
-        data = http_get_json(url)
-        
-        status = data.get("status", "")
-        if status == "OVER_QUERY_LIMIT":
-            raise RuntimeError("Google Place Details API: OVER_QUERY_LIMIT")
-        if status == "REQUEST_DENIED":
-            raise RuntimeError(f"Google Place Details API: REQUEST_DENIED - {data}")
-        
-        # Cache the result
+        # place_name is already in format 'places/{id}'
+        url = f"https://places.googleapis.com/v1/{place_name}"
+        headers = {
+            "X-Goog-Api-Key": api_key,
+            "X-Goog-FieldMask": fields,
+        }
+        data = http_get_json(url, headers=headers)
         cache.setdefault("details", {})[cache_key] = data
-        
         return data
-        
     except Exception as e:
-        print(f"Error getting details for place_id '{place_id}': {e}")
+        print(f"Error getting details for place '{place_name}': {e}")
         cache.setdefault("details", {})[cache_key] = {"error": str(e)}
         return None
 
@@ -227,13 +235,14 @@ def extract_place_data(place_basic: Dict, place_details: Optional[Dict], keyword
     """
     Extract and normalize place data into CSV row format matching enriched_resources.csv schema.
     """
-    # Start with basic data from search results
-    place_id = place_basic.get("place_id", "")
-    name = place_basic.get("name", "")
-    formatted_address = place_basic.get("formatted_address", "")
-    geometry = place_basic.get("geometry", {}).get("location", {})
-    lat = geometry.get("lat", "")
-    lng = geometry.get("lng", "")
+    # Start with basic data from search results (Places API New)
+    place_id = place_basic.get("id") or (place_basic.get("name", "").split("/")[-1] if place_basic.get("name") else "")
+    display_name = place_basic.get("displayName", {})
+    name = display_name.get("text") or place_basic.get("name", "")
+    formatted_address = place_basic.get("formattedAddress", "")
+    loc = place_basic.get("location", {}) or {}
+    lat = loc.get("latitude", "")
+    lng = loc.get("longitude", "")
     
     # Initialize row with basic data
     row = {
@@ -249,75 +258,54 @@ def extract_place_data(place_basic: Dict, place_details: Optional[Dict], keyword
     }
     
     # If we have detailed data, extract it
-    if place_details and "result" in place_details:
-        result = place_details["result"]
+    if place_details:
+        # Places API New returns the place object directly
+        result = place_details
         
-        # Opening hours
-        opening_hours = result.get("opening_hours", {})
-        row["gmaps_open_now"] = str(opening_hours.get("open_now", ""))
-        row["gmaps_opening_hours_weekday_text"] = "; ".join(opening_hours.get("weekday_text", []))
+        # Contact Data fields (website + phone)
+        row["gmaps_website"] = result.get("websiteUri", "")
+        row["gmaps_phone"] = result.get("nationalPhoneNumber", "") or result.get("internationalPhoneNumber", "")
         
-        # Current opening hours
-        current_opening = result.get("current_opening_hours", {})
-        row["gmaps_current_opening_hours_weekday_text"] = "; ".join(current_opening.get("weekday_text", []))
+        # Note: opening_hours NOT requested to save costs (Contact Data)
         
-        # Contact info
-        row["gmaps_website"] = result.get("website", "")
-        row["gmaps_phone"] = result.get("international_phone_number") or result.get("formatted_phone_number", "")
-        
-        # Ratings and reviews
-        row["gmaps_rating"] = str(result.get("rating", ""))
-        row["gmaps_user_ratings_total"] = str(result.get("user_ratings_total", ""))
-        
-        # Reviews (top 3)
-        reviews = result.get("reviews", [])
-        top_reviews = []
-        for rv in reviews[:3]:
-            author = rv.get("author_name", "")
-            rating = rv.get("rating", "")
-            text = (rv.get("text", "") or "").strip().replace("\n", " ")
-            top_reviews.append(f"{author}({rating}): {text}".strip())
-        row["gmaps_reviews_top3"] = " | ".join(top_reviews)
-        
-        # Editorial summary
-        editorial = result.get("editorial_summary", {})
-        row["gmaps_editorial_summary"] = editorial.get("overview", "")
+        # Note: rating, user_ratings_total, reviews, editorial_summary are NOT requested
+        # to avoid expensive Atmosphere Data charges - these fields will be empty
         
         # URLs
-        row["gmaps_url"] = result.get("url", "") or f"https://www.google.com/maps/place/?q=place_id:{place_id}"
-        row["gmaps_directions_url"] = f"https://www.google.com/maps/dir/?api=1&destination_place_id={place_id}"
+        row["gmaps_url"] = result.get("googleMapsUri", "") or (f"https://www.google.com/maps/place/?q=place_id:{place_id}" if place_id else "")
+        if lat and lng:
+            row["gmaps_directions_url"] = f"https://www.google.com/maps/dir/?api=1&destination={lat}%2C{lng}"
+        else:
+            row["gmaps_directions_url"] = ""
         
         # Plus code
-        plus_code = result.get("plus_code", {})
-        row["gmaps_plus_code_global"] = plus_code.get("global_code", "")
-        row["gmaps_plus_code_compound"] = plus_code.get("compound_code", "")
+        plus_code = result.get("plusCode", {})
+        row["gmaps_plus_code_global"] = plus_code.get("globalCode", "")
+        row["gmaps_plus_code_compound"] = plus_code.get("compoundCode", "")
         
         # UTC offset
         row["gmaps_utc_offset_minutes"] = str(result.get("utc_offset_minutes", ""))
         
         # Photo reference
         photos = result.get("photos", [])
-        row["gmaps_photo_reference_1"] = photos[0].get("photo_reference", "") if photos else ""
+        row["gmaps_photo_reference_1"] = photos[0].get("name", "") if photos else ""
         
-        # Address components
-        address_components = result.get("address_components", [])
-        for comp in address_components:
-            types_list = comp.get("types", [])
-            long_name = comp.get("long_name", "")
-            short_name = comp.get("short_name", "")
-            
-            if "country" in types_list:
-                row["gmaps_addr_country"] = long_name or short_name
-            elif "postal_code" in types_list:
-                row["gmaps_addr_postal_code"] = long_name or short_name
-            elif "postal_town" in types_list:
-                row["gmaps_addr_postal_town"] = long_name or short_name
-            elif "locality" in types_list:
-                row["gmaps_addr_locality"] = long_name or short_name
-            elif "administrative_area_level_1" in types_list:
-                row["gmaps_addr_admin_area_level_1"] = long_name or short_name
-            elif "administrative_area_level_2" in types_list:
-                row["gmaps_addr_admin_area_level_2"] = long_name or short_name
+        # Address components (Places API New: addressComponents with types)
+        addr_components = result.get("addressComponents", [])
+        def addr_get(type_name: str) -> str:
+            for comp in addr_components:
+                types_list = comp.get("types", []) or []
+                if type_name in types_list:
+                    # v1 uses longText/shortText
+                    return (comp.get("longText") or comp.get("shortText") or "").strip()
+            return ""
+
+        row["gmaps_addr_country"] = addr_get("country")
+        row["gmaps_addr_postal_code"] = addr_get("postal_code")
+        row["gmaps_addr_postal_town"] = addr_get("postal_town")
+        row["gmaps_addr_locality"] = addr_get("locality")
+        row["gmaps_addr_admin_area_level_1"] = addr_get("administrative_area_level_1")
+        row["gmaps_addr_admin_area_level_2"] = addr_get("administrative_area_level_2")
     
     # Fill in any missing fields with empty strings
     all_fields = [
@@ -397,7 +385,8 @@ def scrape_uk_places(
             
             new_places = 0
             for place in places:
-                place_id = place.get("place_id")
+                place_name = place.get("name", "")  # Resource name like 'places/ChIJ...'
+                place_id = place.get("id") or (place_name.split("/")[-1] if place_name else None)
                 if not place_id or place_id in seen_place_ids:
                     continue
                 
@@ -407,8 +396,8 @@ def scrape_uk_places(
                 
                 # Get detailed info if requested
                 details = None
-                if fetch_details:
-                    details = get_place_details(place_id, api_key, cache, rate_limiter)
+                if fetch_details and place_name:
+                    details = get_place_details(place_name, api_key, cache, rate_limiter)
                 
                 # Extract and store place data
                 place_data = extract_place_data(place, details, keyword, region_name)

@@ -28,9 +28,11 @@ from typing import Dict, Iterable, List, Optional, Tuple
 
 
 DEFAULT_FIELDS = (
-    "place_id,name,formatted_address,geometry,opening_hours,current_opening_hours,website,"
-    "formatted_phone_number,international_phone_number,rating,user_ratings_total,reviews,types,"
-    "business_status,editorial_summary,url,address_components,plus_code,photos"
+    # Optimized for cost: Basic Data (FREE) + Website + Phone (2 Contact Data fields)
+    # Removed: opening_hours, international_phone_number (Contact Data)
+    # Removed: rating, user_ratings_total, reviews, editorial_summary (Atmosphere Data)
+    "place_id,name,formatted_address,geometry,types,business_status,url,"
+    "address_components,plus_code,photos,website,formatted_phone_number"
 )
 
 
@@ -235,21 +237,11 @@ def gmaps_place_details(api_key: str, place_id: str, fields: str, cache: Dict, s
 def extract_from_details(details: Dict) -> Dict[str, str]:
     result = (details or {}).get("result") or {}
     geom = (result.get("geometry") or {}).get("location") or {}
-    opening = result.get("opening_hours") or {}
-    reviews = result.get("reviews") or []
-    weekday_text = opening.get("weekday_text") or []
-    current_opening = result.get("current_opening_hours") or {}
-    current_weekday_text = current_opening.get("weekday_text") or []
+    # Note: opening_hours, phone numbers NOT requested to save costs (Contact Data)
+    # Note: reviews, rating, user_ratings_total, editorial_summary NOT requested (Atmosphere Data)
     plus_code = result.get("plus_code") or {}
     address_components = result.get("address_components") or []
     photos = result.get("photos") or []
-    # Keep top 3 reviews as a compact string
-    top_reviews = []
-    for rv in reviews[:3]:
-        author = rv.get("author_name") or ""
-        rating = rv.get("rating")
-        text = (rv.get("text") or "").strip().replace("\n", " ")
-        top_reviews.append(f"{author}({rating}): {text}".strip())
 
     types = ",".join(result.get("types") or [])
 
@@ -281,17 +273,17 @@ def extract_from_details(details: Dict) -> Dict[str, str]:
         "gmaps_formatted_address": result.get("formatted_address", ""),
         "gmaps_latitude": lat_str,
         "gmaps_longitude": lng_str,
-        "gmaps_open_now": str(opening.get("open_now", "")),
-        "gmaps_opening_hours_weekday_text": "; ".join(weekday_text),
-        "gmaps_current_opening_hours_weekday_text": "; ".join(current_weekday_text),
+        "gmaps_open_now": "",  # Not requested to save costs (Contact Data)
+        "gmaps_opening_hours_weekday_text": "",  # Not requested to save costs (Contact Data)
+        "gmaps_current_opening_hours_weekday_text": "",  # Not requested to save costs (Contact Data)
         "gmaps_website": result.get("website", ""),
-        "gmaps_phone": result.get("international_phone_number") or result.get("formatted_phone_number", ""),
-        "gmaps_rating": str(result.get("rating", "")),
-        "gmaps_user_ratings_total": str(result.get("user_ratings_total", "")),
+        "gmaps_phone": result.get("formatted_phone_number", ""),
+        "gmaps_rating": "",  # Not requested to save costs (Atmosphere Data)
+        "gmaps_user_ratings_total": "",  # Not requested to save costs (Atmosphere Data)
         "gmaps_types": types,
-        "gmaps_reviews_top3": " | ".join(top_reviews),
+        "gmaps_reviews_top3": "",  # Not requested to save costs (Atmosphere Data)
         "gmaps_business_status": result.get("business_status", ""),
-        "gmaps_editorial_summary": (result.get("editorial_summary") or {}).get("overview", ""),
+        "gmaps_editorial_summary": "",  # Not requested to save costs (Atmosphere Data)
         "gmaps_url": maps_url,
         "gmaps_directions_url": directions_url,
         "gmaps_plus_code_global": plus_code.get("global_code", ""),
