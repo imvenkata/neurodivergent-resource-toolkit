@@ -143,6 +143,11 @@ GOOGLE_PLACES_CONFIG = {
     "max_searches": None,  # Maximum number of searches to perform (None = unlimited)
     "fetch_details": True,  # Whether to fetch detailed place information
     "max_results_per_search": 60,  # Max results per keyword (API returns 20/page, will paginate up to this limit)
+    
+    # Parallel processing options
+    "use_parallel": False,  # Enable parallel processing for faster scraping
+    "max_workers": 5,  # Number of concurrent workers (be careful with rate limits!)
+    "use_keyword_grouping": True,  # Group similar keywords to reduce API calls
 }
 
 # Comprehensive list of keywords for neurodivergent resource discovery

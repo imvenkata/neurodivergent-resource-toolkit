@@ -39,9 +39,19 @@ except ImportError:
 
 from config import GOOGLE_PLACES_CONFIG, SEARCH_KEYWORDS, UK_REGIONS
 
-# Import the scraper
+# Import the scrapers
 from src.scrape_google_places import scrape_uk_places, RateLimiter
 from src.utils.coverage_tracker import upsert_region
+
+# Import parallel scraper
+try:
+    from src.scrape_google_places_parallel import (
+        scrape_uk_places_parallel,
+        ThreadSafeRateLimiter,
+    )
+    PARALLEL_AVAILABLE = True
+except ImportError:
+    PARALLEL_AVAILABLE = False
 
 
 def read_csv(path: str) -> List[Dict[str, str]]:
@@ -382,6 +392,24 @@ def main():
         help="Requests per minute (default from config)",
     )
     
+    # Parallel processing
+    parser.add_argument(
+        "--parallel",
+        action="store_true",
+        help="Use parallel processing for faster scraping",
+    )
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=5,
+        help="Number of parallel workers (default: 5, use with --parallel)",
+    )
+    parser.add_argument(
+        "--no-keyword-grouping",
+        action="store_true",
+        help="Disable keyword grouping optimization (use with --parallel)",
+    )
+    
     # Merging arguments
     parser.add_argument(
         "--prefer-new",
@@ -420,9 +448,12 @@ def main():
             ))
             sys.exit(1)
         
-        # Set up rate limiter
+        # Set up rate limiter (thread-safe if parallel mode)
         rate_limit = args.rate_limit or GOOGLE_PLACES_CONFIG["requests_per_minute"]
-        rate_limiter = RateLimiter(rate_limit)
+        if args.parallel and PARALLEL_AVAILABLE:
+            rate_limiter = ThreadSafeRateLimiter(rate_limit)
+        else:
+            rate_limiter = RateLimiter(rate_limit)
         
         # Filter keywords if specified
         keywords = SEARCH_KEYWORDS
@@ -464,16 +495,43 @@ def main():
         # Get max results per search from config
         max_results_per_search = GOOGLE_PLACES_CONFIG.get("max_results_per_search", 60)
         
-        new_places = scrape_uk_places(
-            api_key=api_key,
-            keywords=keywords,
-            regions=regions,
-            cache_path=cache_path,
-            rate_limiter=rate_limiter,
-            fetch_details=fetch_details,
-            max_searches=max_searches,
-            max_results_per_search=max_results_per_search,
-        )
+        # Choose parallel or sequential scraping
+        if args.parallel:
+            if not PARALLEL_AVAILABLE:
+                print("⚠️  Parallel mode requested but not available. Falling back to sequential.")
+                use_parallel = False
+            else:
+                use_parallel = True
+                print(f"🚀 Using PARALLEL mode with {args.workers} workers")
+                if not args.no_keyword_grouping:
+                    print(f"📦 Keyword grouping: ENABLED")
+        else:
+            use_parallel = False
+        
+        if use_parallel:
+            new_places = scrape_uk_places_parallel(
+                api_key=api_key,
+                keywords=keywords,
+                regions=regions,
+                cache_path=cache_path,
+                rate_limiter=rate_limiter,
+                fetch_details=fetch_details,
+                max_searches=max_searches,
+                max_results_per_search=max_results_per_search,
+                max_workers=args.workers,
+                use_keyword_grouping=not args.no_keyword_grouping,
+            )
+        else:
+            new_places = scrape_uk_places(
+                api_key=api_key,
+                keywords=keywords,
+                regions=regions,
+                cache_path=cache_path,
+                rate_limiter=rate_limiter,
+                fetch_details=fetch_details,
+                max_searches=max_searches,
+                max_results_per_search=max_results_per_search,
+            )
         
         # Save scraped data if cache path provided
         if args.scraped_cache:
