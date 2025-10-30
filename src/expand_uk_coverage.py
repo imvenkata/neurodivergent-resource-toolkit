@@ -438,13 +438,16 @@ def main():
             regions = [reg for reg in UK_REGIONS if any(fr in reg["name"].lower() for fr in filter_regions)]
             print(f"Filtered to {len(regions)} regions matching: {args.regions_filter}")
         
-        # Determine max searches
+        # Determine max searches (priority: CLI arg > test mode > config default)
         max_searches = None
         if args.test:
             max_searches = 5
             print("🧪 TEST MODE: Limited to 5 searches\n")
         elif args.max_searches:
             max_searches = args.max_searches
+        else:
+            # Use config default if set
+            max_searches = GOOGLE_PLACES_CONFIG.get("max_searches")
         
         # Run scraper
         print("\n" + "─"*60)
@@ -453,13 +456,18 @@ def main():
         
         cache_path = GOOGLE_PLACES_CONFIG["cache_file"]
         
+        # Determine fetch_details (priority: CLI arg > config default)
+        fetch_details = GOOGLE_PLACES_CONFIG.get("fetch_details", True)
+        if args.no_details:
+            fetch_details = False
+        
         new_places = scrape_uk_places(
             api_key=api_key,
             keywords=keywords,
             regions=regions,
             cache_path=cache_path,
             rate_limiter=rate_limiter,
-            fetch_details=not args.no_details,
+            fetch_details=fetch_details,
             max_searches=max_searches,
         )
         

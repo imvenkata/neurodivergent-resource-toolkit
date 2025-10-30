@@ -140,6 +140,8 @@ GOOGLE_PLACES_CONFIG = {
     "sleep_between_calls": 0.5,  # Rate limiting: seconds between API calls
     "cache_file": ".cache/google_places_scraping_cache.json",
     "requests_per_minute": 100,  # Conservative limit for Google Places API
+    "max_searches": None,  # Maximum number of searches to perform (None = unlimited)
+    "fetch_details": True,  # Whether to fetch detailed place information
 }
 
 # Comprehensive list of keywords for neurodivergent resource discovery
@@ -358,3 +360,22 @@ def get_command_args(config: Dict[str, Any], input_file: str = None, output_file
             args.extend(["--ollama-auth", ollama["auth"]])
     
     return args
+
+# Example usage presets for UK expansion
+UK_EXPANSION_PRESETS = {
+    "test_single_region": {
+        "max_searches": 5,
+        "fetch_details": True,
+        "requests_per_minute": 100,
+    },
+    "production_full_scan": {
+        "max_searches": None,  # Unlimited
+        "fetch_details": True,
+        "requests_per_minute": 60,  # More conservative for large scans
+    },
+    "quick_scan_no_details": {
+        "max_searches": 50,
+        "fetch_details": False,  # Faster but less data
+        "requests_per_minute": 100,
+    },
+}
