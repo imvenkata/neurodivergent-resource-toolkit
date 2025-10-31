@@ -145,35 +145,35 @@ GOOGLE_PLACES_CONFIG = {
     "max_results_per_search": 60,  # Max results per keyword (API returns 20/page, will paginate up to this limit)
     
     # Parallel processing options
-    "use_parallel": False,  # Enable parallel processing for faster scraping
+    "use_parallel": True,  # Enable parallel processing for faster scraping
     "max_workers": 5,  # Number of concurrent workers (be careful with rate limits!)
-    "use_keyword_grouping": True,  # Group similar keywords to reduce API calls
+    "use_keyword_grouping": False,  # Group similar keywords to reduce API calls
 }
-
+ 
 # Comprehensive list of keywords for neurodivergent resource discovery
 SEARCH_KEYWORDS = [
     # Autism-specific
     "autism support center",
     "autism assessment clinic",
     "autism therapy",
-    "autism diagnosis",
-    "autism spectrum services",
+    # "autism diagnosis",
+    # "autism spectrum services",
     "ASD support",
     "autistic services",
-    "autism charities",
+    # "autism charities",
     
     # ADHD-specific
     "ADHD assessment",
     "ADHD clinic",
     "ADHD support",
-    "ADHD diagnosis",
+    # "ADHD diagnosis",
     "ADHD therapy",
     "attention deficit services",
     
     # Learning disabilities and difficulties
     "learning disability support",
     "dyslexia support",
-    "dyspraxia services",
+    # "dyspraxia services",
     "special educational needs",
     "SEN support",
     "special needs center",
@@ -185,7 +185,7 @@ SEARCH_KEYWORDS = [
     
     # Service types
     "special needs school",
-    "special education",
+    # "special education",
     "occupational therapy autism",
     "speech therapy autism",
     "behavioral therapy",
@@ -195,20 +195,18 @@ SEARCH_KEYWORDS = [
     "autism employment support",
     "supported employment neurodivergent",
     "autism job coaching",
-    "life skills training autism",
+    # "life skills training autism",
     
     # Social and community
     "autism social group",
-    "autism community center",
+    # "autism community center",
     "autism support group",
     "autism parent support",
     "autism family support",
     
     # Diagnosis and assessment
-    "autism diagnostic center",
+    # "autism diagnostic center",
     "neurodevelopmental assessment",
-    "developmental pediatrician",
-    "child development center",
     
     # Specific organizations (common UK providers)
     "National Autistic Society",

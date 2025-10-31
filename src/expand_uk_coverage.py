@@ -495,6 +495,11 @@ def main():
         # Get max results per search from config
         max_results_per_search = GOOGLE_PLACES_CONFIG.get("max_results_per_search", 60)
         
+        # Determine keyword grouping (priority: CLI arg > config default)
+        use_keyword_grouping = GOOGLE_PLACES_CONFIG.get("use_keyword_grouping", True)
+        if args.no_keyword_grouping:
+            use_keyword_grouping = False
+        
         # Choose parallel or sequential scraping
         if args.parallel:
             if not PARALLEL_AVAILABLE:
@@ -503,8 +508,10 @@ def main():
             else:
                 use_parallel = True
                 print(f"🚀 Using PARALLEL mode with {args.workers} workers")
-                if not args.no_keyword_grouping:
+                if use_keyword_grouping:
                     print(f"📦 Keyword grouping: ENABLED")
+                else:
+                    print(f"📦 Keyword grouping: DISABLED")
         else:
             use_parallel = False
         
@@ -519,7 +526,7 @@ def main():
                 max_searches=max_searches,
                 max_results_per_search=max_results_per_search,
                 max_workers=args.workers,
-                use_keyword_grouping=not args.no_keyword_grouping,
+                use_keyword_grouping=use_keyword_grouping,
             )
         else:
             new_places = scrape_uk_places(
