@@ -500,6 +500,20 @@ def main():
         if args.no_keyword_grouping:
             use_keyword_grouping = False
         
+        # Build existing sets to avoid churn
+        existing_place_ids_set = set()
+        existing_websites_set = set()
+        for res in existing_resources:
+            pid = (res.get("gmaps_place_id") or "").strip()
+            if pid:
+                existing_place_ids_set.add(pid)
+            site = (res.get("gmaps_website") or "").strip().lower()
+            if site:
+                existing_websites_set.add(site)
+        
+        # Strict geo filtering flag
+        strict_geo_filter = GOOGLE_PLACES_CONFIG.get("strict_geo_filter", True)
+        
         # Choose parallel or sequential scraping
         if args.parallel:
             if not PARALLEL_AVAILABLE:
@@ -527,6 +541,9 @@ def main():
                 max_results_per_search=max_results_per_search,
                 max_workers=args.workers,
                 use_keyword_grouping=use_keyword_grouping,
+                existing_place_ids=existing_place_ids_set,
+                existing_websites=existing_websites_set,
+                strict_geo_filter=strict_geo_filter,
             )
         else:
             new_places = scrape_uk_places(
@@ -538,6 +555,9 @@ def main():
                 fetch_details=fetch_details,
                 max_searches=max_searches,
                 max_results_per_search=max_results_per_search,
+                existing_place_ids=existing_place_ids_set,
+                existing_websites=existing_websites_set,
+                strict_geo_filter=strict_geo_filter,
             )
         
         # Save scraped data if cache path provided

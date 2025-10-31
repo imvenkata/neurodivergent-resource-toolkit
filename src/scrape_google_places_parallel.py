@@ -10,6 +10,7 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
+from math import radians, sin, cos, asin, sqrt
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -55,6 +56,18 @@ class ThreadSafeRateLimiter:
                 time.sleep(sleep_time)
             
             self.last_request_time = time.time()
+
+
+def haversine_meters(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    try:
+        R = 6371000.0
+        dlat = radians(float(lat2) - float(lat1))
+        dlon = radians(float(lon2) - float(lon1))
+        a = sin(dlat/2)**2 + cos(radians(float(lat1))) * cos(radians(float(lat2))) * sin(dlon/2)**2
+        c = 2 * asin(sqrt(a))
+        return R * c
+    except Exception:
+        return float("inf")
 
 
 def optimize_keywords(keywords: List[str]) -> List[Dict[str, any]]:
@@ -157,6 +170,9 @@ def search_keyword_group_task(
     rate_limiter: ThreadSafeRateLimiter,
     max_results_per_search: int,
     fetch_details: bool,
+    existing_place_ids: Optional[Set[str]] = None,
+    existing_websites: Optional[Set[str]] = None,
+    strict_geo_filter: bool = True,
 ) -> Tuple[str, str, List[Dict]]:
     """
     Search for a keyword group in a region.
@@ -193,11 +209,27 @@ def search_keyword_group_task(
             
             if not place_id:
                 continue
+            # Skip known duplicates immediately
+            if place_id in existing_place_ids:
+                continue
+            # Strict geo filter
+            if strict_geo_filter and lat_lng:
+                loc = place.get("location") or {}
+                plat = loc.get("latitude")
+                plon = loc.get("longitude")
+                if plat is not None and plon is not None:
+                    dist_m = haversine_meters(lat_lng[0], lat_lng[1], plat, plon)
+                    if dist_m > float(radius_meters):
+                        continue
             
             # Get details if requested
             details = None
             if fetch_details and place_name:
                 details = get_place_details(place_name, api_key, cache, rate_limiter)
+                if details:
+                    site = (details.get("websiteUri") or "").strip().lower()
+                    if site and site in existing_websites:
+                        continue
             
             # Extract place data
             place_data = extract_place_data(place, details, primary_keyword, region_name)
@@ -221,6 +253,9 @@ def scrape_uk_places_parallel(
     max_results_per_search: int = 60,
     max_workers: int = 5,
     use_keyword_grouping: bool = True,
+    existing_place_ids: Optional[Set[str]] = None,
+    existing_websites: Optional[Set[str]] = None,
+    strict_geo_filter: bool = True,
 ) -> List[Dict[str, str]]:
     """
     Parallel version of scrape_uk_places with optional keyword grouping.
@@ -274,6 +309,9 @@ def scrape_uk_places_parallel(
                 rate_limiter=rate_limiter,
                 max_results_per_search=max_results_per_search,
                 fetch_details=fetch_details,
+                existing_place_ids=existing_place_ids,
+                existing_websites=existing_websites,
+                strict_geo_filter=strict_geo_filter,
             )
             future_to_task[future] = (keyword_group["primary"], region["name"])
         

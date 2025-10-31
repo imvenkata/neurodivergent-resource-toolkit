@@ -173,7 +173,7 @@ SEARCH_KEYWORDS = [
     # Learning disabilities and difficulties
     "learning disability support",
     "dyslexia support",
-    # "dyspraxia services",
+    "dyspraxia services",
     "special educational needs",
     "SEN support",
     "special needs center",

@@ -19,6 +19,7 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
+from math import radians, sin, cos, asin, sqrt
 
 # Add parent directory to path to import config
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -358,6 +359,19 @@ def extract_place_data(place_basic: Dict, place_details: Optional[Dict], keyword
     return row
 
 
+def haversine_meters(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """Compute Haversine distance in meters between two lat/lon points."""
+    try:
+        R = 6371000.0  # meters
+        dlat = radians(float(lat2) - float(lat1))
+        dlon = radians(float(lon2) - float(lon1))
+        a = sin(dlat / 2) ** 2 + cos(radians(float(lat1))) * cos(radians(float(lat2))) * sin(dlon / 2) ** 2
+        c = 2 * asin(sqrt(a))
+        return R * c
+    except Exception:
+        return float("inf")
+
+
 def scrape_uk_places(
     api_key: str,
     keywords: List[str],
@@ -367,6 +381,9 @@ def scrape_uk_places(
     fetch_details: bool = True,
     max_searches: Optional[int] = None,
     max_results_per_search: int = 60,
+    existing_place_ids: Optional[Set[str]] = None,
+    existing_websites: Optional[Set[str]] = None,
+    strict_geo_filter: bool = True,
 ) -> List[Dict[str, str]]:
     """
     Main scraping function that searches across keywords and regions.
@@ -374,10 +391,15 @@ def scrape_uk_places(
     
     Args:
         max_results_per_search: Maximum results to fetch per keyword/region combo (will paginate)
+        existing_place_ids: Known place_ids to skip early (avoid fetching details/adding duplicates)
+        existing_websites: Known websites to skip early (applied when available)
+        strict_geo_filter: If True, drop results beyond radius_meters from region center
     """
     cache = load_cache(cache_path)
-    all_places: Dict[str, Dict[str, str]] = {}  # place_id -> place_data
+    all_places: Dict[str, Dict[str, str]] = {}
     seen_place_ids: Set[str] = set()
+    existing_place_ids = existing_place_ids or set()
+    existing_websites = existing_websites or set()
     
     total_searches = len(keywords) * len(regions)
     if max_searches:
@@ -422,10 +444,22 @@ def scrape_uk_places(
             
             new_places = 0
             for place in places:
-                place_name = place.get("name", "")  # Resource name like 'places/ChIJ...'
+                place_name = place.get("name", "")
                 place_id = place.get("id") or (place_name.split("/")[-1] if place_name else None)
-                if not place_id or place_id in seen_place_ids:
+                if not place_id:
                     continue
+                # Skip known duplicates immediately
+                if place_id in seen_place_ids or place_id in existing_place_ids:
+                    continue
+                # Strict geo filter (compute distance from region center)
+                if strict_geo_filter and lat_lng:
+                    loc = place.get("location") or {}
+                    plat = loc.get("latitude")
+                    plon = loc.get("longitude")
+                    if plat is not None and plon is not None:
+                        dist_m = haversine_meters(lat_lng[0], lat_lng[1], plat, plon)
+                        if dist_m > float(radius_meters):
+                            continue
                 
                 seen_place_ids.add(place_id)
                 new_places += 1
@@ -435,8 +469,12 @@ def scrape_uk_places(
                 details = None
                 if fetch_details and place_name:
                     details = get_place_details(place_name, api_key, cache, rate_limiter)
+                    # If website exists and already known, skip adding this duplicate
+                    if details:
+                        site = (details.get("websiteUri") or "").strip().lower()
+                        if site and site in existing_websites:
+                            continue
                 
-                # Extract and store place data
                 place_data = extract_place_data(place, details, keyword, region_name)
                 all_places[place_id] = place_data
             
