@@ -142,12 +142,15 @@ GOOGLE_PLACES_CONFIG = {
     "requests_per_minute": 100,  # Conservative limit for Google Places API
     "max_searches": None,  # Maximum number of searches to perform (None = unlimited)
     "fetch_details": True,  # Whether to fetch detailed place information
-    "max_results_per_search": 60,  # Max results per keyword (API returns 20/page, will paginate up to this limit)
+    "max_results_per_search": 30,  # Lowered to limit spillover and duplicates
     
     # Parallel processing options
     "use_parallel": True,  # Enable parallel processing for faster scraping
     "max_workers": 5,  # Number of concurrent workers (be careful with rate limits!)
     "use_keyword_grouping": False,  # Group similar keywords to reduce API calls
+    
+    # Dedup/geo options
+    "strict_geo_filter": True,  # Drop results outside radius
 }
  
 # Comprehensive list of keywords for neurodivergent resource discovery

@@ -176,7 +176,8 @@ def search_places_by_keyword(
                 "X-Goog-FieldMask": field_mask,
             }
             body: Dict[str, object] = {
-                "textQuery": query,
+                # Include location in query to improve localization
+                "textQuery": f"{keyword} in {location}",
                 "regionCode": (region or "gb").upper(),
                 "languageCode": "en",
                 "maxResultCount": 20,  # API max per request
