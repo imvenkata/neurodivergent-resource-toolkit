@@ -25,6 +25,18 @@ try:
 except ImportError:
     pass  # python-dotenv not installed, will use system env vars
 
+# Load cache directory from config if available
+project_root = Path(__file__).parent.parent
+try:
+    if str(project_root) not in sys.path:
+        sys.path.insert(0, str(project_root))
+    import config
+    DEFAULT_CACHE_DIR = config.CACHE_DIR if hasattr(config, 'CACHE_DIR') else project_root / ".cache"
+except ImportError:
+    # Fallback if config.py not available
+    DEFAULT_CACHE_DIR = project_root / ".cache"
+    config = None
+
 
 # Multiple User-Agent strings to rotate (avoid bot detection)
 USER_AGENTS = [
@@ -147,8 +159,15 @@ def decompress_response(resp) -> str:
 # Content text caching functions (replaces HTML cache)
 def get_content_cache_path(center_name: str, website_url: str, cache_dir: Optional[str] = None) -> Path:
     """Get cache file path for cleaned text content (one file per service center)."""
+    # Use config CACHE_DIR if available, otherwise default
     if cache_dir is None:
-        cache_dir = ".cache/content"
+        cache_dir = DEFAULT_CACHE_DIR / "content"
+    else:
+        # If relative path provided, resolve from cache directory
+        cache_path = Path(cache_dir)
+        if not cache_path.is_absolute():
+            # If relative, resolve from CACHE_DIR
+            cache_dir = DEFAULT_CACHE_DIR / cache_dir
     
     cache_base = Path(cache_dir)
     cache_base.mkdir(parents=True, exist_ok=True)
@@ -241,7 +260,11 @@ def save_content_to_cache(
 def get_html_cache_path(url: str, cache_dir: Optional[str] = None) -> Path:
     """Get cache file path for a URL (DISABLED - no longer saving HTML cache)."""
     if cache_dir is None:
-        cache_dir = ".cache/html_content"
+        cache_dir = DEFAULT_CACHE_DIR / "html_content"
+    else:
+        cache_path = Path(cache_dir)
+        if not cache_path.is_absolute():
+            cache_dir = DEFAULT_CACHE_DIR / cache_dir
     
     cache_base = Path(cache_dir)
     cache_base.mkdir(parents=True, exist_ok=True)
@@ -297,7 +320,7 @@ def save_html_to_cache(url: str, content: str, cache_dir: Optional[str] = None) 
     pass
 
 
-def fetch_url(url: str, timeout: int = 20, html_cache_dir: Optional[str] = ".cache/html_content", refresh_html_cache: bool = False) -> Optional[Tuple[str, str]]:
+def fetch_url(url: str, timeout: int = 20, html_cache_dir: Optional[str] = None, refresh_html_cache: bool = False) -> Optional[Tuple[str, str]]:
     """
     Fetch URL with comprehensive error handling and fallback strategies.
     
@@ -507,10 +530,10 @@ def rank_link(url: str) -> int:
 def crawl_site(
     start_url: str, 
     max_pages: int = 6, 
-    html_cache_dir: Optional[str] = ".cache/html_content", 
+    html_cache_dir: Optional[str] = None, 
     refresh_html_cache: bool = False,
     center_name: Optional[str] = None,
-    content_cache_dir: Optional[str] = ".cache/content",
+    content_cache_dir: Optional[str] = None,
     refresh_content_cache: bool = False
 ) -> Tuple[List[Tuple[str, str]], str]:
     """
@@ -605,15 +628,21 @@ def crawl_site(
         web_search_text = existing_content.get("web_search_text", "") if existing_content else ""
         web_search_sources = existing_content.get("web_search_sources", []) if existing_content else []
         
-        save_content_to_cache(
-            center_name=center_name,
-            website_url=working_url,
-            website_text=combined_website_text,
-            website_pages=website_pages_list,
-            web_search_text=web_search_text,
-            web_search_sources=web_search_sources,
-            cache_dir=content_cache_dir
-        )
+        # Always save content cache (even if empty) so we know the crawl happened
+        # This helps debug when websites can't be fetched
+        try:
+            save_content_to_cache(
+                center_name=center_name,
+                website_url=working_url,
+                website_text=combined_website_text,
+                website_pages=website_pages_list,
+                web_search_text=web_search_text,
+                web_search_sources=web_search_sources,
+                cache_dir=content_cache_dir
+            )
+        except Exception as e:
+            # Log cache errors but don't fail the extraction
+            print(f"⚠️  Failed to save content cache for {center_name}: {str(e)[:100]}", file=sys.stderr)
     
     return (collected, working_url)
 
@@ -622,7 +651,7 @@ def build_prompt(
     center_name: str, 
     website_url: str, 
     docs: List[Tuple[str, str]],
-    content_cache_dir: Optional[str] = ".cache/content",
+    content_cache_dir: Optional[str] = None,
     use_content_cache: bool = True
 ) -> str:
     # Try to use cached cleaned text first
@@ -693,11 +722,15 @@ def build_prompt(
         "    Examples: \"ADHD Assessment Clinic\", \"Autism Specialist School\", \"Dyslexia Tutoring\", \"National Autistic Society\"\n\n"
         "  MEDIUM = SIGNIFICANTLY HELPS neurodivergent people (valuable in ND directory)\n"
         "    ✓ SEND/SEN services (Special Educational Needs includes autism, ADHD, dyslexia)\n"
-        "      REQUIRED: Must EXPLICITLY mention SEND/SEN in services or programs\n"
+        "      REQUIRED: Must PROVIDE DIRECT SEND/SEN services or programs, not just INFORMATION\n"
+        "      ✗ Administrative/informational services (school search, admissions info) → LOW, not MEDIUM\n"
+        "      ✗ General websites that list schools (including special schools) → LOW\n"
+        "      ✓ Actual SEND schools, SEND support programs, SEND therapy → MEDIUM\n"
         "    ✓ Autism-friendly or sensory-friendly activities\n"
         "      REQUIRED: Must EXPLICITLY state \"autism-friendly\", \"sensory-friendly\", or \"neurodivergent-friendly\"\n"
         "    ✓ Mental health services (70% of autistic people have mental health conditions)\n"
         "      REQUIRED: Must be mental health counseling, therapy, or crisis services (not just general wellness)\n"
+        "      ✓ Crisis helplines (Samaritans, etc.) → MEDIUM (critical for ND mental health)\n"
         "    ✓ Crisis support services (ND people have higher rates of mental health crisis)\n"
         "      REQUIRED: Must be dedicated crisis helplines or emergency mental health support\n"
         "    ✓ Parent/carer support groups (for families of ND children)\n"
@@ -712,7 +745,8 @@ def build_prompt(
         "    ✓ Employment support for people with disabilities\n"
         "      REQUIRED: Must EXPLICITLY mention disability employment or supported employment\n"
         "    ✓ Benefits advice, housing support for disabled/SEND\n"
-        "      REQUIRED: Must EXPLICITLY mention disabled/SEND individuals\n"
+        "      REQUIRED: Must PROVIDE direct support services, not just information/links\n"
+        "      ✗ Administrative offices providing general information → LOW\n"
         "    Examples: \"SEND swimming\", \"Mental health counseling\", \"Samaritans crisis line\", \n"
         "              \"Parent Carer Forum\", \"RDA riding center\", \"Autism-friendly cinema\", \n"
         "              \"Occupational therapy\", \"Social skills group\"\n\n"
@@ -722,7 +756,11 @@ def build_prompt(
         "    ✗ No dedicated ND programs or staff\n"
         "    ✗ Mentions vague \"therapeutic benefits\" but no explicit ND programs\n"
         "    ✗ Educational/recreational facilities without SEND/autism-friendly programs\n"
-        "    Examples: \"Council SEND office\", \"General hospital\", \"Library with quiet space\",\n"
+        "    ✗ Administrative/informational services that mention SEND but don't provide direct support\n"
+        "      ⚠️  School search tools, admissions info, general SEND information pages → LOW\n"
+        "      ⚠️  Council services that list/link to SEND resources but don't provide them → LOW\n"
+        "    Examples: \"Council SEND office\", \"Schools Office (information/admissions)\", \n"
+        "              \"General hospital\", \"Library with quiet space\",\n"
         "              \"City farm (general)\", \"Community park\", \"General youth center\"\n\n"
         "  NONE = Completely irrelevant to ND needs\n"
         "    ✗ No connection to neurodivergent conditions\n"
@@ -772,11 +810,28 @@ def build_prompt(
         "  ✗ is_neurodivergent_related: false\n"
         "  ✗ conditions_supported: []\n"
         "  ✗ neurodivergent_focus: \"General transport service. Has accessibility features but not ND-specific.\"\n\n"
-        "Example 5: \"Southwark Council\"\n"
-        "  ✗ General local authority → LOW\n"
+        "Example 5: \"Southwark Council\" or \"Hammersmith and Fulham Council\"\n"
+        "  ✗ General local authority → NONE (not LOW!)\n"
         "  ✗ is_neurodivergent_related: false\n"
-        "  ✗ conditions_supported: []\n"
-        "  ✗ neurodivergent_focus: \"General council services. May have SEND department but not ND-specific org.\"\n\n"
+        "  ✗ conditions_supported: [] (even if mentions 'Disabilities' or 'Learning Disabilities' - too generic)\n"
+        "  ✗ neurodivergent_focus: \"General council providing public services. Even if mentions disability support, \n"
+        "      this is a general public service used by everyone, not a neurodivergent-specific resource. \n"
+        "      Generic terms like 'disabilities' or 'learning disabilities' do not qualify as ND-specific.\"\n\n"
+        "Example 5b: \"Tower Hamlets Schools Office\" or similar administrative/informational services\n"
+        "  ✗ Provides INFORMATION about schools (including special schools) → LOW (not MEDIUM!)\n"
+        "  ✗ Administrative service (school search, admissions, term dates) → LOW\n"
+        "  ✗ Mentions SEND but only provides links/information, not direct services → LOW\n"
+        "  ✗ is_neurodivergent_related: false (or true if has search for SEND schools, but still LOW score)\n"
+        "  ✗ conditions_supported: [\"SEND\"] (information service, not direct support)\n"
+        "  ✗ neurodivergent_focus: \"Administrative office providing school information and search tools. \n"
+        "      While it includes special schools in search results, this is an informational service, \n"
+        "      not a direct neurodivergent support resource. Families use it to find schools, \n"
+        "      but it doesn't provide therapy, support groups, or ND-specific services.\"\n\n"
+        "Example 5c: \"Actual SEND School\" or \"SEND Support Service\"\n"
+        "  ✓ Provides DIRECT SEND education or support → MEDIUM\n"
+        "  ✓ is_neurodivergent_related: true\n"
+        "  ✓ conditions_supported: [\"SEND\", \"Autism\", \"ADHD\"]\n"
+        "  ✓ neurodivergent_focus: \"Specialist school providing education for children with SEND needs.\"\n\n"
         "Example 6: \"General Hospital\"\n"
         "  ✗ No ND specialty → NONE\n"
         "  ✗ is_neurodivergent_related: false\n"
@@ -843,6 +898,11 @@ def build_prompt(
         "• Respite care, short breaks for disabled children\n\n"
         "ALWAYS LOW or NONE:\n"
         "• General public services everyone uses: Transport (TfL), councils, general hospitals\n"
+        "  ⚠️  CRITICAL: Local councils/authorities are ALWAYS NONE even if they mention:\n"
+        "     - \"Disabilities\" or \"Learning Disabilities\" (too generic)\n"
+        "     - General disability support (everyone uses this)\n"
+        "     - Benefits advice for disabled (general service, not ND-specific)\n"
+        "     - Only exception: Council-run autism/ADHD assessment centers with specific ND name\n"
         "• Pharmacies, dentists, opticians (unless ND-specialist)\n"
         "• Museums, theatres with only passive \"quiet hours\" (not active ND programs)\n"
         "• Generic gyms, sports clubs (no adaptive programs)\n"
@@ -865,7 +925,9 @@ def build_prompt(
         "  → If populated → Continue to Step 3\n\n"
         "STEP 3: Determine score level\n"
         "  • Name has ND keywords → HIGH\n"
-        "  • Explicit SEND/SEN programs → MEDIUM\n"
+        "  • Explicit SEND/SEN programs → MEDIUM (but check if it's direct service or just info)\n"
+        "    ⚠️  SEND school search/information → LOW (administrative, not direct service)\n"
+        "    ✓ Actual SEND schools, SEND therapy, SEND support groups → MEDIUM\n"
         "  • Explicit autism-friendly/sensory-friendly → MEDIUM\n"
         "  • Professional therapeutic services (OT, speech) → MEDIUM\n"
         "  • Mental health/crisis services → MEDIUM\n"
@@ -874,13 +936,24 @@ def build_prompt(
         "  ✗ Vague \"therapeutic benefits\" without explicit ND programs → LOW\n"
         "  ✗ General farms/parks/recreation without SEND programs → LOW/NONE\n"
         "  ✗ Educational services without SEN provision → LOW\n"
-        "  ✗ Generic accessibility features (wheelchair access) → NOT enough for Medium\n\n"
+        "  ✗ Generic accessibility features (wheelchair access) → NOT enough for Medium\n"
+        "  ✗ Administrative/informational services (school search, admissions info) → LOW\n"
+        "  ✗ Services that only PROVIDE INFORMATION about SEND but not direct support → LOW\n\n"
         "STEP 5: Final scoring for generic services\n"
         "  • Generic public services (transport, councils, hospitals) → NONE\n"
+        "    ⚠️  Councils are ALWAYS NONE even if they mention generic 'disabilities' support\n"
         "  • General recreational/educational (farms, parks, museums) → LOW\n"
         "  • Commercial businesses → NONE\n\n"
-        "STRICT RULE: If conditions_supported is EMPTY and no explicit ND keywords exist,\n"
-        "            the service MUST be scored LOW or NONE (never Medium or High)\n\n"
+        "STRICT RULES:\n"
+        "1. If conditions_supported is EMPTY and no explicit ND keywords exist → MUST be LOW or NONE\n"
+        "2. Generic terms like 'Disabilities' or 'Learning Disabilities' do NOT count as explicit ND keywords\n"
+        "3. Councils/local authorities are ALWAYS NONE unless name has specific ND terms (e.g., 'Autism Centre')\n"
+        "4. Services with only generic disability support (no autism/ADHD/dyslexia/SEND) → NONE\n"
+        "5. Administrative/informational services (school search, admissions, general info) → LOW\n"
+        "   Even if they mention SEND/special schools, if they only provide INFORMATION not direct services → LOW\n"
+        "6. DISTINCTION: Information service vs Direct service\n"
+        "   • Information service (lists schools, provides links, search tools) → LOW\n"
+        "   • Direct service (provides therapy, education, support groups) → MEDIUM\n\n"
         "OUTPUT: Return ONLY valid JSON in this exact structure:\n"
         "{\n"
         "  \"center_name\": \"" + center_name + "\",\n"
@@ -1233,7 +1306,11 @@ def parse_uk_address(address: str) -> Dict[str, str]:
 def get_websearch_cache_path(center_name: str, website_url: str, cache_dir: Optional[str] = None) -> Path:
     """Get cache file path for web search results."""
     if cache_dir is None:
-        cache_dir = ".cache/web_search"
+        cache_dir = DEFAULT_CACHE_DIR / "web_search"
+    else:
+        cache_path = Path(cache_dir)
+        if not cache_path.is_absolute():
+            cache_dir = DEFAULT_CACHE_DIR / cache_dir
     
     cache_base = Path(cache_dir)
     cache_base.mkdir(parents=True, exist_ok=True)
@@ -1299,7 +1376,7 @@ def save_websearch_to_cache(center_name: str, website_url: str, contact_info: Di
         pass
 
 
-def search_web_for_contact(center_name: str, website_url: str, timeout: int = 10, websearch_cache_dir: Optional[str] = ".cache/web_search", refresh_websearch_cache: bool = False) -> Dict[str, any]:
+def search_web_for_contact(center_name: str, website_url: str, timeout: int = 10, websearch_cache_dir: Optional[str] = None, refresh_websearch_cache: bool = False) -> Dict[str, any]:
     """Search web for missing contact information from reliable sources."""
     # Check cache first (unless refresh is requested)
     if not refresh_websearch_cache and websearch_cache_dir is not False:
@@ -1328,7 +1405,7 @@ def search_web_for_contact(center_name: str, website_url: str, timeout: int = 10
     
     try:
         # Fetch DuckDuckGo search results page (this also uses HTML cache)
-        fetch_result = fetch_url(search_url, timeout=timeout, html_cache_dir=".cache/html_content")
+        fetch_result = fetch_url(search_url, timeout=timeout, html_cache_dir=str(DEFAULT_CACHE_DIR / "html_content"))
         if not fetch_result:
             return contact_info
         
@@ -1354,7 +1431,7 @@ def search_web_for_contact(center_name: str, website_url: str, timeout: int = 10
                 continue
                 
             # Fetch the page
-            fetch_result = fetch_url(actual_url, timeout=timeout, html_cache_dir=".cache/html_content")
+            fetch_result = fetch_url(actual_url, timeout=timeout, html_cache_dir=str(DEFAULT_CACHE_DIR / "html_content"))
             if not fetch_result:
                 continue
             
@@ -1429,7 +1506,7 @@ def search_web_for_contact(center_name: str, website_url: str, timeout: int = 10
         combined_web_search_text = "\n".join(web_search_text_parts)
         
         # Load existing website_text to preserve it
-        content_cache_file = get_content_cache_path(center_name, website_url, ".cache/content")
+        content_cache_file = get_content_cache_path(center_name, website_url, str(DEFAULT_CACHE_DIR / "content"))
         existing_website_text = ""
         existing_website_pages = []
         if content_cache_file.exists():
@@ -1448,7 +1525,7 @@ def search_web_for_contact(center_name: str, website_url: str, timeout: int = 10
             website_pages=existing_website_pages,
             web_search_text=combined_web_search_text,
             web_search_sources=web_search_sources_list,
-            cache_dir=".cache/content"
+            cache_dir=str(DEFAULT_CACHE_DIR / "content")
         )
     
     return contact_info
@@ -1467,10 +1544,10 @@ def main() -> None:
     parser.add_argument("--ollama-auth", default=None, help="Header line or bare token")
     parser.add_argument("--openai-key", default=None)
     parser.add_argument("--gemini-key", default=None)
-    parser.add_argument("--html-cache-dir", default=".cache/html_content", help="Directory to cache HTML content (set to 'false' to disable, default: .cache/html_content)")
+    parser.add_argument("--html-cache-dir", default=str(DEFAULT_CACHE_DIR / "html_content"), help=f"Directory to cache HTML content (set to 'false' to disable, default: {DEFAULT_CACHE_DIR / 'html_content'})")
     parser.add_argument("--no-html-cache", action="store_true", help="Disable HTML caching")
     parser.add_argument("--refresh-html-cache", action="store_true", help="Skip HTML cache and fetch fresh content")
-    parser.add_argument("--websearch-cache-dir", default=".cache/web_search", help="Directory to cache web search results (set to 'false' to disable, default: .cache/web_search)")
+    parser.add_argument("--websearch-cache-dir", default=str(DEFAULT_CACHE_DIR / "web_search"), help=f"Directory to cache web search results (set to 'false' to disable, default: {DEFAULT_CACHE_DIR / 'web_search'})")
     parser.add_argument("--no-websearch-cache", action="store_true", help="Disable web search caching")
     parser.add_argument("--refresh-websearch-cache", action="store_true", help="Skip web search cache and perform fresh search")
     args = parser.parse_args()
@@ -1481,8 +1558,8 @@ def main() -> None:
     # Determine web search cache settings
     websearch_cache_dir = None if args.no_websearch_cache else (False if args.websearch_cache_dir.lower() == "false" else args.websearch_cache_dir)
     
-    # Determine content cache settings
-    content_cache_dir = ".cache/content"  # New unified content cache
+    # Determine content cache settings - use config CACHE_DIR
+    content_cache_dir = str(DEFAULT_CACHE_DIR / "content")
     refresh_content_cache = args.refresh_html_cache  # Use same flag for now
     
     start = args.url
@@ -1496,7 +1573,21 @@ def main() -> None:
         refresh_content_cache=refresh_content_cache
     )
     if not docs:
-        print("Failed to fetch website content.")
+        # Still try to save content cache (empty) to record that crawl was attempted
+        if args.center_name and content_cache_dir is not False:
+            try:
+                save_content_to_cache(
+                    center_name=args.center_name,
+                    website_url=start,
+                    website_text="",  # Empty - fetch failed
+                    website_pages=[],
+                    web_search_text="",
+                    web_search_sources=[],
+                    cache_dir=content_cache_dir
+                )
+            except Exception:
+                pass  # Ignore cache save errors
+        print("Failed to fetch website content.", file=sys.stderr)
         sys.exit(2)
 
     prompt = build_prompt(args.center_name, args.url, docs, content_cache_dir=content_cache_dir)

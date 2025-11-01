@@ -64,18 +64,47 @@ def is_generic_service(name: str, description: str, focus: str) -> bool:
     """
     Check if this is a GENERIC service (not ND-specific)
     Returns True if it's a false positive
+    
+    Generic services (councils, transport, etc.) are ALWAYS generic unless
+    they have VERY specific ND services in the name itself (e.g., "Autism Assessment Centre")
     """
     text = f"{name} {description} {focus}".lower()
     
-    # Check for generic service keywords
+    # STRICT: Councils and government services are ALWAYS generic unless name has specific ND keywords
+    # (e.g., "Hammersmith Autism Support" would be OK, but "Hammersmith Council" is not)
+    council_patterns = [r'\bcouncil\b', r'\bborough\b', r'\blocal authority\b', r'\bgovernment\b']
+    is_council = any(re.search(pattern, text, re.IGNORECASE) for pattern in council_patterns)
+    
+    if is_council:
+        # Only allow if the NAME itself contains specific ND keywords (not just description)
+        # This catches things like "Hammersmith Autism Assessment Centre" but rejects "Hammersmith Council"
+        specific_nd_keywords = [r'\bautis[mt]\b', r'\bASD\b', r'\bASC\b', r'\bADHD\b', r'\bADD\b', 
+                               r'\bdyslex\w*\b', r'\bdysprax\w*\b', r'\bSEN\b', r'\bSEND\b']
+        name_has_specific_nd = any(
+            re.search(pattern, name, re.IGNORECASE) 
+            for pattern in specific_nd_keywords
+        )
+        if not name_has_specific_nd:
+            return True  # Council without specific ND in name = always generic
+    
+    # Check for other generic service keywords
     for pattern in GENERIC_SERVICE_KEYWORDS:
         if re.search(pattern, text, re.IGNORECASE):
-            # It's a generic service UNLESS it has explicit ND keywords
-            has_nd_keywords = any(
+            # For non-council generic services, check if it has explicit ND keywords
+            # But be stricter - exclude generic terms like "disabilities" or "learning disabilities"
+            specific_nd_keywords = [r'\bautis[mt]\b', r'\bASD\b', r'\bASC\b', r'\bADHD\b', r'\bADD\b',
+                                   r'\bdyslex\w*\b', r'\bdysprax\w*\b', r'\bDCD\b',
+                                   r'\bneurodiverg\w*\b', r'\bneurodivers\w*\b',
+                                   r'\bSEN\b', r'\bSEND\b', r'\bspecial educational needs\b',
+                                   r'\bAsperger\b', r'\bTourette\b']
+            has_specific_nd = any(
                 re.search(nd_pattern, text, re.IGNORECASE) 
-                for nd_pattern in TRUE_ND_KEYWORDS
+                for nd_pattern in specific_nd_keywords
             )
-            if not has_nd_keywords:
+            # Exclude generic terms - "disabilities" or "learning disabilities" alone don't count
+            has_generic_only = re.search(r'\bdisabilit\w*\b', text, re.IGNORECASE) and not has_specific_nd
+            
+            if not has_specific_nd or has_generic_only:
                 return True  # False positive!
     
     return False
@@ -117,13 +146,37 @@ def revalidate_resource(data: Dict) -> Tuple[bool, str, str]:
     if is_generic_service(name, description, focus):
         return False, "None", "Generic service (not ND-specific) - false positive"
     
-    # Step 2: STRICT RULE - If conditions_supported is empty AND no explicit ND keywords
-    # This catches cases like Vauxhall City Farm that mention "therapeutic" but have no ND programs
+    # Step 2: STRICT RULE - Check conditions_supported - filter out generic terms
+    # Generic terms like "Disabilities" or "Learning Disabilities" don't count as explicit ND
     all_text = f"{name} {description} {focus} {services_text}".lower()
+    
+    # Specific ND keywords (exclude generic terms)
+    specific_nd_patterns = [
+        r'\bautis[mt]\b', r'\bASD\b', r'\bASC\b',
+        r'\bADHD\b', r'\bADD\b', r'\battention deficit\b',
+        r'\bdyslex\w*\b', r'\bdysprax\w*\b', r'\bDCD\b',
+        r'\bneurodiverg\w*\b', r'\bneurodivers\w*\b',
+        r'\bSEN\b', r'\bSEND\b', r'\bspecial educational needs\b',
+        r'\bAsperger\b', r'\bTourette\b',
+        r'\bautism spectrum\b', r'\bautistic spectrum\b',
+    ]
+    
     has_explicit_nd = any(
         re.search(pattern, all_text, re.IGNORECASE)
-        for pattern in TRUE_ND_KEYWORDS
+        for pattern in specific_nd_patterns
     )
+    
+    # Check if conditions contain only generic terms
+    if conditions and len(conditions) > 0:
+        conditions_text = " ".join(conditions) if isinstance(conditions, list) else str(conditions)
+        # Filter out generic conditions - only count specific ND conditions
+        has_specific_conditions = any(
+            re.search(pattern, conditions_text, re.IGNORECASE)
+            for pattern in specific_nd_patterns
+        )
+        # If conditions only have generic terms (disabilities, learning disabilities), treat as empty
+        if not has_specific_conditions and re.search(r'\bdisabilit\w*\b', conditions_text, re.IGNORECASE):
+            conditions = []  # Treat as empty - generic terms don't count
     
     # Also check for explicit SEND/SEN/autism-friendly mentions in services
     has_explicit_programs = any(
