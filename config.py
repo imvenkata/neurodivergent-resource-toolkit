@@ -159,17 +159,17 @@ SEARCH_KEYWORDS = [
     "autism support center",
     "autism assessment clinic",
     "autism therapy",
-    # "autism diagnosis",
-    # "autism spectrum services",
+    "autism diagnosis",
+    "autism spectrum services",
     "ASD support",
     "autistic services",
-    # "autism charities",
+    "autism charities",
     
     # ADHD-specific
     "ADHD assessment",
     "ADHD clinic",
     "ADHD support",
-    # "ADHD diagnosis",
+    "ADHD diagnosis",
     "ADHD therapy",
     "attention deficit services",
     
@@ -202,13 +202,13 @@ SEARCH_KEYWORDS = [
     
     # Social and community
     "autism social group",
-    # "autism community center",
+    "autism community center",
     "autism support group",
     "autism parent support",
     "autism family support",
     
     # Diagnosis and assessment
-    # "autism diagnostic center",
+    "autism diagnostic center",
     "neurodevelopmental assessment",
     
     # Specific organizations (common UK providers)
@@ -219,10 +219,10 @@ SEARCH_KEYWORDS = [
 
 # UK Counties and Major Regions for systematic coverage
 UK_REGIONS = [
-    # England - Greater London (already covered, but keeping for completeness)
+    # England - Greater London (already covered, but keeping for completeness) - Completed
     {"name": "Greater London", "center": "London, UK", "radius_km": 25},
     
-    # England - South East
+    # England - South East - Completed, some missing from this list
     {"name": "Kent", "center": "Maidstone, Kent, UK", "radius_km": 30},
     {"name": "Surrey", "center": "Guildford, Surrey, UK", "radius_km": 25},
     {"name": "East Sussex", "center": "Lewes, East Sussex, UK", "radius_km": 25},
@@ -234,7 +234,7 @@ UK_REGIONS = [
     {"name": "Hertfordshire", "center": "Hertford, Hertfordshire, UK", "radius_km": 25},
     {"name": "Essex", "center": "Chelmsford, Essex, UK", "radius_km": 30},
     
-    # England - South West
+    # England - South West - Completed
     {"name": "Bristol", "center": "Bristol, UK", "radius_km": 20},
     {"name": "Somerset", "center": "Taunton, Somerset, UK", "radius_km": 30},
     {"name": "Devon", "center": "Exeter, Devon, UK", "radius_km": 35},
