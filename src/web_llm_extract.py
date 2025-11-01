@@ -1,4 +1,6 @@
 import argparse
+import gzip
+import hashlib
 import html
 import json
 import os
@@ -86,9 +88,224 @@ def get_root_url(url: str) -> str:
     return root_url, root_url_with_www
 
 
-def fetch_url(url: str, timeout: int = 20) -> Optional[Tuple[str, str]]:
+def decompress_response(resp) -> str:
+    """Read and decompress HTTP response content, handling gzip/deflate/br encoding."""
+    charset = resp.headers.get_content_charset() or "utf-8"
+    raw_content = resp.read()
+    
+    # Decompress based on Content-Encoding header
+    content_encoding = resp.headers.get('Content-Encoding', '').lower()
+    
+    if content_encoding == 'br':
+        # Brotli compression
+        try:
+            import brotli
+            content = brotli.decompress(raw_content).decode(charset, errors="ignore")
+        except ImportError:
+            # If brotli library not available, try to decode anyway (may fail)
+            print("⚠️  Warning: Brotli compression detected but 'brotli' library not installed. Install with: pip install brotli", file=sys.stderr)
+            content = raw_content.decode(charset, errors="ignore")
+        except Exception:
+            # If decompression fails, try decoding directly
+            content = raw_content.decode(charset, errors="ignore")
+    elif content_encoding == 'gzip':
+        try:
+            content = gzip.decompress(raw_content).decode(charset, errors="ignore")
+        except Exception:
+            # If decompression fails, try decoding directly
+            content = raw_content.decode(charset, errors="ignore")
+    elif content_encoding == 'deflate':
+        try:
+            import zlib
+            content = zlib.decompress(raw_content).decode(charset, errors="ignore")
+        except Exception:
+            content = raw_content.decode(charset, errors="ignore")
+    else:
+        # Try to auto-detect compression by magic bytes
+        if len(raw_content) >= 2:
+            if raw_content[:2] == b'\x1f\x8b':
+                # Gzip magic bytes
+                try:
+                    content = gzip.decompress(raw_content).decode(charset, errors="ignore")
+                except Exception:
+                    content = raw_content.decode(charset, errors="ignore")
+            elif raw_content[:4] == b'\xce\xb2\xcf\x81' or content_encoding == '':
+                # Try Brotli (no reliable magic bytes, but worth trying if Content-Encoding is missing)
+                try:
+                    import brotli
+                    content = brotli.decompress(raw_content).decode(charset, errors="ignore")
+                except (ImportError, Exception):
+                    content = raw_content.decode(charset, errors="ignore")
+            else:
+                content = raw_content.decode(charset, errors="ignore")
+        else:
+            content = raw_content.decode(charset, errors="ignore")
+    
+    return content
+
+
+# Content text caching functions (replaces HTML cache)
+def get_content_cache_path(center_name: str, website_url: str, cache_dir: Optional[str] = None) -> Path:
+    """Get cache file path for cleaned text content (one file per service center)."""
+    if cache_dir is None:
+        cache_dir = ".cache/content"
+    
+    cache_base = Path(cache_dir)
+    cache_base.mkdir(parents=True, exist_ok=True)
+    
+    # Create a safe filename from center name and URL hash
+    cache_key = f"{center_name}_{website_url}".encode('utf-8')
+    cache_hash = hashlib.md5(cache_key).hexdigest()
+    name_safe = re.sub(r'[^\w\-_.]', '_', center_name)[:100]
+    cache_file = cache_base / f"{name_safe}_{cache_hash}.json"
+    
+    return cache_file
+
+
+def load_content_from_cache(center_name: str, website_url: str, cache_dir: Optional[str] = None, max_age_days: int = 30) -> Optional[Dict[str, str]]:
+    """
+    Load cleaned text content from cache if it exists and is not expired.
+    
+    Returns:
+        Dict with 'website_text' and 'web_search_text' if cached and fresh, None otherwise
+    """
+    if cache_dir is False:  # Explicitly disabled
+        return None
+        
+    cache_file = get_content_cache_path(center_name, website_url, cache_dir)
+    
+    if not cache_file.exists():
+        return None
+    
+    # Check if cache is expired
+    if max_age_days > 0:
+        file_age = time.time() - cache_file.stat().st_mtime
+        if file_age > (max_age_days * 24 * 60 * 60):
+            return None  # Cache expired
+    
+    try:
+        with open(cache_file, "r", encoding="utf-8") as f:
+            cached_data = json.load(f)
+            # Verify it's for the same center and URL
+            if (cached_data.get("center_name") == center_name and 
+                cached_data.get("website_url") == website_url):
+                return {
+                    "website_text": cached_data.get("website_text", ""),
+                    "web_search_text": cached_data.get("web_search_text", ""),
+                    "website_pages": cached_data.get("website_pages", []),
+                    "web_search_sources": cached_data.get("web_search_sources", [])
+                }
+    except (OSError, json.JSONDecodeError, KeyError):
+        # Cache file corrupted, ignore it
+        pass
+    
+    return None
+
+
+def save_content_to_cache(
+    center_name: str,
+    website_url: str,
+    website_text: str,
+    website_pages: List[str],
+    web_search_text: str = "",
+    web_search_sources: List[str] = None,
+    cache_dir: Optional[str] = None
+) -> None:
+    """Save cleaned text content to cache (replaces HTML cache)."""
+    if cache_dir is False:  # Explicitly disabled
+        return
+        
+    cache_file = get_content_cache_path(center_name, website_url, cache_dir)
+    
+    try:
+        cache_data = {
+            "center_name": center_name,
+            "website_url": website_url,
+            "website_text": website_text,
+            "website_pages": website_pages,
+            "web_search_text": web_search_text,
+            "web_search_sources": web_search_sources or [],
+            "cached_at": time.time(),
+            "cached_at_readable": time.strftime("%Y-%m-%d %H:%M:%S")
+        }
+        with open(cache_file, "w", encoding="utf-8") as f:
+            json.dump(cache_data, f, indent=2, ensure_ascii=False)
+    except OSError:
+        # Ignore cache write errors (disk full, permissions, etc.)
+        pass
+
+
+# HTML caching functions (DISABLED - HTML cache saving removed)
+# Functions kept for backward compatibility with existing HTML cache files (read-only)
+# We now only save processed/cleaned text to content cache, not raw HTML
+def get_html_cache_path(url: str, cache_dir: Optional[str] = None) -> Path:
+    """Get cache file path for a URL (DISABLED - no longer saving HTML cache)."""
+    if cache_dir is None:
+        cache_dir = ".cache/html_content"
+    
+    cache_base = Path(cache_dir)
+    cache_base.mkdir(parents=True, exist_ok=True)
+    
+    # Create a safe filename from URL using hash
+    url_hash = hashlib.md5(url.encode('utf-8')).hexdigest()
+    # Also include first part of domain for easier debugging
+    parsed = parse.urlparse(url)
+    domain_safe = re.sub(r'[^\w\-_.]', '_', parsed.netloc or 'unknown')[:50]
+    cache_file = cache_base / f"{domain_safe}_{url_hash}.html"
+    
+    return cache_file
+
+
+def load_html_from_cache(url: str, cache_dir: Optional[str] = None, max_age_days: int = 30) -> Optional[str]:
+    """
+    Load HTML content from cache if it exists and is not expired.
+    
+    Returns:
+        HTML content if cached and fresh, None otherwise
+    """
+    if cache_dir is False:  # Explicitly disabled
+        return None
+        
+    cache_file = get_html_cache_path(url, cache_dir)
+    
+    if not cache_file.exists():
+        return None
+    
+    # Check if cache is expired
+    if max_age_days > 0:
+        file_age = time.time() - cache_file.stat().st_mtime
+        if file_age > (max_age_days * 24 * 60 * 60):
+            return None  # Cache expired
+    
+    try:
+        with open(cache_file, "r", encoding="utf-8") as f:
+            cached_data = json.load(f)
+            # Verify it's for the same URL (in case of hash collision)
+            if cached_data.get("url") == url:
+                return cached_data.get("content")
+    except (OSError, json.JSONDecodeError, KeyError):
+        # Cache file corrupted, ignore it
+        pass
+    
+    return None
+
+
+def save_html_to_cache(url: str, content: str, cache_dir: Optional[str] = None) -> None:
+    """Save HTML content to cache (DISABLED - we now only save processed text)."""
+    # HTML caching is disabled - we only save processed/cleaned text to content cache
+    # This function is kept for backward compatibility but does nothing
+    pass
+
+
+def fetch_url(url: str, timeout: int = 20, html_cache_dir: Optional[str] = ".cache/html_content", refresh_html_cache: bool = False) -> Optional[Tuple[str, str]]:
     """
     Fetch URL with comprehensive error handling and fallback strategies.
+    
+    Args:
+        url: URL to fetch
+        timeout: Request timeout in seconds
+        html_cache_dir: Directory to cache HTML content (None to disable, False to explicitly disable)
+        refresh_html_cache: If True, skip cache and fetch fresh content
     
     Returns:
         Tuple of (content, working_url) if successful, None if all strategies fail
@@ -106,6 +323,13 @@ def fetch_url(url: str, timeout: int = 20) -> Optional[Tuple[str, str]]:
     if url and not url.startswith(('http://', 'https://')):
         url = f'https://{url}'
     
+    # HTML cache loading disabled - we only use processed text cache now
+    # Keeping this commented out for backward compatibility with existing HTML cache
+    # if not refresh_html_cache and html_cache_dir is not False:
+    #     cached_content = load_html_from_cache(url, html_cache_dir)
+    #     if cached_content:
+    #         return (cached_content, url)
+    
     # Add small random delay to avoid rate limiting (0.1-0.5 seconds)
     time.sleep(random.uniform(0.1, 0.5))
     
@@ -114,16 +338,16 @@ def fetch_url(url: str, timeout: int = 20) -> Optional[Tuple[str, str]]:
     req = request.Request(url, headers=headers)
     try:
         with request.urlopen(req, timeout=timeout) as resp:
-            charset = resp.headers.get_content_charset() or "utf-8"
-            content = resp.read().decode(charset, errors="ignore")
+            content = decompress_response(resp)
+            # HTML cache removed - we only save processed text to content cache
             return (content, url)
     except ssl.SSLError:
         # Strategy 2: Try HTTPS without SSL verification (many small charity sites have SSL issues)
         try:
             context = ssl._create_unverified_context()
             with request.urlopen(req, timeout=timeout, context=context) as resp:
-                charset = resp.headers.get_content_charset() or "utf-8"
-                content = resp.read().decode(charset, errors="ignore")
+                content = decompress_response(resp)
+                # HTML cache removed - we only save processed text to content cache
                 return (content, url)
         except Exception:
             pass
@@ -136,8 +360,8 @@ def fetch_url(url: str, timeout: int = 20) -> Optional[Tuple[str, str]]:
         try:
             req_http = request.Request(http_url, headers=get_browser_headers(http_url))
             with request.urlopen(req_http, timeout=timeout) as resp:
-                charset = resp.headers.get_content_charset() or "utf-8"
-                content = resp.read().decode(charset, errors="ignore")
+                content = decompress_response(resp)
+                # HTML cache removed - we only save processed text to content cache
                 return (content, http_url)
         except Exception:
             pass
@@ -152,15 +376,15 @@ def fetch_url(url: str, timeout: int = 20) -> Optional[Tuple[str, str]]:
             req_root = request.Request(root_url, headers=get_browser_headers(root_url))
             try:
                 with request.urlopen(req_root, timeout=timeout) as resp:
-                    charset = resp.headers.get_content_charset() or "utf-8"
-                    content = resp.read().decode(charset, errors="ignore")
+                    content = decompress_response(resp)
+                    # HTML cache removed - we only save processed text to content cache
                     return (content, root_url)
             except ssl.SSLError:
                 # Try root without SSL verification
                 context = ssl._create_unverified_context()
                 with request.urlopen(req_root, timeout=timeout, context=context) as resp:
-                    charset = resp.headers.get_content_charset() or "utf-8"
-                    content = resp.read().decode(charset, errors="ignore")
+                    content = decompress_response(resp)
+                    # HTML cache removed - we only save processed text to content cache
                     return (content, root_url)
         except Exception:
             pass
@@ -171,8 +395,8 @@ def fetch_url(url: str, timeout: int = 20) -> Optional[Tuple[str, str]]:
             try:
                 req_http_root = request.Request(http_root, headers=get_browser_headers(http_root))
                 with request.urlopen(req_http_root, timeout=timeout) as resp:
-                    charset = resp.headers.get_content_charset() or "utf-8"
-                    content = resp.read().decode(charset, errors="ignore")
+                    content = decompress_response(resp)
+                    # HTML cache removed - we only save processed text to content cache
                     return (content, http_root)
             except Exception:
                 pass
@@ -183,15 +407,15 @@ def fetch_url(url: str, timeout: int = 20) -> Optional[Tuple[str, str]]:
                 req_www = request.Request(root_url_with_www, headers=get_browser_headers(root_url_with_www))
                 try:
                     with request.urlopen(req_www, timeout=timeout) as resp:
-                        charset = resp.headers.get_content_charset() or "utf-8"
-                        content = resp.read().decode(charset, errors="ignore")
+                        content = decompress_response(resp)
+                        # HTML cache removed - we only save processed text to content cache
                         return (content, root_url_with_www)
                 except ssl.SSLError:
                     # Try www without SSL verification
                     context = ssl._create_unverified_context()
                     with request.urlopen(req_www, timeout=timeout, context=context) as resp:
-                        charset = resp.headers.get_content_charset() or "utf-8"
-                        content = resp.read().decode(charset, errors="ignore")
+                        content = decompress_response(resp)
+                        # HTML cache removed - we only save processed text to content cache
                         return (content, root_url_with_www)
             except Exception:
                 pass
@@ -202,8 +426,8 @@ def fetch_url(url: str, timeout: int = 20) -> Optional[Tuple[str, str]]:
                 try:
                     req_http_www = request.Request(http_www, headers=get_browser_headers(http_www))
                     with request.urlopen(req_http_www, timeout=timeout) as resp:
-                        charset = resp.headers.get_content_charset() or "utf-8"
-                        content = resp.read().decode(charset, errors="ignore")
+                        content = decompress_response(resp)
+                        # HTML cache removed - we only save processed text to content cache
                         return (content, http_www)
                 except Exception:
                     pass
@@ -280,10 +504,24 @@ def rank_link(url: str) -> int:
     return score
 
 
-def crawl_site(start_url: str, max_pages: int = 6) -> Tuple[List[Tuple[str, str]], str]:
+def crawl_site(
+    start_url: str, 
+    max_pages: int = 6, 
+    html_cache_dir: Optional[str] = ".cache/html_content", 
+    refresh_html_cache: bool = False,
+    center_name: Optional[str] = None,
+    content_cache_dir: Optional[str] = ".cache/content",
+    refresh_content_cache: bool = False
+) -> Tuple[List[Tuple[str, str]], str]:
     """
     Crawl website starting from start_url.
     If start_url fails, automatically falls back to root domain (handled by fetch_url).
+    
+    Args:
+        start_url: Starting URL to crawl
+        max_pages: Maximum number of pages to crawl
+        html_cache_dir: Directory to cache HTML content (None to disable)
+        refresh_html_cache: If True, skip cache and fetch fresh content
     
     Returns:
         Tuple of (collected_pages, working_url)
@@ -296,17 +534,17 @@ def crawl_site(start_url: str, max_pages: int = 6) -> Tuple[List[Tuple[str, str]
     working_url = start_url  # Track the URL that actually works
     
     # Try to fetch the starting URL (fetch_url will handle fallback to root)
-    result = fetch_url(start_url)
+    result = fetch_url(start_url, html_cache_dir=html_cache_dir, refresh_html_cache=refresh_html_cache)
     if not result:
         # If even root domain fails, try explicit root URL fallback
         root_url, root_url_with_www = get_root_url(start_url)
-        result = fetch_url(root_url)
+        result = fetch_url(root_url, html_cache_dir=html_cache_dir, refresh_html_cache=refresh_html_cache)
         if result:
             # Use root URL as starting point instead
             start_url = root_url
             print(f"⚠️  Original URL failed, using root domain: {root_url}")
         elif root_url_with_www:
-            result = fetch_url(root_url_with_www)
+            result = fetch_url(root_url_with_www, html_cache_dir=html_cache_dir, refresh_html_cache=refresh_html_cache)
             if result:
                 start_url = root_url_with_www
                 print(f"⚠️  Original URL failed, using www domain: {root_url_with_www}")
@@ -329,7 +567,7 @@ def crawl_site(start_url: str, max_pages: int = 6) -> Tuple[List[Tuple[str, str]
         visited.add(url)
         if not same_site(url, start_url):
             continue
-        result = fetch_url(url)
+        result = fetch_url(url, html_cache_dir=html_cache_dir, refresh_html_cache=refresh_html_cache)
         if not result:
             continue
         html_doc, _ = result  # Unpack tuple
@@ -339,20 +577,79 @@ def crawl_site(start_url: str, max_pages: int = 6) -> Tuple[List[Tuple[str, str]
         for l in links:
             if l not in visited and l not in queue:
                 queue.append(l)
+    
+    # Save cleaned text to content cache (replaces HTML cache)
+    if center_name and content_cache_dir is not False and not refresh_content_cache:
+        # Check if we should use cached content
+        cached_content = load_content_from_cache(center_name, working_url, content_cache_dir)
+        if cached_content and cached_content.get("website_text"):
+            # Return cached pages structure (we still need to return pages for build_prompt)
+            # But we'll use the cached text later in build_prompt
+            pass
+    
+    # Process and save website text
+    if center_name and content_cache_dir is not False:
+        website_text_parts = []
+        website_pages_list = []
+        for url, html_content in collected:
+            cleaned_text = html_to_text(html_content)
+            if cleaned_text.strip():
+                # Format: URL marker before text (so we know which page we're reading)
+                website_text_parts.append(f"\n\n=== PAGE: {url} ===\n\n{cleaned_text}")
+                website_pages_list.append(url)
+        
+        combined_website_text = "\n".join(website_text_parts)
+        
+        # Load existing web_search_text if any (to preserve it when updating website text only)
+        existing_content = load_content_from_cache(center_name, working_url, content_cache_dir)
+        web_search_text = existing_content.get("web_search_text", "") if existing_content else ""
+        web_search_sources = existing_content.get("web_search_sources", []) if existing_content else []
+        
+        save_content_to_cache(
+            center_name=center_name,
+            website_url=working_url,
+            website_text=combined_website_text,
+            website_pages=website_pages_list,
+            web_search_text=web_search_text,
+            web_search_sources=web_search_sources,
+            cache_dir=content_cache_dir
+        )
+    
     return (collected, working_url)
 
 
-def build_prompt(center_name: str, website_url: str, docs: List[Tuple[str, str]]) -> str:
-    parts = []
-    for url, html_doc in docs:
-        text = html_to_text(html_doc)
-        if not text:
-            continue
-        # limit per page to avoid overlong prompts
-        parts.append(f"\n\n=== PAGE: {url} ===\n{text[:8000]}")
-        if len(parts) >= 8:
-            break
-    body = "".join(parts)
+def build_prompt(
+    center_name: str, 
+    website_url: str, 
+    docs: List[Tuple[str, str]],
+    content_cache_dir: Optional[str] = ".cache/content",
+    use_content_cache: bool = True
+) -> str:
+    # Try to use cached cleaned text first
+    body = None
+    if use_content_cache and content_cache_dir is not False:
+        cached_content = load_content_from_cache(center_name, website_url, content_cache_dir)
+        if cached_content and cached_content.get("website_text"):
+            # Use cached cleaned text (already has page separators)
+            body = cached_content["website_text"]
+            # Limit length if needed
+            if len(body) > 50000:  # Limit total length
+                # Split by page markers and take first N pages
+                pages = body.split("\n=== PAGE:")
+                body = "\n=== PAGE:".join(pages[:8])
+    
+    # Fallback: process HTML on the fly (if cache not available)
+    if body is None:
+        parts = []
+        for url, html_doc in docs:
+            text = html_to_text(html_doc)
+            if not text:
+                continue
+            # limit per page to avoid overlong prompts
+            parts.append(f"\n\n=== PAGE: {url} ===\n{text[:8000]}")
+            if len(parts) >= 8:
+                break
+        body = "".join(parts)
 
     instructions = (
         f"TASK: Extract structured information about {center_name} from their website content.\n"
@@ -885,8 +1182,83 @@ def parse_uk_address(address: str) -> Dict[str, str]:
     return components
 
 
-def search_web_for_contact(center_name: str, website_url: str, timeout: int = 10) -> Dict[str, any]:
+def get_websearch_cache_path(center_name: str, website_url: str, cache_dir: Optional[str] = None) -> Path:
+    """Get cache file path for web search results."""
+    if cache_dir is None:
+        cache_dir = ".cache/web_search"
+    
+    cache_base = Path(cache_dir)
+    cache_base.mkdir(parents=True, exist_ok=True)
+    
+    # Create a safe filename from center name and URL
+    cache_key = f"{center_name}_{website_url}".encode('utf-8')
+    cache_hash = hashlib.md5(cache_key).hexdigest()
+    name_safe = re.sub(r'[^\w\-_.]', '_', center_name)[:50]
+    cache_file = cache_base / f"{name_safe}_{cache_hash}.json"
+    
+    return cache_file
+
+
+def load_websearch_from_cache(center_name: str, website_url: str, cache_dir: Optional[str] = None, max_age_days: int = 30) -> Optional[Dict[str, any]]:
+    """Load web search results from cache if they exist and are not expired."""
+    if cache_dir is False:  # Explicitly disabled
+        return None
+        
+    cache_file = get_websearch_cache_path(center_name, website_url, cache_dir)
+    
+    if not cache_file.exists():
+        return None
+    
+    # Check if cache is expired
+    if max_age_days > 0:
+        file_age = time.time() - cache_file.stat().st_mtime
+        if file_age > (max_age_days * 24 * 60 * 60):
+            return None  # Cache expired
+    
+    try:
+        with open(cache_file, "r", encoding="utf-8") as f:
+            cached_data = json.load(f)
+            # Verify it's for the same center and URL
+            if (cached_data.get("center_name") == center_name and 
+                cached_data.get("website_url") == website_url):
+                return cached_data.get("contact_info")
+    except (OSError, json.JSONDecodeError, KeyError):
+        # Cache file corrupted, ignore it
+        pass
+    
+    return None
+
+
+def save_websearch_to_cache(center_name: str, website_url: str, contact_info: Dict[str, any], cache_dir: Optional[str] = None) -> None:
+    """Save web search results to cache."""
+    if cache_dir is False:  # Explicitly disabled
+        return
+        
+    cache_file = get_websearch_cache_path(center_name, website_url, cache_dir)
+    
+    try:
+        cache_data = {
+            "center_name": center_name,
+            "website_url": website_url,
+            "contact_info": contact_info,
+            "cached_at": time.time(),
+            "cached_at_readable": time.strftime("%Y-%m-%d %H:%M:%S")
+        }
+        with open(cache_file, "w", encoding="utf-8") as f:
+            json.dump(cache_data, f, indent=2, ensure_ascii=False)
+    except OSError:
+        # Ignore cache write errors (disk full, permissions, etc.)
+        pass
+
+
+def search_web_for_contact(center_name: str, website_url: str, timeout: int = 10, websearch_cache_dir: Optional[str] = ".cache/web_search", refresh_websearch_cache: bool = False) -> Dict[str, any]:
     """Search web for missing contact information from reliable sources."""
+    # Check cache first (unless refresh is requested)
+    if not refresh_websearch_cache and websearch_cache_dir is not False:
+        cached_result = load_websearch_from_cache(center_name, website_url, websearch_cache_dir)
+        if cached_result is not None:
+            return cached_result
+    
     contact_info = {
         "phone": None,
         "email": None, 
@@ -894,6 +1266,10 @@ def search_web_for_contact(center_name: str, website_url: str, timeout: int = 10
         "address_components": None,
         "sources": []
     }
+    
+    # Track web search text for content cache
+    web_search_text_parts = []
+    web_search_sources_list = []
     
     # Build search query
     domain = parse.urlparse(website_url).netloc if website_url else ""
@@ -903,9 +1279,12 @@ def search_web_for_contact(center_name: str, website_url: str, timeout: int = 10
     search_url = f"https://html.duckduckgo.com/html/?q={search_query}"
     
     try:
-        html_content = fetch_url(search_url, timeout=timeout)
-        if not html_content:
+        # Fetch DuckDuckGo search results page (this also uses HTML cache)
+        fetch_result = fetch_url(search_url, timeout=timeout, html_cache_dir=".cache/html_content")
+        if not fetch_result:
             return contact_info
+        
+        html_content, _ = fetch_result
             
         # Extract search results
         # Pattern to find result links
@@ -927,11 +1306,18 @@ def search_web_for_contact(center_name: str, website_url: str, timeout: int = 10
                 continue
                 
             # Fetch the page
-            page_html = fetch_url(actual_url, timeout=timeout)
-            if not page_html:
+            fetch_result = fetch_url(actual_url, timeout=timeout, html_cache_dir=".cache/html_content")
+            if not fetch_result:
                 continue
-                
+            
+            page_html, _ = fetch_result
             page_text = html_to_text(page_html)
+            
+            # Collect web search text for content cache
+            if page_text.strip():
+                # Format: URL marker before text (so we know which source we're reading)
+                web_search_text_parts.append(f"\n\n=== SOURCE: {actual_url} ===\n\n{page_text}")
+                web_search_sources_list.append(actual_url)
             
             # Extract phone numbers (UK and international formats)
             if not contact_info["phone"]:
@@ -987,6 +1373,36 @@ def search_web_for_contact(center_name: str, website_url: str, timeout: int = 10
         # Silently fail - web search is optional enhancement
         pass
     
+    # Save contact info to web search cache
+    save_websearch_to_cache(center_name, website_url, contact_info, websearch_cache_dir)
+    
+    # Also save web search text to content cache (unified cache)
+    if web_search_text_parts:
+        combined_web_search_text = "\n".join(web_search_text_parts)
+        
+        # Load existing website_text to preserve it
+        content_cache_file = get_content_cache_path(center_name, website_url, ".cache/content")
+        existing_website_text = ""
+        existing_website_pages = []
+        if content_cache_file.exists():
+            try:
+                with open(content_cache_file, "r", encoding="utf-8") as f:
+                    existing = json.load(f)
+                    existing_website_text = existing.get("website_text", "")
+                    existing_website_pages = existing.get("website_pages", [])
+            except Exception:
+                pass
+        
+        save_content_to_cache(
+            center_name=center_name,
+            website_url=website_url,
+            website_text=existing_website_text,
+            website_pages=existing_website_pages,
+            web_search_text=combined_web_search_text,
+            web_search_sources=web_search_sources_list,
+            cache_dir=".cache/content"
+        )
+    
     return contact_info
 
 
@@ -1003,15 +1419,39 @@ def main() -> None:
     parser.add_argument("--ollama-auth", default=None, help="Header line or bare token")
     parser.add_argument("--openai-key", default=None)
     parser.add_argument("--gemini-key", default=None)
+    parser.add_argument("--html-cache-dir", default=".cache/html_content", help="Directory to cache HTML content (set to 'false' to disable, default: .cache/html_content)")
+    parser.add_argument("--no-html-cache", action="store_true", help="Disable HTML caching")
+    parser.add_argument("--refresh-html-cache", action="store_true", help="Skip HTML cache and fetch fresh content")
+    parser.add_argument("--websearch-cache-dir", default=".cache/web_search", help="Directory to cache web search results (set to 'false' to disable, default: .cache/web_search)")
+    parser.add_argument("--no-websearch-cache", action="store_true", help="Disable web search caching")
+    parser.add_argument("--refresh-websearch-cache", action="store_true", help="Skip web search cache and perform fresh search")
     args = parser.parse_args()
 
+    # Determine HTML cache settings
+    html_cache_dir = None if args.no_html_cache else (False if args.html_cache_dir.lower() == "false" else args.html_cache_dir)
+    
+    # Determine web search cache settings
+    websearch_cache_dir = None if args.no_websearch_cache else (False if args.websearch_cache_dir.lower() == "false" else args.websearch_cache_dir)
+    
+    # Determine content cache settings
+    content_cache_dir = ".cache/content"  # New unified content cache
+    refresh_content_cache = args.refresh_html_cache  # Use same flag for now
+    
     start = args.url
-    docs, working_url = crawl_site(start, max_pages=args.max_pages)
+    docs, working_url = crawl_site(
+        start, 
+        max_pages=args.max_pages, 
+        html_cache_dir=html_cache_dir, 
+        refresh_html_cache=args.refresh_html_cache,
+        center_name=args.center_name,
+        content_cache_dir=content_cache_dir,
+        refresh_content_cache=refresh_content_cache
+    )
     if not docs:
         print("Failed to fetch website content.")
         sys.exit(2)
 
-    prompt = build_prompt(args.center_name, args.url, docs)
+    prompt = build_prompt(args.center_name, args.url, docs, content_cache_dir=content_cache_dir)
 
     if args.backend == "ollama":
         model = args.model or "llama3.1:8b-instruct"
@@ -1061,29 +1501,46 @@ def main() -> None:
             obj["contact_info"] = contact
             
         missing_fields = []
-        if not contact.get("phone"):
+        # Check if phone is missing (empty, None, or placeholder values)
+        phone = contact.get("phone", "")
+        if not phone or (isinstance(phone, str) and phone.strip().lower() in ("not specified", "n/a", "none", "nan", "unknown", "")):
             missing_fields.append("phone")
-        if not contact.get("email"):
+        # Check if email is missing
+        email = contact.get("email", "")
+        if not email or (isinstance(email, str) and email.strip().lower() in ("not specified", "n/a", "none", "nan", "unknown", "")):
             missing_fields.append("email")
-        if not contact.get("address"):
+        # Check if address is missing
+        address = contact.get("address", "")
+        if not address or (isinstance(address, str) and address.strip().lower() in ("not specified", "n/a", "none", "nan", "unknown", "")):
             missing_fields.append("address")
         
         if missing_fields:
             print(f"Searching web for missing contact info: {', '.join(missing_fields)}...", file=sys.stderr)
-            web_contact = search_web_for_contact(args.center_name, args.url)
+            web_contact = search_web_for_contact(
+                args.center_name, 
+                args.url,
+                websearch_cache_dir=websearch_cache_dir,
+                refresh_websearch_cache=args.refresh_websearch_cache
+            )
             
             # Track what was enhanced
             enhanced_fields = []
             
-            if not contact.get("phone") and web_contact.get("phone"):
+            # Update phone if missing or placeholder
+            phone = contact.get("phone", "")
+            if (not phone or (isinstance(phone, str) and phone.strip().lower() in ("not specified", "n/a", "none", "nan", "unknown", ""))) and web_contact.get("phone"):
                 contact["phone"] = web_contact["phone"]
                 enhanced_fields.append("phone")
             
-            if not contact.get("email") and web_contact.get("email"):
+            # Update email if missing or placeholder
+            email = contact.get("email", "")
+            if (not email or (isinstance(email, str) and email.strip().lower() in ("not specified", "n/a", "none", "nan", "unknown", ""))) and web_contact.get("email"):
                 contact["email"] = web_contact["email"]
                 enhanced_fields.append("email")
             
-            if not contact.get("address") and web_contact.get("address"):
+            # Update address if missing or placeholder
+            address = contact.get("address", "")
+            if (not address or (isinstance(address, str) and address.strip().lower() in ("not specified", "n/a", "none", "nan", "unknown", ""))) and web_contact.get("address"):
                 contact["address"] = web_contact["address"]
                 enhanced_fields.append("address")
                 

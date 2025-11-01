@@ -20,8 +20,8 @@ DEFAULT_OUTPUT = OUTPUT_DIR / "enriched_resources_complete.xlsx"
 # LLM Configuration
 LLM_CONFIG = {
     "backend": "gemini",  # Options: gemini, openai, ollama
-    "model": "gemini-1.5-flash",  # Model name (None for default)
-    "enhance_with_websearch": True,
+    "model": None,  # Model name (None for default: gemini-1.5-flash)
+    "enhance_with_websearch": False,  # Enable web search for missing contact info
     "cache_dir": ".cache/llm_extractions",
     "rate_limit": 15,  # requests per minute
 }
@@ -29,12 +29,13 @@ LLM_CONFIG = {
 # Processing Configuration
 PROCESSING_CONFIG = {
     "workers": 10,  # Number of parallel workers
-    "max_rows": None,  # None for all rows, or specify number
-    "start_row": 0,  # Starting row index
-    "fields_to_check": "description_short,age_range,organization_type,specific_services",
+    "max_rows": 1,  # None for all rows, or specify number (default: 1 for testing)
+    "start_row": 150,  # Starting row index (default: 150 for testing)
+    "fields_to_check": "description_short,age_range,organization_type",  # Fields to check for enrichment
     "skip_no_website": True,
     "populate_urls": True,
     "categorize": False,
+    "input_file": "data/enriched/enriched_resources_20251101_080009.csv",  # Default input file
 }
 
 # Ollama Configuration (for local LLM)

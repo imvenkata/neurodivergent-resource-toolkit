@@ -39,6 +39,18 @@ try:
 except ImportError:
     requests = None  # Will be checked if --populate-urls is used
 
+# Import configuration
+try:
+    # Ensure project root is in path for config.py import
+    import sys
+    project_root = Path(__file__).parent.parent
+    if str(project_root) not in sys.path:
+        sys.path.insert(0, str(project_root))
+    import config
+except ImportError:
+    # Fallback if config.py not available
+    config = None
+
 
 # Valid resource categories
 RESOURCE_CATEGORIES = [
@@ -130,7 +142,13 @@ def is_field_empty(value: any) -> bool:
 
 
 def needs_enrichment(row: Dict[str, str], fields_to_check: List[str]) -> bool:
-    """Check if a row needs enrichment based on missing fields."""
+    """
+    Check if a row needs enrichment based on missing fields.
+    
+    NOTE: This function is kept for backward compatibility but is no longer used.
+    All rows are now processed to extract complete information for the cache,
+    regardless of existing field values. Only missing fields are filled in Excel output.
+    """
     for field in fields_to_check:
         if is_field_empty(row.get(field, "")):
             return True
@@ -157,6 +175,10 @@ def call_web_llm_extract(
     enhance_with_websearch: bool,
     cache_dir: str,
     use_rate_limit: bool = True,
+    html_cache_dir: Optional[str] = ".cache/html_content",
+    refresh_html_cache: bool = False,
+    websearch_cache_dir: Optional[str] = ".cache/web_search",
+    refresh_websearch_cache: bool = False,
     **kwargs
 ) -> Optional[Dict]:
     """Call web_llm_extract.py to extract information."""
@@ -197,6 +219,27 @@ def call_web_llm_extract(
     if enhance_with_websearch:
         cmd.append("--enhance-with-websearch")
     
+    # Add HTML cache settings
+    if html_cache_dir is False:
+        cmd.append("--no-html-cache")
+    elif html_cache_dir and html_cache_dir != ".cache/html_content":
+        cmd.extend(["--html-cache-dir", html_cache_dir])
+    
+    if refresh_html_cache:
+        cmd.append("--refresh-html-cache")
+    
+    # Add web search cache settings
+    websearch_cache_dir = kwargs.get('websearch_cache_dir', ".cache/web_search")
+    refresh_websearch_cache = kwargs.get('refresh_websearch_cache', False)
+    
+    if websearch_cache_dir is False:
+        cmd.append("--no-websearch-cache")
+    elif websearch_cache_dir and websearch_cache_dir != ".cache/web_search":
+        cmd.extend(["--websearch-cache-dir", websearch_cache_dir])
+    
+    if refresh_websearch_cache:
+        cmd.append("--refresh-websearch-cache")
+    
     # Add backend-specific args
     if backend == "ollama" and kwargs.get("ollama_url"):
         cmd.extend(["--ollama-url", kwargs["ollama_url"]])
@@ -222,16 +265,26 @@ def call_web_llm_extract(
         )
         
         if result.returncode == 0:
-            data = json.loads(result.stdout)
-            
-            # Cache the result (thread-safe)
-            with cache_lock:
-                cache_file.parent.mkdir(parents=True, exist_ok=True)
-                with open(cache_file, "w", encoding="utf-8") as f:
-                    json.dump(data, f, indent=2, ensure_ascii=False)
-            
-            return {"cached": False, "data": data}
+            try:
+                data = json.loads(result.stdout)
+                
+                # Cache the result (thread-safe)
+                with cache_lock:
+                    cache_file.parent.mkdir(parents=True, exist_ok=True)
+                    with open(cache_file, "w", encoding="utf-8") as f:
+                        json.dump(data, f, indent=2, ensure_ascii=False)
+                
+                return {"cached": False, "data": data}
+            except json.JSONDecodeError as e:
+                # Even if JSON parsing fails, log the error but return None
+                print(f"⚠️  JSON decode error for {center_name}: {str(e)[:100]}", file=sys.stderr)
+                if result.stdout:
+                    print(f"   Output preview: {result.stdout[:200]}", file=sys.stderr)
+                return None
         else:
+            # Log subprocess error for debugging
+            if result.stderr:
+                print(f"⚠️  Subprocess error for {center_name}: {result.stderr[:200]}", file=sys.stderr)
             return None
     except subprocess.TimeoutExpired:
         return None
@@ -304,6 +357,10 @@ def process_single_center(
             model=args.model,
             enhance_with_websearch=args.enhance_with_websearch,
             cache_dir=args.cache_dir,
+            html_cache_dir=getattr(args, 'html_cache_dir', ".cache/html_content"),
+            refresh_html_cache=getattr(args, 'refresh_html_cache', False),
+            websearch_cache_dir=getattr(args, 'websearch_cache_dir', ".cache/web_search"),
+            refresh_websearch_cache=getattr(args, 'refresh_websearch_cache', False),
             ollama_url=args.ollama_url,
             ollama_auth=args.ollama_auth,
             openai_key=args.openai_key,
@@ -591,29 +648,95 @@ def export_to_xlsx(data: List[Dict[str, str]], output_path: str, highlight_chang
 
 
 def main():
+    # Get defaults from config.py if available
+    if config:
+        llm_config = config.LLM_CONFIG
+        proc_config = config.PROCESSING_CONFIG
+        # Get input file from PROCESSING_CONFIG or fallback to DEFAULT_INPUT
+        default_input = proc_config.get("input_file")
+        if not default_input:
+            default_input = str(getattr(config, "DEFAULT_INPUT", "data/input/to_be_normalised/enriched_resources.csv"))
+        default_backend = llm_config.get("backend", "gemini")
+        default_model = llm_config.get("model")
+        default_cache_dir = llm_config.get("cache_dir", ".cache/llm_extractions")
+        default_rate_limit = llm_config.get("rate_limit", 15)
+        default_enhance_websearch = llm_config.get("enhance_with_websearch", False)
+        default_max_rows = proc_config.get("max_rows")
+        default_start_row = proc_config.get("start_row", 0)
+        default_fields_to_check = proc_config.get("fields_to_check", "description_short,age_range,organization_type")
+        default_workers = proc_config.get("workers", 10)
+        default_skip_no_website = proc_config.get("skip_no_website", False)
+        default_populate_urls = proc_config.get("populate_urls", False)
+        default_categorize = proc_config.get("categorize", False)
+    else:
+        # Fallback defaults if config.py not available
+        default_input = "data/input/to_be_normalised/enriched_resources.csv"
+        default_backend = "gemini"
+        default_model = None
+        default_cache_dir = ".cache/llm_extractions"
+        default_rate_limit = 15
+        default_enhance_websearch = False
+        default_max_rows = None
+        default_start_row = 0
+        default_fields_to_check = "description_short,age_range,organization_type"
+        default_workers = 10
+        default_skip_no_website = False
+        default_populate_urls = False
+        default_categorize = False
+    
     parser = argparse.ArgumentParser(
-        description="Parallel batch pipeline to enrich service center information (MUCH FASTER!)"
+        description="Parallel batch pipeline to enrich service center information (MUCH FASTER!)",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
     )
-    parser.add_argument("--input", default="data/input/to_be_normalised/enriched_resources.csv")
-    parser.add_argument("--output", default=None)
-    parser.add_argument("--backend", choices=["ollama", "openai", "gemini"], default="gemini")
-    parser.add_argument("--model", default=None)
-    parser.add_argument("--enhance-with-websearch", action="store_true")
-    parser.add_argument("--max-rows", type=int, default=None)
-    parser.add_argument("--start-row", type=int, default=0)
-    parser.add_argument("--cache-dir", default=".cache/llm_extractions")
-    parser.add_argument("--fields-to-check", default="description_short,age_range,organization_type")
-    parser.add_argument("--skip-no-website", action="store_true")
-    parser.add_argument("--workers", type=int, default=10, help="Number of parallel workers (default: 10)")
-    parser.add_argument("--rate-limit", type=int, default=15, help="Max API requests per minute (default: 15 for Gemini free tier)")
-    parser.add_argument("--populate-urls", action="store_true", help="Populate missing gmaps_url from place_id or coordinates before enrichment")
-    parser.add_argument("--categorize", action="store_true", help="Automatically categorize resources after enrichment")
+    parser.add_argument("--input", default=default_input, help=f"Input CSV file (default from config.py: {default_input})")
+    parser.add_argument("--output", default=None, help="Output Excel file (default: auto-generated timestamp)")
+    parser.add_argument("--backend", choices=["ollama", "openai", "gemini"], default=default_backend, help=f"LLM backend (default from config.py: {default_backend})")
+    parser.add_argument("--model", default=default_model, help=f"Model name (default from config.py: {default_model or 'use backend default'})")
+    parser.add_argument("--enhance-with-websearch", action="store_true", help=f"Enable web search for missing contact info (default from config.py: {default_enhance_websearch})")
+    parser.add_argument("--max-rows", type=int, default=default_max_rows, help=f"Maximum rows to process (default from config.py: {default_max_rows or 'all'})")
+    parser.add_argument("--start-row", type=int, default=default_start_row, help=f"Starting row index (default from config.py: {default_start_row})")
+    parser.add_argument("--cache-dir", default=default_cache_dir, help=f"LLM extraction cache directory (default from config.py: {default_cache_dir})")
+    parser.add_argument("--fields-to-check", default=default_fields_to_check, help=f"Fields to check for enrichment (default from config.py: {default_fields_to_check})")
+    parser.add_argument("--skip-no-website", action="store_true", help=f"Skip rows without website (default from config.py: {default_skip_no_website})")
+    parser.add_argument("--workers", type=int, default=default_workers, help=f"Number of parallel workers (default from config.py: {default_workers})")
+    parser.add_argument("--rate-limit", type=int, default=default_rate_limit, help=f"Max API requests per minute (default from config.py: {default_rate_limit})")
+    parser.add_argument("--populate-urls", action="store_true", help=f"Populate missing gmaps_url from place_id (default from config.py: {default_populate_urls})")
+    parser.add_argument("--categorize", action="store_true", help=f"Automatically categorize resources (default from config.py: {default_categorize})")
     parser.add_argument("--ollama-url", default=None)
     parser.add_argument("--ollama-auth", default=None)
     parser.add_argument("--openai-key", default=None)
     parser.add_argument("--gemini-key", default=None)
+    parser.add_argument("--html-cache-dir", default=".cache/html_content", help="Directory to cache HTML content (set to 'false' to disable, default: .cache/html_content)")
+    parser.add_argument("--no-html-cache", action="store_true", help="Disable HTML caching")
+    parser.add_argument("--refresh-html-cache", action="store_true", help="Skip HTML cache and fetch fresh content")
+    parser.add_argument("--websearch-cache-dir", default=".cache/web_search", help="Directory to cache web search results (set to 'false' to disable, default: .cache/web_search)")
+    parser.add_argument("--no-websearch-cache", action="store_true", help="Disable web search caching")
+    parser.add_argument("--refresh-websearch-cache", action="store_true", help="Skip web search cache and perform fresh search")
     
     args = parser.parse_args()
+    
+    # Apply config defaults for boolean flags that weren't explicitly set
+    # argparse with store_true defaults to False, so we check if config says True
+    if not args.enhance_with_websearch and default_enhance_websearch:
+        args.enhance_with_websearch = True
+    if not args.skip_no_website and default_skip_no_website:
+        args.skip_no_website = True
+    if not args.populate_urls and default_populate_urls:
+        args.populate_urls = True
+    if not args.categorize and default_categorize:
+        args.categorize = True
+    
+    # Normalize HTML cache directory setting
+    if args.no_html_cache:
+        args.html_cache_dir = False
+    elif args.html_cache_dir and args.html_cache_dir.lower() == "false":
+        args.html_cache_dir = False
+    
+    # Normalize web search cache directory setting
+    if args.no_websearch_cache:
+        args.websearch_cache_dir = False
+    elif args.websearch_cache_dir and args.websearch_cache_dir.lower() == "false":
+        args.websearch_cache_dir = False
     
     # Update rate limiter with user setting
     global rate_limiter
@@ -662,6 +785,8 @@ def main():
     fields_to_check = [f.strip() for f in args.fields_to_check.split(",")]
     tasks = []
     
+    # Process ALL rows to extract complete information for cache
+    # The merge_data() function will only fill missing fields in Excel output
     for idx, row in enumerate(rows):
         if args.start_row and idx < args.start_row:
             continue
@@ -672,10 +797,12 @@ def main():
         if args.skip_no_website and not website:
             continue
         
-        if needs_enrichment(row, fields_to_check):
-            tasks.append((len(tasks) + 1, idx, row))
+        # Always process to extract ALL fields for cache, even if fields already exist
+        # merge_data() will only update missing fields in Excel output
+        tasks.append((len(tasks) + 1, idx, row))
     
-    print(f"Found {len(tasks)} rows that need enrichment")
+    print(f"Found {len(tasks)} rows to process")
+    print("  Note: All fields will be extracted and cached, but Excel will only fill missing fields")
     
     updated_rows = rows.copy()
     highlight_changes = {}
