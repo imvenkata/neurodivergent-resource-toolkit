@@ -29,9 +29,9 @@ LLM_CONFIG = {
 # Processing Configuration
 PROCESSING_CONFIG = {
     "workers": 10,  # Number of parallel workers
-    "max_rows": 10,  # None for all rows, or specify number (default: 1 for testing)
+    "max_rows": 15,  # None for all rows, or specify number (default: 1 for testing)
     "start_row": 1,  # Starting row index (default: 150 for testing)
-    "fields_to_check": "description_short,age_range,organization_type",  # Fields to check for enrichment
+    "fields_to_check": "description_short,age_range,organization_type,neurodivergent_relevance,is_neurodivergent_related",  # Fields to check for enrichment
     "skip_no_website": True,
     "populate_urls": True,
     "categorize": False,
