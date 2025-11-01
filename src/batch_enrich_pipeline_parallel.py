@@ -42,7 +42,6 @@ except ImportError:
 # Import configuration
 try:
     # Ensure project root is in path for config.py import
-    import sys
     project_root = Path(__file__).parent.parent
     if str(project_root) not in sys.path:
         sys.path.insert(0, str(project_root))
@@ -50,6 +49,13 @@ try:
 except ImportError:
     # Fallback if config.py not available
     config = None
+
+# Import validation for auto-correction
+try:
+    from src.validate_neurodivergent import revalidate_resource
+    VALIDATION_AVAILABLE = True
+except ImportError:
+    VALIDATION_AVAILABLE = False
 
 
 # Valid resource categories
@@ -182,9 +188,23 @@ def call_web_llm_extract(
     **kwargs
 ) -> Optional[Dict]:
     """Call web_llm_extract.py to extract information."""
-    # Check cache first (thread-safe)
+    # Check if content cache exists - if not, we need to run crawl even if LLM extraction is cached
+    content_cache_dir = ".cache/content"
+    content_cache_needed = False
+    try:
+        from src.web_llm_extract import get_content_cache_path, load_content_from_cache
+        content_cache_file = get_content_cache_path(center_name, website_url, content_cache_dir)
+        if not content_cache_file.exists():
+            content_cache_needed = True
+    except ImportError:
+        pass  # Module not available, skip content cache check
+    
+    # Check LLM extraction cache first (thread-safe)
     cache_file = Path(cache_dir) / f"{center_name.replace('/', '_').replace(' ', '_')[:100]}.json"
-    if cache_file.exists():
+    llm_cache_exists = cache_file.exists()
+    
+    # If LLM cache exists but content cache is missing, we still need to run to populate content cache
+    if llm_cache_exists and not content_cache_needed:
         with cache_lock:
             try:
                 with open(cache_file, "r", encoding="utf-8") as f:
@@ -329,6 +349,76 @@ def merge_data(original_row: Dict[str, str], extracted_data: Dict) -> Tuple[Dict
             
             updated_row[csv_column] = str(extracted_value)
             changes.append(csv_column)
+    
+    # Auto-validate neurodivergent relevance to catch false positives
+    if VALIDATION_AVAILABLE and "error" not in extracted_data:
+        try:
+            # Convert row data format for validation
+            validation_data = {
+                "center_name": updated_row.get("gmaps_name", ""),
+                "description_short": updated_row.get("description_short", ""),
+                "neurodivergent_focus": updated_row.get("neurodivergent_focus", ""),
+                "conditions_supported": updated_row.get("conditions_supported", ""),
+                "specific_services": updated_row.get("specific_services", ""),
+            }
+            
+            # Parse conditions_supported if it's a string
+            if isinstance(validation_data["conditions_supported"], str):
+                if validation_data["conditions_supported"].strip():
+                    # Try to parse as comma-separated or JSON
+                    try:
+                        import ast
+                        validation_data["conditions_supported"] = ast.literal_eval(validation_data["conditions_supported"])
+                    except:
+                        # Fallback: split by comma
+                        validation_data["conditions_supported"] = [
+                            s.strip() for s in validation_data["conditions_supported"].split(",")
+                            if s.strip() and s.strip().lower() not in ("none", "n/a", "not specified")
+                        ]
+                else:
+                    validation_data["conditions_supported"] = []
+            
+            # Parse specific_services if it's a string
+            if isinstance(validation_data["specific_services"], str):
+                if validation_data["specific_services"].strip():
+                    try:
+                        import ast
+                        validation_data["specific_services"] = ast.literal_eval(validation_data["specific_services"])
+                    except:
+                        # Fallback: split by comma
+                        validation_data["specific_services"] = [
+                            s.strip() for s in validation_data["specific_services"].split(",")
+                            if s.strip()
+                        ]
+                else:
+                    validation_data["specific_services"] = []
+            
+            # Run validation
+            is_related, score, reason = revalidate_resource(validation_data)
+            
+            # Get original values
+            original_is_related = updated_row.get("is_neurodivergent_related", "")
+            original_score = updated_row.get("neurodivergent_relevance_score", "")
+            
+            # Convert boolean to string for CSV compatibility
+            is_related_str = str(is_related).lower() if isinstance(is_related, bool) else str(is_related)
+            
+            # Update if validation differs from LLM output
+            if str(original_is_related).lower() != is_related_str:
+                updated_row["is_neurodivergent_related"] = is_related_str
+                changes.append("is_neurodivergent_related")
+            
+            if str(original_score) != str(score):
+                updated_row["neurodivergent_relevance_score"] = score
+                changes.append("neurodivergent_relevance_score")
+                
+                # Update neurodivergent_focus with validation reason if changed
+                if not is_related:
+                    updated_row["neurodivergent_focus"] = f"Validation: {reason}"
+                    changes.append("neurodivergent_focus")
+        except Exception as e:
+            # Silently fail validation - don't break the pipeline
+            pass
     
     return updated_row, changes
 

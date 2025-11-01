@@ -34,6 +34,18 @@ GENERIC_SERVICE_KEYWORDS = [
     r'\bcinema\b' + r'(?!.*autism|adhd|neurodiv)',
     r'\bsports club\b' + r'(?!.*autism|adhd|neurodiv)',
     r'\bgym\b' + r'(?!.*autism|adhd|neurodiv)',
+    
+    # Recreational/Educational (generic)
+    r'\bcity farm\b' + r'(?!.*autism|adhd|send|sen|special needs|neurodiv)',
+    r'\bfarm\b' + r'(?!.*autism|adhd|send|sen|special needs|neurodiv|rda|disabled)',
+    r'\bcountry park\b' + r'(?!.*send|sen|special needs|autism|adhd|neurodiv)',
+    r'\bpark\b' + r'(?!.*send|sen|special needs|autism|adhd|neurodiv)',
+    r'\byouth center\b' + r'(?!.*send|sen|special needs|autism|adhd|neurodiv)',
+    r'\byouth centre\b' + r'(?!.*send|sen|special needs|autism|adhd|neurodiv)',
+    r'\bcommunity center\b' + r'(?!.*send|sen|special needs|autism|adhd|neurodiv)',
+    r'\bcommunity centre\b' + r'(?!.*send|sen|special needs|autism|adhd|neurodiv)',
+    r'\brecreation center\b' + r'(?!.*send|sen|special needs|autism|adhd|neurodiv)',
+    r'\brecreation centre\b' + r'(?!.*send|sen|special needs|autism|adhd|neurodiv)',
 ]
 
 # Keywords that indicate TRUE neurodivergent focus
@@ -98,18 +110,51 @@ def revalidate_resource(data: Dict) -> Tuple[bool, str, str]:
     conditions = data.get("conditions_supported", [])
     services = data.get("specific_services", [])
     
+    # Convert services to string for searching
+    services_text = " ".join(services) if isinstance(services, list) else str(services)
+    
     # Step 1: Check if it's a generic service (false positive)
     if is_generic_service(name, description, focus):
         return False, "None", "Generic service (not ND-specific) - false positive"
     
-    # Step 2: Check if it has genuine ND focus
-    if not has_true_nd_focus(name, description, conditions, services):
-        return False, "Low", "No clear neurodivergent focus"
+    # Step 2: STRICT RULE - If conditions_supported is empty AND no explicit ND keywords
+    # This catches cases like Vauxhall City Farm that mention "therapeutic" but have no ND programs
+    all_text = f"{name} {description} {focus} {services_text}".lower()
+    has_explicit_nd = any(
+        re.search(pattern, all_text, re.IGNORECASE)
+        for pattern in TRUE_ND_KEYWORDS
+    )
     
-    # Step 3: Check conditions_supported
-    if not conditions or len(conditions) == 0:
-        # No conditions specified - likely not ND-focused
-        return False, "Low", "No neurodivergent conditions specified"
+    # Also check for explicit SEND/SEN/autism-friendly mentions in services
+    has_explicit_programs = any(
+        keyword in services_text.lower()
+        for keyword in ["send", "sen", "autism-friendly", "sensory-friendly", 
+                       "special needs", "for disabled", "neurodivergent-friendly"]
+    )
+    
+    if (not conditions or len(conditions) == 0):
+        if not has_explicit_nd and not has_explicit_programs:
+            # Empty conditions AND no explicit ND keywords = must be Low or None
+            return False, "Low", "Empty conditions_supported and no explicit ND keywords/programs found"
+    
+    # Step 3: Check if it has genuine ND focus (requires explicit keywords or populated conditions)
+    if not has_true_nd_focus(name, description, conditions, services):
+        # Double-check: maybe it has conditions but no keywords (edge case)
+        if conditions and len(conditions) > 0:
+            # Has conditions but no keywords - might be legit, but be cautious
+            # Check if conditions actually mention ND conditions
+            conditions_text = " ".join(conditions) if isinstance(conditions, list) else str(conditions)
+            has_nd_in_conditions = any(
+                re.search(pattern, conditions_text, re.IGNORECASE)
+                for pattern in TRUE_ND_KEYWORDS
+            )
+            if has_nd_in_conditions:
+                # Conditions mention ND - allow Medium score
+                pass
+            else:
+                return False, "Low", "No clear neurodivergent focus despite conditions list"
+        else:
+            return False, "Low", "No clear neurodivergent focus"
     
     # Step 4: If passed all checks, determine relevance level
     nd_keywords_in_name = any(
@@ -124,6 +169,9 @@ def revalidate_resource(data: Dict) -> Tuple[bool, str, str]:
     elif len(conditions) == 1:
         return True, "Medium", "Single ND condition supported"
     else:
+        # Has some ND keywords but no conditions - be cautious, might be Medium if explicit programs exist
+        if has_explicit_nd or has_explicit_programs:
+            return True, "Medium", "Explicit ND programs/services mentioned"
         return True, "Medium", "Some ND support offered"
 
 def validate_cache_file(cache_path: Path) -> Dict:
