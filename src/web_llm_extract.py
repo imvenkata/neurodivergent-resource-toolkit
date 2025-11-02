@@ -685,7 +685,7 @@ def build_prompt(
         f"Website: {website_url}\n\n"
         "RULES:\n"
         "• Extract factual information only - do not infer or assume\n"
-        "• Use \"Not specified\" for missing text fields, [] for missing arrays\n"
+        "• Use empty string \"\" for missing text fields (NOT \"Not specified\"), [] for missing arrays, null for missing values\n"
         "• Choose the most appropriate category from the list below\n\n"
         "CATEGORIES (choose one):\n"
         "1. Assessment & Diagnosis - Diagnostic Centers, Assessment Clinics, Psychoeducational Evaluation\n"
@@ -723,7 +723,7 @@ def build_prompt(
         "  - EXCLUDE: Supportive activities unless explicitly ND-focused (e.g., \"Recreational activities\")\n"
         "  - PRIORITIZE: Services explicitly mentioned as primary offerings\n"
         "• organization_type: NHS Service, Charity/Non-profit, Local Authority, Private School, Private Provider, Social Enterprise, or Unknown\n"
-        "• contact_info: Extract phone, email, full address if available\n"
+        "• contact_info: Extract phone, email, full address if available. Use empty string \"\" if not found (NOT \"Not specified\")\n"
         "• address_components: Break down address into postal_code, postal_town, admin_area_level_1 (country/region), admin_area_level_2 (county/area)\n"
         "• additional_notes: Note any funding, accessibility, referral requirements, payment plans\n"
         "• data_confidence: High (clear info), Medium (some ambiguity), or Low (limited info)\n"
@@ -1650,6 +1650,21 @@ def main() -> None:
             "error": "Model did not return valid JSON.",
             "raw": resp_text[:4000],
         }
+
+    # Clean up "Not specified" values - convert to empty strings
+    def clean_not_specified(value):
+        """Recursively clean 'Not specified' values to empty strings."""
+        if isinstance(value, str):
+            if value.strip().lower() in ("not specified", "n/a", "none", "nan", "null", "unknown"):
+                return ""
+            return value
+        elif isinstance(value, dict):
+            return {k: clean_not_specified(v) for k, v in value.items()}
+        elif isinstance(value, list):
+            return [clean_not_specified(item) for item in value]
+        return value
+    
+    obj = clean_not_specified(obj)
 
     # Ensure center_name and website_url presence
     obj.setdefault("center_name", args.center_name)

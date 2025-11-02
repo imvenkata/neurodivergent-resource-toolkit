@@ -85,7 +85,7 @@ COLUMN_MAPPING = {
     "specific_services": "specific_services",
     "organization_type": "organization_type",
     "contact_info.phone": "gmaps_phone",
-    "contact_info.email": None,
+    "contact_info.email": "email",
     "contact_info.address": "gmaps_formatted_address",
     "address_components.postal_code": "gmaps_addr_postal_code",
     "address_components.postal_town": "gmaps_addr_postal_town",

@@ -14,7 +14,7 @@ CACHE_DIR = PROJECT_ROOT / ".cache"
 OUTPUT_DIR = DATA_DIR / "output"
 
 # Default input/output files
-DEFAULT_INPUT = DATA_DIR / "input" / "enriched_resources.csv"
+DEFAULT_INPUT = DATA_DIR / "enriched" / "enriched_resources_20251101_080009.csv"
 DEFAULT_OUTPUT = OUTPUT_DIR / "enriched_resources_complete.xlsx"
 
 # LLM Configuration
@@ -29,9 +29,9 @@ LLM_CONFIG = {
 # Processing Configuration
 PROCESSING_CONFIG = {
     "workers": 10,  # Number of parallel workers
-    "max_rows": 15,  # None for all rows, or specify number (default: 1 for testing)
+    "max_rows": 10,  # None for all rows, or specify number (default: 1 for testing)
     "start_row": 1,  # Starting row index (default: 150 for testing)
-    "fields_to_check": "description_short,age_range,organization_type,neurodivergent_relevance,is_neurodivergent_related",  # Fields to check for enrichment
+    "fields_to_check": "description_short,age_range,organization_type,neurodivergent_relevance,is_neurodivergent_related,category,conditions_supported,neurodivergent_focus",  # Fields to check for enrichment
     "skip_no_website": True,
     "populate_urls": True,
     "categorize": False,
