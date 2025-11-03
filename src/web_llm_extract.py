@@ -166,8 +166,12 @@ def get_content_cache_path(center_name: str, website_url: str, cache_dir: Option
         # If relative path provided, resolve from cache directory
         cache_path = Path(cache_dir)
         if not cache_path.is_absolute():
-            # If relative, resolve from CACHE_DIR
-            cache_dir = DEFAULT_CACHE_DIR / cache_dir
+            # If relative path starts with .cache/, strip it to avoid double .cache
+            cache_dir_str = str(cache_dir)
+            if cache_dir_str.startswith(".cache/"):
+                cache_dir_str = cache_dir_str[7:]  # Remove ".cache/" prefix
+            # Resolve from CACHE_DIR
+            cache_dir = DEFAULT_CACHE_DIR / cache_dir_str
     
     cache_base = Path(cache_dir)
     cache_base.mkdir(parents=True, exist_ok=True)

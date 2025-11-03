@@ -197,7 +197,19 @@ def call_web_llm_extract(
         pass  # Module not available, skip content cache check
     
     # Check LLM extraction cache first (thread-safe)
-    cache_file = Path(cache_dir) / f"{center_name.replace('/', '_').replace(' ', '_')[:100]}.json"
+    # Resolve cache_dir to absolute path to avoid issues with relative paths
+    cache_dir_path = Path(cache_dir)
+    if not cache_dir_path.is_absolute():
+        # If relative path starts with .cache/, resolve from project root
+        if cache_dir.startswith(".cache/"):
+            # Get project root (parent of src directory)
+            project_root = Path(__file__).parent.parent
+            cache_dir_path = project_root / cache_dir
+        else:
+            # Otherwise resolve from current working directory
+            cache_dir_path = Path(cache_dir).resolve()
+    
+    cache_file = cache_dir_path / f"{center_name.replace('/', '_').replace(' ', '_')[:100]}.json"
     llm_cache_exists = cache_file.exists()
     
     # If LLM cache exists but content cache is missing, we still need to run to populate content cache
@@ -286,6 +298,7 @@ def call_web_llm_extract(
                 data = json.loads(result.stdout)
                 
                 # Cache the result (thread-safe)
+                # Use the same resolved cache_dir_path from above
                 with cache_lock:
                     cache_file.parent.mkdir(parents=True, exist_ok=True)
                     with open(cache_file, "w", encoding="utf-8") as f:
