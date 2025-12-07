@@ -28,8 +28,8 @@ LLM_CONFIG = {
 
 # Processing Configuration
 PROCESSING_CONFIG = {
-    "workers": 10,  # Number of parallel workers
-    "max_rows": 300,  # None for all rows, or specify number (default: 1 for testing)
+    "workers": 50,  # Number of parallel workers
+    "max_rows": None,  # None for all rows, or specify number (default: 1 for testing)
     "start_row": 1,  # Starting row index (default: 150 for testing)
     "fields_to_check": "description_short,age_range,organization_type,neurodivergent_relevance,is_neurodivergent_related,category,conditions_supported,neurodivergent_focus",  # Fields to check for enrichment
     "skip_no_website": True,
@@ -51,7 +51,7 @@ FILE_CONFIG = {
     "highlight_changes": True,
 }
 
-# Resource Categories (Simplified 9-Category System)
+# Resource Categories (Standardized 10-Category System)
 RESOURCE_CATEGORIES = [
     "Assessment & Diagnosis",
     "Crisis & Emergency", 
@@ -61,6 +61,7 @@ RESOURCE_CATEGORIES = [
     "Transport & Accessibility",
     "Community & Social",
     "Recreation & Activities",
+    "Mental Health & Wellbeing",
     "Unknown/Uncategorized",
 ]
 
@@ -74,6 +75,7 @@ CATEGORY_DESCRIPTIONS = {
     "Transport & Accessibility": "Accessible Transport, Travel Training, Mobility Services, Transport Subsidies",
     "Community & Social": "Local Groups, National Organization Branches, Peer Networks, Social Meetups, Parent/Carer Groups",
     "Recreation & Activities": "Sports & Fitness, Arts & Entertainment, Play Centers, Hobby Clubs, Social Activities",
+    "Mental Health & Wellbeing": "Mental Health Services, Therapy, Counselling, Therapeutic Services, Rehabilitation, Wellbeing Support",
     "Unknown/Uncategorized": "Use only when the description doesn't clearly fit any category"
 }
 

@@ -50,6 +50,17 @@ except ImportError:
     # Fallback if config.py not available
     config = None
 
+# Import category standardization
+try:
+    from src.utils.category_standardization import (
+        standardize_resource_categories,
+        standardize_category,
+        standardize_subcategory,
+    )
+    STANDARDIZATION_AVAILABLE = True
+except ImportError:
+    STANDARDIZATION_AVAILABLE = False
+
 # Keyword-based validation DISABLED - using LLM reasoning only
 # from src.validate_neurodivergent import revalidate_resource
 VALIDATION_AVAILABLE = False
@@ -357,8 +368,31 @@ def merge_data(original_row: Dict[str, str], extracted_data: Dict) -> Tuple[Dict
             elif isinstance(extracted_value, dict):
                 extracted_value = json.dumps(extracted_value)
             
+            # Standardize category and subcategory fields
+            if csv_column == "category" and STANDARDIZATION_AVAILABLE:
+                extracted_value = standardize_category(str(extracted_value))
+            elif csv_column == "subcategory" and STANDARDIZATION_AVAILABLE:
+                # Get category for context
+                category = updated_row.get("category", "") or original_row.get("category", "")
+                _, extracted_value = standardize_subcategory(str(extracted_value), category)
+            
             updated_row[csv_column] = str(extracted_value)
             changes.append(csv_column)
+    
+    # Standardize category and subcategory together to ensure consistency
+    if STANDARDIZATION_AVAILABLE:
+        category = updated_row.get("category", "")
+        subcategory = updated_row.get("subcategory", "")
+        if category or subcategory:
+            std_category, std_subcategory = standardize_resource_categories(category, subcategory)
+            if std_category != category:
+                updated_row["category"] = std_category
+                if "category" not in changes:
+                    changes.append("category")
+            if std_subcategory != subcategory:
+                updated_row["subcategory"] = std_subcategory
+                if "subcategory" not in changes:
+                    changes.append("subcategory")
     
     # Keyword-based validation DISABLED - using LLM reasoning only
     # Auto-validation removed - LLM makes the decision based on prompt instructions
